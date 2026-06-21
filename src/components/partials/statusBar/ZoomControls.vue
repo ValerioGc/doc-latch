@@ -70,8 +70,8 @@ function onZoomSelect(e: Event): void {
 
         .zoom_btn {
             @extend %flex-center;
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             border: 0.5px solid var(--color-border-strong);
             background: var(--color-bg-primary);
             border-radius: $radius-sm;
@@ -88,17 +88,17 @@ function onZoomSelect(e: Event): void {
             }
 
             & :deep(svg) {
-                width: 10px;
-                height: 10px;
+                width: 12px;
+                height: 12px;
             }
         }
 
         .zoom_select {
-            height: 20px;
+            height: 24px;
             border: 0.5px solid var(--color-border-strong);
             background: var(--color-bg-primary);
             border-radius: $radius-sm;
-            font-size: $font-size-xs;
+            font-size: $font-size-sm;
             color: var(--color-text-secondary);
             text-align: center;
             cursor: pointer;

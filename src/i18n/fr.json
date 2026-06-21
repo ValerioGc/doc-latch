@@ -75,7 +75,9 @@
   },
   "statusBar": {
     "noFile": "Aucun fichier",
-    "page": "Page {current} / {total}"
+    "page": "Page {current} / {total}",
+    "goToPage": "Aller",
+    "goToPageLabel": "Aller à la page"
   },
   "errors": {
     "fileNotFound": "Fichier introuvable.",

@@ -44,6 +44,7 @@ describe('StatusBar', () => {
     const wrapper = mountStatusBar();
 
     expect(wrapper.findAll('.s_item')).toHaveLength(1);
+    expect(wrapper.find('.page_selector-trigger').exists()).toBe(false);
     expect(wrapper.find('.zoom').exists()).toBe(false);
   });
 
@@ -54,9 +55,8 @@ describe('StatusBar', () => {
     docStore.setPage(2);
     const wrapper = mountStatusBar();
 
-    const items = wrapper.findAll('.s_item');
-    expect(items[0].text()).toContain('document.pdf');
-    expect(items[1].text()).toContain('Pag. 2 / 4');
+    expect(wrapper.find('.s_item').text()).toContain('document.pdf');
+    expect(wrapper.find('.page_selector-trigger').text()).toContain('Pag. 2 / 4');
   });
 
   it('renders zoom controls once a document is open', () => {

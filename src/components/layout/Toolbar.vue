@@ -184,8 +184,8 @@
   .icon-btn {
     @extend %flex-center;
 
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border: none;
     background: transparent;
     border-radius: $radius-md;
@@ -204,8 +204,8 @@
   }
 
   .icon-btn-svg :deep(svg) {
-    width: 15px;
-    height: 15px;
+    width: 18px;
+    height: 18px;
   }
 
   .toolbar-spacer {
@@ -214,7 +214,7 @@
 
   .toolbar-sep {
     width: 1px;
-    height: 18px;
+    height: 20px;
     background: var(--color-border-strong);
     margin: 0 $space-1;
   }
@@ -223,13 +223,13 @@
     @extend %flex-row;
 
     position: relative;
-    height: 36px;
+    height: 40px;
   }
 
   .menu-btn {
     @include flex-row($space-1);
 
-    height: 28px;
+    height: 32px;
     padding: 0 10px;
     font-size: $font-size-base;
     color: var(--color-text-primary);
@@ -250,23 +250,23 @@
   }
 
   .menu-btn-icon :deep(svg) {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
   }
 
   .chev {
     color: var(--color-text-tertiary);
 
     :deep(svg) {
-      width: 10px;
-      height: 10px;
+      width: 11px;
+      height: 11px;
     }
   }
 
   /* Dropdown */
   .dropdown {
     position: absolute;
-    top: 34px;
+    top: 38px;
     left: 0;
     min-width: 230px;
     background: var(--color-bg-primary);

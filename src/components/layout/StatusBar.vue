@@ -3,8 +3,8 @@
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
   import documentIcon from '@/assets/icons/document.svg?raw';
-  import pageIcon from '@/assets/icons/page.svg?raw';
   import ZoomControls from '../partials/statusBar/ZoomControls.vue';
+  import PageSelector from '../partials/statusBar/PageSelector.vue';
 
   const { t } = useI18n();
   const docStore = useDocumentStore();
@@ -21,10 +21,7 @@
     </div>
 
     <!-- Page info -->
-    <div v-if="docStore.isOpen" class="s_item">
-      <span class="s_item_icon" aria-hidden="true" v-html="pageIcon"> </span>
-      {{ t('statusBar.page', { current: docStore.currentPage, total: docStore.totalPages }) }}
-    </div>
+    <PageSelector v-if="docStore.isOpen" />
 
     <div class="s_spacer"></div>
 
