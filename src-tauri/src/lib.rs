@@ -1,0 +1,23 @@
+mod commands;
+mod pdf;
+
+use commands::document::{
+    open_pdf, open_pdf_with_password, render_page, render_page_with_password,
+};
+
+/// Tauri application entry point
+#[cfg_attr(mobile, tauri::mobile_entry_point)]
+pub fn run() {
+    tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_shell::init())
+        .invoke_handler(tauri::generate_handler![
+            open_pdf,
+            open_pdf_with_password,
+            render_page,
+            render_page_with_password,
+        ])
+        .run(tauri::generate_context!())
+        .expect("Error during the startup of the Tauri application");
+}

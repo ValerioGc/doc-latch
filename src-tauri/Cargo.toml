@@ -1,0 +1,60 @@
+[package]
+name = "pdf-reader"
+version = "0.1.0"
+description = "PDF Reader/Editor — Tauri 2 + Rust"
+authors = []
+edition = "2021"
+rust-version = "1.77"
+
+[[bin]]
+name = "pdf-reader"
+path = "src/main.rs"
+
+[lib]
+name = "pdf_reader_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.0", features = [] }
+
+[dependencies]
+# Tauri core
+tauri = { version = "2.0", features = [] }
+
+# Tauri plugins
+tauri-plugin-dialog = "2.0"
+tauri-plugin-fs = "2.0"
+tauri-plugin-shell = "2.0"
+
+# PDF parsing and writing
+lopdf = { version = "0.33", features = ["nom_parser"] }
+
+# PDF rendering via PDFium
+pdfium-render = { version = "0.8", features = ["thread_safe"] }
+
+# Image encoding (PNG export from pdfium bitmap)
+image = { version = "0.25", default-features = false, features = ["png"] }
+
+# Base64 encoding for IPC transport
+base64 = "0.22"
+
+# Error handling
+thiserror = "1.0"
+
+# Serialization (required by Tauri IPC)
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Logging
+log = "0.4"
+
+[dev-dependencies]
+tempfile = "3.10"
+
+[profile.release]
+# Optimize for size in release builds
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
