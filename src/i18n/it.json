@@ -1,0 +1,88 @@
+{
+  "titlebar": {
+    "minimize": "Riduci a icona",
+    "maximize": "Ripristina/Massimizza",
+    "close": "Chiudi"
+  },
+  "menu": {
+    "file": "File",
+    "open": "Apri file…",
+    "recent": "Recenti",
+    "close": "Chiudi documento",
+    "docInfo": "Informazioni documento…",
+    "settings": "Impostazioni",
+    "info": "Info"
+  },
+  "settings": {
+    "appearance": "Aspetto",
+    "darkMode": "Tema scuro",
+    "hideSidebar": "Nascondi sidebar",
+    "collapseSidebar": "Comprimi sidebar",
+    "expandSidebar": "Espandi sidebar",
+    "resizeSidebar": "Ridimensiona sidebar",
+    "language": "Lingua",
+    "languageLabel": "Lingua"
+  },
+  "viewer": {
+    "noDocument": "Nessun documento aperto",
+    "openHint": "Usa File > Apri file per aprire un PDF",
+    "page": "Pag. {current} / {total}",
+    "zoom": "Zoom",
+    "resetZoom": "Reimposta zoom al 100%"
+  },
+  "home": {
+    "noRecent": "Nessun documento recente"
+  },
+  "dialog": {
+    "password": {
+      "title": "Documento protetto",
+      "description": "Inserisci la password per aprire il documento.",
+      "placeholder": "Password",
+      "confirm": "Apri",
+      "cancel": "Annulla",
+      "wrongPassword": "Password errata. Riprova.",
+      "attemptsLeft": "{n} tentativo rimanente | {n} tentativi rimanenti"
+    },
+    "docInfo": {
+      "title": "Informazioni documento",
+      "path": "Percorso",
+      "pages": "Pagine",
+      "pdfTitle": "Titolo",
+      "author": "Autore",
+      "subject": "Oggetto",
+      "creator": "Creatore",
+      "producer": "Prodotto da",
+      "creationDate": "Data creazione",
+      "modDate": "Ultima modifica",
+      "version": "Versione PDF",
+      "size": "Dimensione pagina",
+      "encrypted": "Cifratura",
+      "yes": "Sì",
+      "no": "No",
+      "notAvailable": "N/D",
+      "close": "Chiudi"
+    },
+    "about": {
+      "title": "PDF Reader",
+      "version": "Versione {version}",
+      "description": "Lettore PDF open source costruito con Tauri 2, Rust e Vue 3.",
+      "github": "Vai su GitHub",
+      "close": "Chiudi"
+    },
+    "settings": {
+      "close": "Chiudi"
+    }
+  },
+  "statusBar": {
+    "noFile": "Nessun file",
+    "page": "Pag. {current} / {total}"
+  },
+  "errors": {
+    "fileNotFound": "File non trovato.",
+    "wrongPassword": "Password errata.",
+    "passwordRequired": "Il documento richiede una password.",
+    "invalidPdf": "Il file non è un PDF valido.",
+    "renderError": "Errore durante il rendering della pagina.",
+    "unknown": "Errore sconosciuto."
+  }
+}

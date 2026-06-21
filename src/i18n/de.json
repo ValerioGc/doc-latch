@@ -1,0 +1,88 @@
+{
+  "titlebar": {
+    "minimize": "Minimieren",
+    "maximize": "Wiederherstellen/Maximieren",
+    "close": "Schließen"
+  },
+  "menu": {
+    "file": "Datei",
+    "open": "Datei öffnen…",
+    "recent": "Zuletzt geöffnet",
+    "close": "Dokument schließen",
+    "docInfo": "Dokumentinformationen…",
+    "settings": "Einstellungen",
+    "info": "Info"
+  },
+  "settings": {
+    "appearance": "Darstellung",
+    "darkMode": "Dunkles Design",
+    "hideSidebar": "Seitenleiste ausblenden",
+    "collapseSidebar": "Seitenleiste einklappen",
+    "expandSidebar": "Seitenleiste ausklappen",
+    "resizeSidebar": "Seitenleiste anpassen",
+    "language": "Sprache",
+    "languageLabel": "Sprache"
+  },
+  "viewer": {
+    "noDocument": "Kein Dokument geöffnet",
+    "openHint": "Verwende Datei > Öffnen um eine PDF-Datei zu öffnen",
+    "page": "Seite {current} / {total}",
+    "zoom": "Zoom",
+    "resetZoom": "Zoom auf 100% zurücksetzen"
+  },
+  "home": {
+    "noRecent": "Keine zuletzt geöffneten Dokumente"
+  },
+  "dialog": {
+    "password": {
+      "title": "Geschütztes Dokument",
+      "description": "Geben Sie das Passwort ein, um dieses Dokument zu öffnen.",
+      "placeholder": "Passwort",
+      "confirm": "Öffnen",
+      "cancel": "Abbrechen",
+      "wrongPassword": "Falsches Passwort. Bitte erneut versuchen.",
+      "attemptsLeft": "{n} Versuch verbleibend | {n} Versuche verbleibend"
+    },
+    "docInfo": {
+      "title": "Dokumentinformationen",
+      "path": "Pfad",
+      "pages": "Seiten",
+      "pdfTitle": "Titel",
+      "author": "Autor",
+      "subject": "Betreff",
+      "creator": "Ersteller",
+      "producer": "Produzent",
+      "creationDate": "Erstellungsdatum",
+      "modDate": "Zuletzt geändert",
+      "version": "PDF-Version",
+      "size": "Seitengröße",
+      "encrypted": "Verschlüsselung",
+      "yes": "Ja",
+      "no": "Nein",
+      "notAvailable": "N/V",
+      "close": "Schließen"
+    },
+    "about": {
+      "title": "PDF Reader",
+      "version": "Version {version}",
+      "description": "Open-Source-PDF-Leser, erstellt mit Tauri 2, Rust und Vue 3.",
+      "github": "Auf GitHub ansehen",
+      "close": "Schließen"
+    },
+    "settings": {
+      "close": "Schließen"
+    }
+  },
+  "statusBar": {
+    "noFile": "Keine Datei",
+    "page": "Seite {current} / {total}"
+  },
+  "errors": {
+    "fileNotFound": "Datei nicht gefunden.",
+    "wrongPassword": "Falsches Passwort.",
+    "passwordRequired": "Dieses Dokument erfordert ein Passwort.",
+    "invalidPdf": "Die Datei ist kein gültiges PDF.",
+    "renderError": "Fehler beim Rendern der Seite.",
+    "unknown": "Unbekannter Fehler."
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "titlebar": {
+    "minimize": "Minimize",
+    "maximize": "Restore/Maximize",
+    "close": "Close"
+  },
+  "menu": {
+    "file": "File",
+    "open": "Open file…",
+    "recent": "Recent",
+    "close": "Close document",
+    "docInfo": "Document info…",
+    "settings": "Settings",
+    "info": "Info"
+  },
+  "settings": {
+    "appearance": "Appearance",
+    "darkMode": "Dark mode",
+    "hideSidebar": "Hide sidebar",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar",
+    "resizeSidebar": "Resize sidebar",
+    "language": "Language",
+    "languageLabel": "Language"
+  },
+  "viewer": {
+    "noDocument": "No document open",
+    "openHint": "Use File > Open file to open a PDF",
+    "page": "Page {current} / {total}",
+    "zoom": "Zoom",
+    "resetZoom": "Reset zoom to 100%"
+  },
+  "home": {
+    "noRecent": "No recent documents"
+  },
+  "dialog": {
+    "password": {
+      "title": "Protected document",
+      "description": "Enter the password to open this document.",
+      "placeholder": "Password",
+      "confirm": "Open",
+      "cancel": "Cancel",
+      "wrongPassword": "Wrong password. Please try again.",
+      "attemptsLeft": "{n} attempt remaining | {n} attempts remaining"
+    },
+    "docInfo": {
+      "title": "Document info",
+      "path": "Path",
+      "pages": "Pages",
+      "pdfTitle": "Title",
+      "author": "Author",
+      "subject": "Subject",
+      "creator": "Creator",
+      "producer": "Producer",
+      "creationDate": "Creation date",
+      "modDate": "Last modified",
+      "version": "PDF version",
+      "size": "Page size",
+      "encrypted": "Encryption",
+      "yes": "Yes",
+      "no": "No",
+      "notAvailable": "N/A",
+      "close": "Close"
+    },
+    "about": {
+      "title": "PDF Reader",
+      "version": "Version {version}",
+      "description": "Open source PDF reader built with Tauri 2, Rust and Vue 3.",
+      "github": "View on GitHub",
+      "close": "Close"
+    },
+    "settings": {
+      "close": "Close"
+    }
+  },
+  "statusBar": {
+    "noFile": "No file",
+    "page": "Page {current} / {total}"
+  },
+  "errors": {
+    "fileNotFound": "File not found.",
+    "wrongPassword": "Wrong password.",
+    "passwordRequired": "This document requires a password.",
+    "invalidPdf": "The file is not a valid PDF.",
+    "renderError": "Error rendering page.",
+    "unknown": "Unknown error."
+  }
+}

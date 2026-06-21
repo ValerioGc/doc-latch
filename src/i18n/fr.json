@@ -1,0 +1,88 @@
+{
+  "titlebar": {
+    "minimize": "Réduire",
+    "maximize": "Restaurer/Agrandir",
+    "close": "Fermer"
+  },
+  "menu": {
+    "file": "Fichier",
+    "open": "Ouvrir…",
+    "recent": "Récents",
+    "close": "Fermer le document",
+    "docInfo": "Informations du document…",
+    "settings": "Paramètres",
+    "info": "Infos"
+  },
+  "settings": {
+    "appearance": "Apparence",
+    "darkMode": "Mode sombre",
+    "hideSidebar": "Masquer le panneau",
+    "collapseSidebar": "Réduire le panneau",
+    "expandSidebar": "Déployer le panneau",
+    "resizeSidebar": "Redimensionner le panneau",
+    "language": "Langue",
+    "languageLabel": "Langue"
+  },
+  "viewer": {
+    "noDocument": "Aucun document ouvert",
+    "openHint": "Utilisez Fichier > Ouvrir pour ouvrir un PDF",
+    "page": "Page {current} / {total}",
+    "zoom": "Zoom",
+    "resetZoom": "Réinitialiser le zoom à 100%"
+  },
+  "home": {
+    "noRecent": "Aucun document récent"
+  },
+  "dialog": {
+    "password": {
+      "title": "Document protégé",
+      "description": "Entrez le mot de passe pour ouvrir ce document.",
+      "placeholder": "Mot de passe",
+      "confirm": "Ouvrir",
+      "cancel": "Annuler",
+      "wrongPassword": "Mot de passe incorrect. Réessayez.",
+      "attemptsLeft": "{n} tentative restante | {n} tentatives restantes"
+    },
+    "docInfo": {
+      "title": "Informations du document",
+      "path": "Chemin",
+      "pages": "Pages",
+      "pdfTitle": "Titre",
+      "author": "Auteur",
+      "subject": "Sujet",
+      "creator": "Créateur",
+      "producer": "Producteur",
+      "creationDate": "Date de création",
+      "modDate": "Dernière modification",
+      "version": "Version PDF",
+      "size": "Taille de page",
+      "encrypted": "Chiffrement",
+      "yes": "Oui",
+      "no": "Non",
+      "notAvailable": "N/D",
+      "close": "Fermer"
+    },
+    "about": {
+      "title": "PDF Reader",
+      "version": "Version {version}",
+      "description": "Lecteur PDF open source construit avec Tauri 2, Rust et Vue 3.",
+      "github": "Voir sur GitHub",
+      "close": "Fermer"
+    },
+    "settings": {
+      "close": "Fermer"
+    }
+  },
+  "statusBar": {
+    "noFile": "Aucun fichier",
+    "page": "Page {current} / {total}"
+  },
+  "errors": {
+    "fileNotFound": "Fichier introuvable.",
+    "wrongPassword": "Mot de passe incorrect.",
+    "passwordRequired": "Ce document nécessite un mot de passe.",
+    "invalidPdf": "Le fichier n'est pas un PDF valide.",
+    "renderError": "Erreur lors du rendu de la page.",
+    "unknown": "Erreur inconnue."
+  }
+}
