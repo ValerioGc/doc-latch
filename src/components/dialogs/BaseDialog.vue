@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-  import { onMounted, onUnmounted } from 'vue';
+  import { onMounted, onUnmounted, useTemplateRef } from 'vue';
 
   const props = withDefaults(defineProps<{
     title?: string
@@ -16,31 +16,35 @@
 
   const emit = defineEmits<{ close: [] }>();
 
-  function close(): void {
+  const dialogRef = useTemplateRef<HTMLDialogElement>('dialog');
+
+  function onNativeClose(): void {
     emit('close');
   }
 
   function onBackdropClick(): void {
     if (props.closeOnBackdrop)
-      close();
+      dialogRef.value?.close();
   }
 
   function onKeydown(e: KeyboardEvent): void {
     if (e.key === 'Escape')
-      close();
+      dialogRef.value?.close();
   }
 
-  onMounted(() => window.addEventListener('keydown', onKeydown));
-  onUnmounted(() => window.removeEventListener('keydown', onKeydown));
+  onMounted(() => {
+    dialogRef.value?.showModal();
+    globalThis.addEventListener('keydown', onKeydown);
+  });
+  onUnmounted(() => globalThis.removeEventListener('keydown', onKeydown));
 
 </script>
 
 <template>
-  <div class="dialog_backdrop"
-    role="dialog"
-    aria-modal="true"
+  <dialog ref="dialog" class="dialog_host"
     :aria-label="ariaLabel ?? title"
     @click.self="onBackdropClick"
+    @close="onNativeClose"
   >
     <div class="dialog" :class="{ 'dialog--centered': centered }" :style="{ width }">
       <slot name="header">
@@ -53,16 +57,29 @@
         <slot name="actions"></slot>
       </div>
     </div>
-  </div>
+  </dialog>
 </template>
 
 <style lang="scss" scoped>
 
-  .dialog_backdrop {
-    @extend %overlay;
+  .dialog_host {
     @extend %flex-center;
 
-    z-index: 500;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+
+    &::backdrop {
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(2px);
+    }
   }
 
   .dialog {

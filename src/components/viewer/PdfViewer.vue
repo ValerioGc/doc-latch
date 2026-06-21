@@ -50,7 +50,7 @@
 
     <!-- Loading state -->
     <div v-else-if="docStore.state === 'loading'" class="empty_state">
-      <div class="spinner" aria-label="Caricamento" role="status"></div>
+      <output class="spinner" aria-label="Caricamento"></output>
     </div>
 
     <!-- Password required: handled by dialog -->
@@ -117,6 +117,7 @@
   }
 
   .spinner {
+    display: block;
     width: 28px;
     height: 28px;
     border: 2px solid var(--color-border);

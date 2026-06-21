@@ -29,7 +29,7 @@ export const useUiStore = defineStore('ui', () => {
 
   // ************************** Theme ***************************
   function applyTheme(t: Theme): void {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const prefersDark = globalThis.matchMedia('(prefers-color-scheme: dark)').matches;
     const isDark = t === 'dark' || (t === 'system' && prefersDark);
     document.documentElement.classList.toggle('dark', isDark);
   }

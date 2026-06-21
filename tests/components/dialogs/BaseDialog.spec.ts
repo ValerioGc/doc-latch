@@ -52,7 +52,7 @@ describe('BaseDialog', () => {
   it('emits close when the backdrop is clicked and closeOnBackdrop is true', async () => {
     const wrapper = mount(BaseDialog);
 
-    await wrapper.find('.dialog_backdrop').trigger('click');
+    await wrapper.find('.dialog_host').trigger('click');
 
     expect(wrapper.emitted('close')).toHaveLength(1);
   });
@@ -62,7 +62,7 @@ describe('BaseDialog', () => {
       props: { closeOnBackdrop: false },
     });
 
-    await wrapper.find('.dialog_backdrop').trigger('click');
+    await wrapper.find('.dialog_host').trigger('click');
 
     expect(wrapper.emitted('close')).toBeUndefined();
   });

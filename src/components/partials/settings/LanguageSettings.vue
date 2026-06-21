@@ -43,16 +43,17 @@ const currentLocale = computed(
                 <!-- Overlay to close the menu on outside click -->
                 <div v-if="langMenuOpen" class="lang-select_overlay" @click="langMenuOpen = false" />
 
-                <button type="button" class="lang-select_trigger" aria-haspopup="listbox" :aria-expanded="langMenuOpen"
+                <button type="button" class="lang-select_trigger" aria-haspopup="menu" :aria-expanded="langMenuOpen"
                     :aria-label="$t('settings.languageLabel')" @click="langMenuOpen = !langMenuOpen">
                     <img :src="currentLocale.flag" alt="" class="lang-select_flag" />
                     {{ currentLocale.label }}
                 </button>
 
-                <ul v-if="langMenuOpen" class="lang-select_menu" role="listbox">
-                    <li v-for="locale in locales" :key="locale.value" role="option"
-                        :aria-selected="locale.value === uiStore.locale">
-                        <button type="button" class="lang-select_option" @click="selectLocale(locale.value)">
+                <ul v-if="langMenuOpen" class="lang-select_menu">
+                    <li v-for="locale in locales" :key="locale.value">
+                        <button type="button" class="lang-select_option"
+                            :aria-current="locale.value === uiStore.locale"
+                            @click="selectLocale(locale.value)">
                             <img :src="locale.flag" alt="" class="lang-select_flag" />
                             {{ locale.label }}
                         </button>

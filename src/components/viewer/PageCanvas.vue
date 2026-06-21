@@ -46,7 +46,7 @@
 
 <template>
   <div class="page_canvas">
-    <div v-if="isLoading" class="page_canvas_spinner" aria-label="Caricamento pagina" role="status" />
+    <output v-if="isLoading" class="page_canvas_spinner" aria-label="Caricamento pagina"></output>
     <canvas ref="canvas"
       class="page_canvas_el"
       :class="{ 'page_canvas_el--hidden': isLoading }"
@@ -78,6 +78,7 @@
     }
 
     &_spinner {
+      display: block;
       width: 28px;
       height: 28px;
       border: 2px solid var(--color-border);

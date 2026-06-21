@@ -20,12 +20,12 @@
     }
 
     function onUp(): void {
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
+      globalThis.removeEventListener('mousemove', onMove);
+      globalThis.removeEventListener('mouseup', onUp);
     }
 
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
+    globalThis.addEventListener('mousemove', onMove);
+    globalThis.addEventListener('mouseup', onUp);
   }
 
 </script>
@@ -52,21 +52,19 @@
       >
 
         <!-- PDF pages thumbnails -->
-        <div v-for="page in docStore.totalPages" :key="`${docStore.filePath}-${page}`"
+        <button v-for="page in docStore.totalPages" :key="`${docStore.filePath}-${page}`"
+          type="button"
           class="thumb"
           :class="{ active: page === docStore.currentPage }"
-          role="button"
           :aria-label="`Pagina ${page}`"
           :aria-current="page === docStore.currentPage ? 'page' : undefined"
-          tabindex="0"
           @click="docStore.setPage(page)"
-          @keydown.enter="docStore.setPage(page)"
         >
           <div class="thumb-preview">
             <ThumbCanvas :page="page" />
           </div>
           <span class="thumb-num">{{ page }}</span>
-        </div>
+        </button>
 
         <!-- placeholder -->
         <div v-if="docStore.totalPages === 0" class="empty-sidebar" aria-hidden="true">
@@ -176,6 +174,9 @@
     padding: 6px 6px 4px;
     cursor: pointer;
     flex-shrink: 0;
+    font: inherit;
+    color: inherit;
+    text-align: inherit;
     transition: border-color $transition-fast;
     
     &:hover {

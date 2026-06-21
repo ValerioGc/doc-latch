@@ -57,6 +57,6 @@ export function useKeyboard(): void {
     }
   }
 
-  onMounted(() => window.addEventListener('keydown', onKeyDown));
-  onUnmounted(() => window.removeEventListener('keydown', onKeyDown));
+  onMounted(() => globalThis.addEventListener('keydown', onKeyDown));
+  onUnmounted(() => globalThis.removeEventListener('keydown', onKeyDown));
 }

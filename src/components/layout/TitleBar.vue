@@ -10,15 +10,15 @@
   const appWindow = getCurrentWindow();
 
   function minimize(): void {
-    void appWindow.minimize();
+    appWindow.minimize();
   }
 
   function toggleMaximize(): void {
-    void appWindow.toggleMaximize();
+    appWindow.toggleMaximize();
   }
 
   function closeWindow(): void {
-    void appWindow.close();
+    appWindow.close();
   }
 
   interface TitleBarControl {

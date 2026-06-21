@@ -28,7 +28,8 @@ function onZoomSelect(e: Event): void {
 </script>
 
 <template>
-    <div  class="zoom" role="group" :aria-label="t('viewer.zoom')">
+    <fieldset class="zoom">
+        <legend class="zoom_legend">{{ t('viewer.zoom') }}</legend>
 
         <!-- Zoom out button -->
         <button class="zoom_btn"
@@ -61,12 +62,27 @@ function onZoomSelect(e: Event): void {
             @click="uiStore.setZoom(100)"
             v-html="zoomResetIcon"
         ></button>
-    </div>
+    </fieldset>
 </template>
 
 <style lang="scss" scoped>
     .zoom {
         @include flex-row($space-1);
+        margin: 0;
+        padding: 0;
+        border: none;
+
+        .zoom_legend {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
 
         .zoom_btn {
             @extend %flex-center;

@@ -52,7 +52,7 @@
 
     <div v-if="open" class="page_selector-overlay" @click="close" />
 
-    <div v-if="open" class="page_selector-panel" role="dialog" :aria-label="t('statusBar.goToPageLabel')">
+    <dialog v-if="open" open class="page_selector-panel" :aria-label="t('statusBar.goToPageLabel')">
       <input ref="inputRef" type="number" class="page_selector-input"
         v-model="pageInput"
         min="1"
@@ -63,7 +63,7 @@
       <button class="btn btn_primary page_selector-go" @click="goToPage">
         {{ t('statusBar.goToPage') }}
       </button>
-    </div>
+    </dialog>
   </div>
 </template>
 
@@ -121,7 +121,7 @@
       position: absolute;
       bottom: 100%;
       left: 0;
-      margin-bottom: 6px;
+      margin: 0 0 6px;
       padding: $space-2;
       background: var(--color-bg-primary);
       border: 0.5px solid var(--color-border-strong);
