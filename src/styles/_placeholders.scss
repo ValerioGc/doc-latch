@@ -1,0 +1,49 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ─── Layout ──────────────────────────────────────────────────────────────────
+
+%flex-center {
+  @include flex-center;
+}
+
+%flex-row {
+  @include flex-row;
+}
+
+%flex-col {
+  @include flex-col;
+}
+
+// ─── Typography ──────────────────────────────────────────────────────────────
+
+%truncate {
+  @include truncate;
+}
+
+%text-xs {
+  font-size: $font-size-xs;
+  color: var(--color-text-tertiary);
+}
+
+// ─── Surface ─────────────────────────────────────────────────────────────────
+
+%surface-primary {
+  @include surface(primary);
+}
+
+// ─── Overlay ─────────────────────────────────────────────────────────────────
+
+%overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+}
+
+// ─── Divider ─────────────────────────────────────────────────────────────────
+
+%divider-x {
+  border: none;
+  border-top: 0.5px solid var(--color-border);
+}

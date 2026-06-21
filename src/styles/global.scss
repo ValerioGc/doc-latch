@@ -1,0 +1,79 @@
+@use 'variables' as *;
+@use 'themes';
+
+// ─── Reset & base ────────────────────────────────────────────────────────────
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#app {
+  height: 100vh;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+// ─── Buttons ─────────────────────────────────────────────────────────────────
+
+.btn {
+  padding: 7px $space-4;
+  font-size: $font-size-base;
+  border-radius: $radius-lg;
+  border: 0.5px solid var(--color-border-strong);
+  cursor: pointer;
+  font-weight: 500;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.btn_ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+
+  &:hover:not(:disabled) {
+    background: var(--color-bg-secondary);
+  }
+}
+
+.btn_primary {
+  background: var(--color-accent);
+  color: white;
+  border-color: transparent;
+
+  &:hover:not(:disabled) {
+    background: var(--color-accent-hover);
+  }
+}
