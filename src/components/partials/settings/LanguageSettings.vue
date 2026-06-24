@@ -97,7 +97,7 @@ const currentLocale = computed(
         &_menu {
             @include flex-col(2px);
             position: absolute;
-            top: calc(100% + 4px);
+            bottom: calc(100% + 4px);
             right: 0;
             min-width: 140px;
             background: var(--color-bg-primary);

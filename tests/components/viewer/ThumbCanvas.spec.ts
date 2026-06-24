@@ -68,7 +68,7 @@ describe('ThumbCanvas', () => {
 
     FakeIntersectionObserver.instances[0].trigger(true);
 
-    expect(renderToCanvas).toHaveBeenCalledWith(4, 0.18);
+    expect(renderToCanvas).toHaveBeenCalledWith(4, 0.5);
   });
 
   it('does not render when the entry is not intersecting', () => {

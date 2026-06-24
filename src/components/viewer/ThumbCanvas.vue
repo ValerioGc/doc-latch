@@ -3,7 +3,9 @@
   import { onMounted, onUnmounted, useTemplateRef } from 'vue';
   import { usePageCanvas } from '@/composables/usePageCanvas';
 
-  const THUMB_ZOOM = 0.18;
+  // Rendered well above the 150px CSS cap on .thumb so the bitmap never needs
+  // to be upscaled, even on high-DPI displays.
+  const THUMB_ZOOM = 0.5;
 
   const props = defineProps<{
     page: number

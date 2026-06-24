@@ -168,6 +168,7 @@
     @extend %surface-primary;
 
     width: 100%;
+    max-width: 150px;
     aspect-ratio: 4 / 5;
     border-radius: $radius-sm;
     align-items: center;
@@ -201,6 +202,7 @@
 
     &-placeholder-empty {
       width: 100%;
+      max-width: 150px;
       aspect-ratio: 4 / 5;
       background: var(--color-border);
       border-radius: $radius-sm;
