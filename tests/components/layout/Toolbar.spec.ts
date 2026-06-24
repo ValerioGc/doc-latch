@@ -71,6 +71,48 @@ describe('Toolbar', () => {
     expect(recentBtn.attributes('disabled')).toBeDefined();
   });
 
+  it('does not open the recent-files submenu when there are no recent files', async () => {
+    const wrapper = mountToolbar();
+
+    await wrapper.find('.menu-btn').trigger('click');
+    const recentBtn = wrapper.findAll('.drop-item')[1];
+    await recentBtn.trigger('click');
+
+    expect(wrapper.find('.submenu').exists()).toBe(false);
+  });
+
+  it('opens the file menu on hover and closes it on mouse leave', async () => {
+    const wrapper = mountToolbar();
+
+    await wrapper.find('.menu-item').trigger('mouseenter');
+    expect(wrapper.find('.dropdown').exists()).toBe(true);
+
+    await wrapper.find('.menu-item').trigger('mouseleave');
+    expect(wrapper.find('.dropdown').exists()).toBe(false);
+  });
+
+  it('opens the recent-files submenu on hover and closes it on mouse leave', async () => {
+    const recentStore = useRecentStore();
+    recentStore.add('/path/to/file.pdf');
+    const wrapper = mountToolbar();
+    await wrapper.find('.menu-btn').trigger('click');
+
+    await wrapper.find('.drop-item-wrap').trigger('mouseenter');
+    expect(wrapper.find('.submenu').exists()).toBe(true);
+
+    await wrapper.find('.drop-item-wrap').trigger('mouseleave');
+    expect(wrapper.find('.submenu').exists()).toBe(false);
+  });
+
+  it('does not open the recent-files submenu on hover when there are no recent files', async () => {
+    const wrapper = mountToolbar();
+    await wrapper.find('.menu-btn').trigger('click');
+
+    await wrapper.find('.drop-item-wrap').trigger('mouseenter');
+
+    expect(wrapper.find('.submenu').exists()).toBe(false);
+  });
+
   it('shows recent files and opens one on click', async () => {
     const recentStore = useRecentStore();
     recentStore.add('/path/to/file.pdf');
@@ -136,5 +178,49 @@ describe('Toolbar', () => {
     await infoBtn.trigger('click');
 
     expect(wrapper.findComponent({ name: 'InfoDialog' }).exists()).toBe(true);
+  });
+
+  it('closes the settings dialog when it emits close', async () => {
+    const wrapper = mountToolbar();
+    await wrapper.findAll('.icon-btn')[0].trigger('click');
+
+    await wrapper.findComponent({ name: 'SettingsDialog' }).vm.$emit('close');
+
+    expect(wrapper.findComponent({ name: 'SettingsDialog' }).exists()).toBe(false);
+  });
+
+  it('closes the info dialog when it emits close', async () => {
+    const wrapper = mountToolbar();
+    await wrapper.findAll('.icon-btn')[1].trigger('click');
+
+    await wrapper.findComponent({ name: 'InfoDialog' }).vm.$emit('close');
+
+    expect(wrapper.findComponent({ name: 'InfoDialog' }).exists()).toBe(false);
+  });
+
+  it('closes the doc info dialog when it emits close', async () => {
+    const docStore = useDocumentStore();
+    docStore.setReady({
+      path: '/test/doc.pdf',
+      pageCount: 1,
+      title: null,
+      author: null,
+      subject: null,
+      creator: null,
+      producer: null,
+      creationDate: null,
+      modDate: null,
+      pdfVersion: '1.7',
+      pageWidthPt: 595,
+      pageHeightPt: 842,
+      isEncrypted: false,
+    });
+    const wrapper = mountToolbar();
+    await wrapper.find('.menu-btn').trigger('click');
+    await wrapper.findAll('.drop-item').at(-1)?.trigger('click');
+
+    await wrapper.findComponent({ name: 'DocInfoDialog' }).vm.$emit('close');
+
+    expect(wrapper.findComponent({ name: 'DocInfoDialog' }).exists()).toBe(false);
   });
 });

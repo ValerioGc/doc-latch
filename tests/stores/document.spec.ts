@@ -63,6 +63,21 @@ describe('useDocumentStore', () => {
     expect(store.currentPage).toBe(1)
   })
 
+  it('setPasswordRequired transitions to password-required state', () => {
+    const store = useDocumentStore()
+    store.setLoading('/test/doc.pdf')
+    store.setPasswordRequired()
+    expect(store.state).toBe('password-required')
+  })
+
+  it('setError transitions to error state with the given error', () => {
+    const store = useDocumentStore()
+    store.setLoading('/test/doc.pdf')
+    store.setError({ kind: 'InvalidPdf', message: 'bad pdf' })
+    expect(store.state).toBe('error')
+    expect(store.error?.kind).toBe('InvalidPdf')
+  })
+
   it('close resets to idle state', () => {
     const store = useDocumentStore()
     store.setReady(mockInfo)

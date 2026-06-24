@@ -19,6 +19,13 @@ describe('useUiStore', () => {
     expect(store.theme).toBe('dark')
   })
 
+  it('setTheme to system follows the OS preference', () => {
+    const store = useUiStore()
+    store.setTheme('system')
+    expect(store.theme).toBe('system')
+    expect(document.documentElement.classList.contains('dark')).toBe(false)
+  })
+
   it('adjustZoom increases zoom', () => {
     const store = useUiStore()
     store.setZoom(100)
@@ -53,6 +60,14 @@ describe('useUiStore', () => {
     const store = useUiStore()
     store.setSidebarHidden(true)
     store.toggleSidebar()
+    expect(store.sidebarCollapsed).toBe(false)
+  })
+
+  it('setSidebarHidden true also un-collapses an already collapsed sidebar', () => {
+    const store = useUiStore()
+    store.toggleSidebar()
+    expect(store.sidebarCollapsed).toBe(true)
+    store.setSidebarHidden(true)
     expect(store.sidebarCollapsed).toBe(false)
   })
 

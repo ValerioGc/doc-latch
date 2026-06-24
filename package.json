@@ -12,8 +12,10 @@
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:coverage:rust": "cd src-tauri && cargo llvm-cov --lcov --output-path ../coverage/rust-lcov.info && cd .. && node scripts/fix-rust-lcov-paths.cjs",
+    "test:coverage:all": "npm run test:coverage && npm run test:coverage:rust",
     "sonar": "docker compose -f .docker/docker-compose.sonar.yml --profile scan run --rm scanner",
-    "sonar:coverage": "npm run coverage && npm run sonar",
+    "sonar:coverage": "npm run test:coverage:all && npm run sonar",
     "docker:sonar:up": "docker compose -f .docker/docker-compose.sonar.yml up -d",
     "docker:sonar:down": "docker compose -f .docker/docker-compose.sonar.yml down",
     "docker:sonar:logs": "docker compose -f .docker/docker-compose.sonar.yml logs -f sonarqube"

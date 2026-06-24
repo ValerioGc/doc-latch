@@ -49,6 +49,17 @@
     recentSubmenuOpen.value = !recentSubmenuOpen.value;
   }
 
+  function openRecentSubmenu(): void {
+    if (recentStore.entries.length === 0)
+      return;
+
+    recentSubmenuOpen.value = true;
+  }
+
+  function closeRecentSubmenu(): void {
+    recentSubmenuOpen.value = false;
+  }
+
   function handleOpenRecent(path: string): void {
     closeMenus();
     void openRecentFile(path);
@@ -89,7 +100,7 @@
           <span class="kbd">⌘O</span>
         </button>
         <div class="drop-sep" />
-        <div class="drop-item-wrap">
+        <div class="drop-item-wrap" @mouseenter="openRecentSubmenu" @mouseleave="closeRecentSubmenu">
           <button
             class="drop-item"
             role="menuitem"
