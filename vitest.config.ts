@@ -35,7 +35,7 @@ export default defineConfig({
         '**/*.d.ts',
         '**/*.config.*',
         '**/types/**',
-        'src/main.ts',
+        'src/styles/**',
       ],
       thresholds: {
         lines: 80,

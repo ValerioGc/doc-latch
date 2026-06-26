@@ -5,7 +5,6 @@ use base64::{engine::general_purpose, Engine};
 use image::ImageFormat;
 use pdfium_render::prelude::*;
 use serde::{Deserialize, Serialize};
-use tauri::{AppHandle, Manager, Runtime};
 
 use super::error::PdfError;
 
@@ -17,10 +16,13 @@ pub struct PageRenderResult {
     pub height_px: u32,
 }
 
-/// Loads the native PDFium library
-fn bind_pdfium<R: Runtime>(app: &AppHandle<R>) -> Result<Pdfium, PdfError> {
+/// Loads the native PDFium library. `resource_dir` is the Tauri app's resource
+/// directory (when running inside a real app); it is a plain `Option<PathBuf>`
+/// rather than an `AppHandle` so this function has no Tauri runtime dependency
+/// and can be unit-tested directly.
+fn bind_pdfium(resource_dir: Option<PathBuf>) -> Result<Pdfium, PdfError> {
     let candidate_dirs: Vec<PathBuf> = [
-        app.path().resource_dir().ok(),
+        resource_dir,
         std::env::current_exe()
             .ok()
             .and_then(|p| p.parent().map(std::path::Path::to_path_buf)),
@@ -48,14 +50,14 @@ fn bind_pdfium<R: Runtime>(app: &AppHandle<R>) -> Result<Pdfium, PdfError> {
 }
 
 /// Renders a PDF page to a base64-encoded PNG image string, along with its dimensions in pixels.
-pub fn render_page<R: Runtime>(
-    app: &AppHandle<R>,
+pub fn render_page(
+    resource_dir: Option<PathBuf>,
     path: &str,
     page: u32,
     zoom: f32,
     password: Option<&str>,
 ) -> Result<PageRenderResult, PdfError> {
-    let pdfium = bind_pdfium(app)?;
+    let pdfium = bind_pdfium(resource_dir)?;
 
     let doc = match password {
         Some(pwd) => pdfium
@@ -104,8 +106,12 @@ pub fn render_page<R: Runtime>(
 }
 
 /// Verifies that a password is correct for an encrypted PDF.
-pub fn verify_password<R: Runtime>(app: &AppHandle<R>, path: &str, password: &str) -> Result<u32, PdfError> {
-    let pdfium = bind_pdfium(app)?;
+pub fn verify_password(
+    resource_dir: Option<PathBuf>,
+    path: &str,
+    password: &str,
+) -> Result<u32, PdfError> {
+    let pdfium = bind_pdfium(resource_dir)?;
 
     let doc = pdfium
         .load_pdf_from_file(path, Some(password))
