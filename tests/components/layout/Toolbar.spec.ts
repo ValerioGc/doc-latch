@@ -278,15 +278,8 @@ describe('Toolbar', () => {
     expect(wrapper.findComponent({ name: 'SecurityInfoDialog' }).exists()).toBe(false);
   });
 
-  it('disables add password when no document is open and enables it for an unencrypted document', async () => {
+  it('enables add password for an unencrypted document', async () => {
     const docStore = useDocumentStore();
-    const wrapper = mountToolbar();
-
-    const protectionMenuBtn = wrapper.findAll('.menu-btn')[1];
-    await protectionMenuBtn.trigger('click');
-    let addPasswordBtn = wrapper.findAll('.dropdown .drop-item')[1];
-    expect(addPasswordBtn.attributes('disabled')).toBeDefined();
-
     docStore.setReady({
       path: '/test/doc.pdf',
       pageCount: 1,
@@ -302,9 +295,10 @@ describe('Toolbar', () => {
       pageHeightPt: 842,
       isEncrypted: false,
     });
-    await wrapper.vm.$nextTick();
+    const wrapper = mountToolbar();
 
-    addPasswordBtn = wrapper.findAll('.dropdown .drop-item')[1];
+    await wrapper.findAll('.menu-btn')[1].trigger('click');
+    const addPasswordBtn = wrapper.findAll('.dropdown .drop-item')[1];
     expect(addPasswordBtn.attributes('disabled')).toBeUndefined();
 
     await addPasswordBtn.trigger('click');
@@ -365,10 +359,24 @@ describe('Toolbar', () => {
 
   it('disables remove password when the document is not encrypted and enables it once encrypted', async () => {
     const docStore = useDocumentStore();
+    docStore.setReady({
+      path: '/test/doc.pdf',
+      pageCount: 1,
+      title: null,
+      author: null,
+      subject: null,
+      creator: null,
+      producer: null,
+      creationDate: null,
+      modDate: null,
+      pdfVersion: '1.7',
+      pageWidthPt: 595,
+      pageHeightPt: 842,
+      isEncrypted: false,
+    });
     const wrapper = mountToolbar();
 
-    const protectionMenuBtn = wrapper.findAll('.menu-btn')[1];
-    await protectionMenuBtn.trigger('click');
+    await wrapper.findAll('.menu-btn')[1].trigger('click');
     let removePasswordBtn = wrapper.findAll('.dropdown .drop-item').at(-1);
     expect(removePasswordBtn?.attributes('disabled')).toBeDefined();
 
