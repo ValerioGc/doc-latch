@@ -3,7 +3,6 @@ import { defineComponent } from 'vue';
 import { mount } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
 import { useDocumentStore } from '@/stores/document';
-import { useUiStore } from '@/stores/ui';
 import { useKeyboard } from '@/composables/useKeyboard';
 import type { DocumentInfo } from '@/types/pdf';
 
@@ -104,73 +103,80 @@ describe('useKeyboard', () => {
   });
 
   it('zooms in on Ctrl/Cmd +', () => {
-    const uiStore = useUiStore();
-    uiStore.setZoom(100);
+    const docStore = useDocumentStore();
+    docStore.setReady(mockInfo);
+    docStore.setZoom(100);
     mount(Host);
 
     press('+', { ctrlKey: true });
 
-    expect(uiStore.zoom).toBe(110);
+    expect(docStore.zoom).toBe(110);
   });
 
   it('zooms in on Ctrl/Cmd = as well', () => {
-    const uiStore = useUiStore();
-    uiStore.setZoom(100);
+    const docStore = useDocumentStore();
+    docStore.setReady(mockInfo);
+    docStore.setZoom(100);
     mount(Host);
 
     press('=', { metaKey: true });
 
-    expect(uiStore.zoom).toBe(110);
+    expect(docStore.zoom).toBe(110);
   });
 
   it('ignores + without Ctrl/Cmd', () => {
-    const uiStore = useUiStore();
-    uiStore.setZoom(100);
+    const docStore = useDocumentStore();
+    docStore.setReady(mockInfo);
+    docStore.setZoom(100);
     mount(Host);
 
     press('+');
 
-    expect(uiStore.zoom).toBe(100);
+    expect(docStore.zoom).toBe(100);
   });
 
   it('zooms out on Ctrl/Cmd -', () => {
-    const uiStore = useUiStore();
-    uiStore.setZoom(100);
+    const docStore = useDocumentStore();
+    docStore.setReady(mockInfo);
+    docStore.setZoom(100);
     mount(Host);
 
     press('-', { ctrlKey: true });
 
-    expect(uiStore.zoom).toBe(90);
+    expect(docStore.zoom).toBe(90);
   });
 
   it('ignores - without Ctrl/Cmd', () => {
-    const uiStore = useUiStore();
-    uiStore.setZoom(100);
+    const docStore = useDocumentStore();
+    docStore.setReady(mockInfo);
+    docStore.setZoom(100);
     mount(Host);
 
     press('-');
 
-    expect(uiStore.zoom).toBe(100);
+    expect(docStore.zoom).toBe(100);
   });
 
   it('resets zoom to 100 on Ctrl/Cmd 0', () => {
-    const uiStore = useUiStore();
-    uiStore.setZoom(250);
+    const docStore = useDocumentStore();
+    docStore.setReady(mockInfo);
+    docStore.setZoom(250);
     mount(Host);
 
     press('0', { ctrlKey: true });
 
-    expect(uiStore.zoom).toBe(100);
+    expect(docStore.zoom).toBe(100);
   });
 
   it('ignores 0 without Ctrl/Cmd', () => {
-    const uiStore = useUiStore();
-    uiStore.setZoom(250);
+    const docStore = useDocumentStore();
+    docStore.setReady(mockInfo);
+    docStore.setZoom(250);
     mount(Host);
 
     press('0');
 
-    expect(uiStore.zoom).toBe(250);
+    expect(docStore.zoom).toBe(250);
   });
 
   it('ignores shortcuts when typing in an input', () => {

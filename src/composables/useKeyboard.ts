@@ -1,13 +1,11 @@
 import { onMounted, onUnmounted } from 'vue';
 import { useDocumentStore } from '@/stores/document';
-import { useUiStore } from '@/stores/ui';
 
 /**
  * Registers global keyboard shortcuts for navigation and zoom.
  */
 export function useKeyboard(): void {
   const docStore = useDocumentStore();
-  const uiStore = useUiStore();
 
   function onKeyDown(e: KeyboardEvent): void {
     const tag = (e.target as HTMLElement).tagName;
@@ -39,19 +37,19 @@ export function useKeyboard(): void {
       case '=':
         if (e.ctrlKey || e.metaKey) {
           e.preventDefault();
-          uiStore.adjustZoom(10);
+          docStore.adjustZoom(10);
         }
         break;
       case '-':
         if (e.ctrlKey || e.metaKey) {
           e.preventDefault();
-          uiStore.adjustZoom(-10);
+          docStore.adjustZoom(-10);
         }
         break;
       case '0':
         if (e.ctrlKey || e.metaKey) {
           e.preventDefault();
-          uiStore.setZoom(100);
+          docStore.setZoom(100);
         }
         break;
     }

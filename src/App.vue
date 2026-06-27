@@ -8,6 +8,7 @@
 
   import TitleBar from '@/components/layout/TitleBar.vue';
   import Toolbar from '@/components/layout/Toolbar.vue';
+  import TabBar from '@/components/layout/TabBar.vue';
   import Sidebar from '@/components/layout/Sidebar.vue';
   import StatusBar from '@/components/layout/StatusBar.vue';
   import PdfViewer from '@/components/viewer/PdfViewer.vue';
@@ -29,6 +30,7 @@
   <div class="app">
     <TitleBar />
     <Toolbar />
+    <TabBar v-if="docStore.tabs.length > 0" />
     <div class="app_body">
       <Sidebar v-if="docStore.isOpen && !uiStore.sidebarHidden" />
 

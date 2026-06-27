@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ref } from 'vue';
 import { mount } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
-import { useUiStore } from '@/stores/ui';
 import { useDocumentStore } from '@/stores/document';
 import PageCanvas from '@/components/viewer/PageCanvas.vue';
 import type { DocumentInfo } from '@/types/pdf';
@@ -49,8 +48,7 @@ describe('PageCanvas', () => {
   it('sizes the box from the page dimensions and the current zoom', () => {
     const docStore = useDocumentStore();
     docStore.setReady(mockInfo);
-    const uiStore = useUiStore();
-    uiStore.setZoom(100);
+    docStore.setZoom(100);
 
     const wrapper = mountPage();
 
@@ -62,8 +60,7 @@ describe('PageCanvas', () => {
   it('halves the box size at 50% zoom', () => {
     const docStore = useDocumentStore();
     docStore.setReady(mockInfo);
-    const uiStore = useUiStore();
-    uiStore.setZoom(50);
+    docStore.setZoom(50);
 
     const wrapper = mountPage();
 
@@ -101,13 +98,12 @@ describe('PageCanvas', () => {
   it('resizes the box immediately on zoom change, without waiting for the re-render', async () => {
     const docStore = useDocumentStore();
     docStore.setReady(mockInfo);
-    const uiStore = useUiStore();
-    uiStore.setZoom(100);
+    docStore.setZoom(100);
     const wrapper = mountPage();
     isLoading.value = false;
     renderToCanvas.mockClear();
 
-    uiStore.setZoom(200);
+    docStore.setZoom(200);
     await wrapper.vm.$nextTick();
 
     const style = wrapper.find('.page_canvas').attributes('style');
@@ -120,28 +116,27 @@ describe('PageCanvas', () => {
   it('debounces the re-render so rapid zoom changes only trigger one call', async () => {
     const docStore = useDocumentStore();
     docStore.setReady(mockInfo);
-    const uiStore = useUiStore();
     mountPage(3);
     renderToCanvas.mockClear();
 
-    uiStore.adjustZoom(10);
+    docStore.adjustZoom(10);
     await vi.advanceTimersByTimeAsync(50);
-    uiStore.adjustZoom(10);
+    docStore.adjustZoom(10);
     await vi.advanceTimersByTimeAsync(50);
-    uiStore.adjustZoom(10);
+    docStore.adjustZoom(10);
     await vi.advanceTimersByTimeAsync(200);
 
     expect(renderToCanvas).toHaveBeenCalledTimes(1);
-    expect(renderToCanvas).toHaveBeenCalledWith(3, uiStore.zoom / 100);
+    expect(renderToCanvas).toHaveBeenCalledWith(3, docStore.zoom / 100);
   });
 
   it('clears the pending debounce timer on unmount', async () => {
-    useDocumentStore().setReady(mockInfo);
-    const uiStore = useUiStore();
+    const docStore = useDocumentStore();
+    docStore.setReady(mockInfo);
     const wrapper = mountPage();
     renderToCanvas.mockClear();
 
-    uiStore.adjustZoom(10);
+    docStore.adjustZoom(10);
     wrapper.unmount();
     await vi.advanceTimersByTimeAsync(200);
 

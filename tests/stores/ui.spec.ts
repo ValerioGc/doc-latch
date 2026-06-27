@@ -26,27 +26,6 @@ describe('useUiStore', () => {
     expect(document.documentElement.classList.contains('dark')).toBe(false)
   })
 
-  it('adjustZoom increases zoom', () => {
-    const store = useUiStore()
-    store.setZoom(100)
-    store.adjustZoom(10)
-    expect(store.zoom).toBe(110)
-  })
-
-  it('zoom is clamped to max 400', () => {
-    const store = useUiStore()
-    store.setZoom(400)
-    store.adjustZoom(50)
-    expect(store.zoom).toBe(400)
-  })
-
-  it('zoom is clamped to min 25', () => {
-    const store = useUiStore()
-    store.setZoom(25)
-    store.adjustZoom(-50)
-    expect(store.zoom).toBe(25)
-  })
-
   it('toggleSidebar collapses and expands', () => {
     const store = useUiStore()
     expect(store.sidebarCollapsed).toBe(false)

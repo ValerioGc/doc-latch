@@ -2,7 +2,6 @@
 
   import { computed, watch, onMounted, onUnmounted } from 'vue';
   import { usePageCanvas } from '@/composables/usePageCanvas';
-  import { useUiStore } from '@/stores/ui';
   import { useDocumentStore } from '@/stores/document';
 
   const ZOOM_DEBOUNCE_MS = 200;
@@ -11,7 +10,6 @@
     page: number
   }>();
 
-  const uiStore = useUiStore();
   const docStore = useDocumentStore();
   const { isLoading, renderToCanvas } = usePageCanvas();
 
@@ -20,11 +18,11 @@
   // The box tracks the zoom level immediately (pure layout, no bitmap
   // involved), so the gap between pages stays correct even while the
   // re-render below is still pending.
-  const targetWidth = computed(() => (docStore.info?.pageWidthPt ?? 0) * uiStore.zoom / 100);
-  const targetHeight = computed(() => (docStore.info?.pageHeightPt ?? 0) * uiStore.zoom / 100);
+  const targetWidth = computed(() => (docStore.info?.pageWidthPt ?? 0) * docStore.zoom / 100);
+  const targetHeight = computed(() => (docStore.info?.pageHeightPt ?? 0) * docStore.zoom / 100);
 
   async function render(): Promise<void> {
-    await renderToCanvas(props.page, uiStore.zoom / 100);
+    await renderToCanvas(props.page, docStore.zoom / 100);
   }
 
   onMounted(render);
@@ -32,7 +30,7 @@
   // Re-render the page on zoom change. The stale canvas is hidden behind the
   // loading spinner for the duration instead of being CSS-scaled: scaling
   // blurred the bitmap and let it bleed visually over the gap between pages.
-  watch(() => uiStore.zoom, () => {
+  watch(() => docStore.zoom, () => {
     isLoading.value = true;
 
     if (debounceTimer)

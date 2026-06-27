@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { useDocumentStore } from '@/stores/document';
 import { useRecentStore } from '@/stores/recent';
-import { useUiStore } from '@/stores/ui';
 import { usePdf } from '@/composables/usePdf';
 import type { DocumentInfo, PdfError, SecurityInfo } from '@/types/pdf';
 
@@ -42,17 +41,31 @@ describe('usePdf', () => {
   });
 
   describe('openRecentFile / loadDocument', () => {
-    it('sets the document ready and resets zoom on success', async () => {
+    it('sets the document ready in a fresh tab at 100% zoom', async () => {
       invoke.mockResolvedValue(mockInfo);
       const docStore = useDocumentStore();
-      const uiStore = useUiStore();
-      uiStore.setZoom(250);
       const { openRecentFile } = usePdf();
 
       await openRecentFile('/test/doc.pdf');
 
       expect(docStore.state).toBe('ready');
-      expect(uiStore.zoom).toBe(100);
+      expect(docStore.zoom).toBe(100);
+    });
+
+    it('switches to the existing tab instead of reloading an already open file', async () => {
+      invoke.mockResolvedValue(mockInfo);
+      const docStore = useDocumentStore();
+      const { openRecentFile } = usePdf();
+      await openRecentFile('/test/doc.pdf');
+      const firstTabId = docStore.activeTabId;
+      docStore.setLoading('/test/other.pdf');
+      invoke.mockClear();
+
+      await openRecentFile('/test/doc.pdf');
+
+      expect(docStore.activeTabId).toBe(firstTabId);
+      expect(docStore.tabs).toHaveLength(2);
+      expect(invoke).not.toHaveBeenCalled();
     });
 
     it('adds the path to recent files on success', async () => {

@@ -20,8 +20,7 @@ export const useUiStore = defineStore('ui', () => {
   const sidebarWidth = ref(
     Number(localStorage.getItem(STORAGE_KEY_SIDEBAR_WIDTH)) || SIDEBAR_WIDTH_DEFAULT,
   );
-  const zoom = ref(100);
-  // locale 
+  // locale
   const locale = ref<SupportedLocale>(
     (localStorage.getItem(STORAGE_KEY_LOCALE) as SupportedLocale) ?? 'it',
   );
@@ -54,14 +53,6 @@ export const useUiStore = defineStore('ui', () => {
     sidebarWidth.value = Math.min(SIDEBAR_WIDTH_MAX, Math.max(SIDEBAR_WIDTH_MIN, value));
   }
 
-  function setZoom(value: number): void {
-    zoom.value = Math.min(400, Math.max(25, value));
-  }
-
-  function adjustZoom(delta: number): void {
-    setZoom(zoom.value + delta);
-  }
-
   // ************************** Locale ***************************
   function setLocale(l: SupportedLocale): void {
     locale.value = l;
@@ -85,13 +76,10 @@ export const useUiStore = defineStore('ui', () => {
     sidebarHidden,
     sidebarWidth,
     locale,
-    zoom,
     setTheme,
     toggleSidebar,
     setSidebarHidden,
     setSidebarWidth,
     setLocale,
-    setZoom,
-    adjustZoom,
   };
 });

@@ -3,8 +3,7 @@
   import { computed, watch, nextTick, useTemplateRef } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
-  import { useUiStore } from '@/stores/ui';
-  
+
   import PasswordDialog from '@/components/dialogs/PasswordDialog.vue';
   import HomeScreen from '@/components/viewer/HomeScreen.vue';
   import PageCanvas from '@/components/viewer/PageCanvas.vue';
@@ -12,7 +11,6 @@
 
   const { t } = useI18n();
   const docStore = useDocumentStore();
-  const uiStore = useUiStore();
 
   const viewerRef = useTemplateRef<HTMLElement>('viewer');
 
@@ -30,7 +28,7 @@
       return;
 
     e.preventDefault();
-    uiStore.adjustZoom(e.deltaY < 0 ? 10 : -10);
+    docStore.adjustZoom(e.deltaY < 0 ? 10 : -10);
   }
 
   // Map PDF loading error kinds to i18n keys for user-friendly messages

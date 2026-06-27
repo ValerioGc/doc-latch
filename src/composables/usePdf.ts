@@ -2,7 +2,6 @@ import { invoke } from '@tauri-apps/api/core';
 import { open as openDialog } from '@tauri-apps/plugin-dialog';
 import { useDocumentStore } from '@/stores/document';
 import { useRecentStore } from '@/stores/recent';
-import { useUiStore } from '@/stores/ui';
 import type { DocumentInfo, PageRenderResult, PdfError, SecurityInfo } from '@/types/pdf';
 
 /**
@@ -11,18 +10,20 @@ import type { DocumentInfo, PageRenderResult, PdfError, SecurityInfo } from '@/t
 export function usePdf() {
   const docStore = useDocumentStore();
   const recentStore = useRecentStore();
-  const uiStore = useUiStore();
 
   /**
    * Loads a PDF from an already-known path (native picker or recent files list).
+   * Switches to the existing tab instead of reloading if the file is already open.
    */
   async function loadDocument(path: string): Promise<void> {
+    if (docStore.focusTabByPath(path))
+      return;
+
     docStore.setLoading(path);
 
     try {
       const info = await invoke<DocumentInfo>('open_pdf', { path });
       docStore.setReady(info);
-      uiStore.setZoom(100);
       recentStore.add(path);
     } catch (err) {
       const pdfErr = err as PdfError;
@@ -70,7 +71,6 @@ export function usePdf() {
     try {
       const info = await invoke<DocumentInfo>('open_pdf_with_password', { path, password });
       docStore.setReady(info, password);
-      uiStore.setZoom(100);
       recentStore.add(path);
       return true;
     } catch (err) {

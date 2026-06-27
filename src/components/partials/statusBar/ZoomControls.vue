@@ -1,28 +1,28 @@
 <script setup lang="ts">
 
 import { computed } from 'vue';
-import { useUiStore } from '@/stores/ui';
+import { useDocumentStore } from '@/stores/document';
 import { useI18n } from 'vue-i18n';
 
 import zoomOutIcon from '@/assets/icons/zoom-out.svg?raw';
 import zoomInIcon from '@/assets/icons/zoom-in.svg?raw';
 import zoomResetIcon from '@/assets/icons/zoom-reset.svg?raw';
 
-const uiStore = useUiStore();
+const docStore = useDocumentStore();
 const { t } = useI18n();
 
 const PRESET_ZOOMS = [50, 75, 100, 125, 150, 200, 300, 400];
 
 const zoomOptions = computed(() => {
-    if (PRESET_ZOOMS.includes(uiStore.zoom))
+    if (PRESET_ZOOMS.includes(docStore.zoom))
         return PRESET_ZOOMS;
 
-    return [...PRESET_ZOOMS, uiStore.zoom].sort((a, b) => a - b);
+    return [...PRESET_ZOOMS, docStore.zoom].sort((a, b) => a - b);
 });
 
 function onZoomSelect(e: Event): void {
     const select = e.target as HTMLSelectElement;
-    uiStore.setZoom(Number(select.value));
+    docStore.setZoom(Number(select.value));
 }
 
 </script>
@@ -34,14 +34,14 @@ function onZoomSelect(e: Event): void {
         <!-- Zoom out button -->
         <button class="zoom_btn"
             :aria-label="`${t('viewer.zoom')} -`"
-            @click="uiStore.adjustZoom(-10)"
+            @click="docStore.adjustZoom(-10)"
             v-html="zoomOutIcon"
         ></button>
 
         <!-- Zoom select dropdown -->
         <select class="zoom_select"
             :aria-label="t('viewer.zoom')"
-            :value="String(uiStore.zoom)"
+            :value="String(docStore.zoom)"
             @change="onZoomSelect"
         >
             <option v-for="z in zoomOptions" :key="z" :value="String(z)">{{ z }}%</option>
@@ -50,16 +50,16 @@ function onZoomSelect(e: Event): void {
         <!-- Zoom in button -->
         <button class="zoom_btn"
             :aria-label="`${t('viewer.zoom')} +`"
-            @click="uiStore.adjustZoom(10)"
+            @click="docStore.adjustZoom(10)"
             v-html="zoomInIcon"
         ></button>
         
         <!-- Reset zoom button -->
         <button class="zoom_btn"
-            :disabled="uiStore.zoom === 100"
+            :disabled="docStore.zoom === 100"
             :title="t('viewer.resetZoom')"
             :aria-label="t('viewer.resetZoom')"
-            @click="uiStore.setZoom(100)"
+            @click="docStore.setZoom(100)"
             v-html="zoomResetIcon"
         ></button>
     </fieldset>
