@@ -1,8 +1,9 @@
 <script setup lang="ts">
 
-  import { ref, watch, onMounted, onUnmounted } from 'vue';
+  import { computed, watch, onMounted, onUnmounted } from 'vue';
   import { usePageCanvas } from '@/composables/usePageCanvas';
   import { useUiStore } from '@/stores/ui';
+  import { useDocumentStore } from '@/stores/document';
 
   const ZOOM_DEBOUNCE_MS = 200;
 
@@ -11,25 +12,28 @@
   }>();
 
   const uiStore = useUiStore();
+  const docStore = useDocumentStore();
   const { isLoading, renderToCanvas } = usePageCanvas();
 
-  const previewScale = ref(1);
-  let renderedZoom = uiStore.zoom;
   let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 
+  // The box tracks the zoom level immediately (pure layout, no bitmap
+  // involved), so the gap between pages stays correct even while the
+  // re-render below is still pending.
+  const targetWidth = computed(() => (docStore.info?.pageWidthPt ?? 0) * uiStore.zoom / 100);
+  const targetHeight = computed(() => (docStore.info?.pageHeightPt ?? 0) * uiStore.zoom / 100);
+
   async function render(): Promise<void> {
-    const targetZoom = uiStore.zoom;
-    await renderToCanvas(props.page, targetZoom / 100);
-    renderedZoom = targetZoom;
-    previewScale.value = 1;
+    await renderToCanvas(props.page, uiStore.zoom / 100);
   }
 
   onMounted(render);
 
-  // Re-render page on zoom change
-  watch(() => uiStore.zoom, (zoom) => {
-    if (!isLoading.value)
-      previewScale.value = zoom / renderedZoom;
+  // Re-render the page on zoom change. The stale canvas is hidden behind the
+  // loading spinner for the duration instead of being CSS-scaled: scaling
+  // blurred the bitmap and let it bleed visually over the gap between pages.
+  watch(() => uiStore.zoom, () => {
+    isLoading.value = true;
 
     if (debounceTimer)
       clearTimeout(debounceTimer);
@@ -45,12 +49,11 @@
 </script>
 
 <template>
-  <div class="page_canvas">
+  <div class="page_canvas" :style="{ width: `${targetWidth}px`, height: `${targetHeight}px` }">
     <output v-if="isLoading" class="page_canvas_spinner" aria-label="Caricamento pagina"></output>
     <canvas ref="canvas"
       class="page_canvas_el"
       :class="{ 'page_canvas_el--hidden': isLoading }"
-      :style="{ transform: `scale(${previewScale})` }"
       :aria-label="`Pagina ${page}`"
     ></canvas>
   </div>
@@ -66,11 +69,12 @@
     min-width: 200px;
     min-height: 260px;
     position: relative;
+    transition: width $transition-fast, height $transition-fast;
 
     &_el {
       display: block;
-      max-width: 100%;
-      transform-origin: center;
+      width: 100%;
+      height: 100%;
 
       &--hidden {
         display: none;
