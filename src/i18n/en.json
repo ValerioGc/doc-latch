@@ -12,6 +12,7 @@
     "docInfo": "Document info…",
     "protection": "Protection",
     "securityInfo": "Security info…",
+    "removePassword": "Remove password…",
     "settings": "Settings",
     "info": "Info"
   },
@@ -83,6 +84,16 @@
       "notAllowed": "Not allowed",
       "notEncrypted": "This document isn't password protected: no restrictions apply.",
       "loadError": "Couldn't read the security information.",
+      "close": "Close"
+    },
+    "removePassword": {
+      "title": "Remove password",
+      "description": "A copy of the document without a password will be created. The original file is left untouched.",
+      "confirm": "Save as…",
+      "cancel": "Cancel",
+      "success": "Unprotected copy saved successfully.",
+      "error": "Couldn't remove the password.",
+      "suggestedSuffix": "no password",
       "close": "Close"
     },
     "about": {

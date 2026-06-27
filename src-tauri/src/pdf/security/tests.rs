@@ -1,7 +1,8 @@
-use lopdf::{dictionary, Object};
+use lopdf::{dictionary, Document, Object};
+use tempfile::NamedTempFile;
 
 use super::*;
-use crate::test_support::{build_test_pdf, save_to_temp};
+use crate::test_support::{build_test_pdf, encrypt_test_pdf, save_to_temp};
 
 /// Builds on top of the shared unencrypted test PDF by attaching a hand-crafted
 /// `/Encrypt` dictionary to the trailer. The `/O` and `/U` hashes are placeholders
@@ -134,6 +135,61 @@ fn unknown_version_reports_a_fallback_label() {
     let info = get_security_info(file.path().to_str().unwrap()).expect("lettura PDF di test");
 
     assert_eq!(info.encryption_method.as_deref(), Some("Sconosciuto"));
+}
+
+#[test]
+fn remove_password_returns_file_not_found_for_missing_file() {
+    let result = remove_password("/nonexistent/path/file.pdf", "secret", "/tmp/out.pdf");
+
+    assert!(matches!(result, Err(PdfError::FileNotFound(_))));
+}
+
+#[test]
+fn remove_password_returns_not_encrypted_for_unprotected_document() {
+    let mut doc = build_test_pdf();
+    let file = save_to_temp(&mut doc);
+    let destination = NamedTempFile::new().expect("creazione file temporaneo");
+
+    let result = remove_password(
+        file.path().to_str().unwrap(),
+        "irrelevant",
+        destination.path().to_str().unwrap(),
+    );
+
+    assert!(matches!(result, Err(PdfError::NotEncrypted)));
+}
+
+#[test]
+fn remove_password_returns_wrong_password_for_incorrect_password() {
+    let mut doc = encrypt_test_pdf(build_test_pdf(), "owner-secret", "user-secret");
+    let file = save_to_temp(&mut doc);
+    let destination = NamedTempFile::new().expect("creazione file temporaneo");
+
+    let result = remove_password(
+        file.path().to_str().unwrap(),
+        "wrong-password",
+        destination.path().to_str().unwrap(),
+    );
+
+    assert!(matches!(result, Err(PdfError::WrongPassword)));
+}
+
+#[test]
+fn remove_password_saves_an_unencrypted_copy_on_success() {
+    let mut doc = encrypt_test_pdf(build_test_pdf(), "owner-secret", "user-secret");
+    let file = save_to_temp(&mut doc);
+    let destination = NamedTempFile::new().expect("creazione file temporaneo");
+
+    remove_password(
+        file.path().to_str().unwrap(),
+        "user-secret",
+        destination.path().to_str().unwrap(),
+    )
+    .expect("rimozione password");
+
+    let result_doc = Document::load(destination.path()).expect("lettura copia decifrata");
+    assert!(!result_doc.is_encrypted());
+    assert_eq!(result_doc.get_pages().len(), 1);
 }
 
 #[test]

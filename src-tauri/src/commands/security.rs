@@ -8,5 +8,15 @@ pub fn get_security_info(path: String) -> Result<SecurityInfo, PdfError> {
     crate::pdf::security::get_security_info(&path)
 }
 
+/// Decrypts a password-protected PDF and saves an unencrypted copy at `destination`.
+#[command]
+pub fn remove_password(
+    path: String,
+    password: String,
+    destination: String,
+) -> Result<(), PdfError> {
+    crate::pdf::security::remove_password(&path, &password, &destination)
+}
+
 #[cfg(test)]
 mod tests;

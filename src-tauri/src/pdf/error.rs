@@ -15,6 +15,9 @@ pub enum PdfError {
     #[error("PDF non valido o corrotto")]
     InvalidPdf,
 
+    #[error("Il documento non è protetto da password")]
+    NotEncrypted,
+
     #[error("Errore di rendering: {0}")]
     RenderError(String),
 

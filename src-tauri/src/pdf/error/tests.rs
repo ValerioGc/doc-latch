@@ -23,11 +23,15 @@ fn unit_variants_have_fixed_messages() {
         PdfError::InvalidPdf.to_string(),
         "PDF non valido o corrotto"
     );
+    assert_eq!(
+        PdfError::NotEncrypted.to_string(),
+        "Il documento non è protetto da password"
+    );
 }
 
 #[test]
 fn from_lopdf_error_always_maps_to_invalid_pdf() {
-    let err: PdfError = lopdf::Error::DictKey.into();
+    let err: PdfError = lopdf::Error::DictKey("Test".to_string()).into();
     assert!(matches!(err, PdfError::InvalidPdf));
 }
 

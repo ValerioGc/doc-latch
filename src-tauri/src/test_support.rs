@@ -3,6 +3,7 @@
 
 use std::path::PathBuf;
 
+use lopdf::encryption::{EncryptionState, EncryptionVersion, Permissions};
 use lopdf::{dictionary, Dictionary, Document, Object, Stream};
 use tempfile::NamedTempFile;
 
@@ -47,4 +48,34 @@ pub(crate) fn save_to_temp(doc: &mut Document) -> NamedTempFile {
     let file = NamedTempFile::new().expect("creazione file temporaneo");
     doc.save(file.path()).expect("salvataggio PDF di test");
     file
+}
+
+/// Encrypts a document with real RC4-128 (V2/R3) encryption, for tests that need
+/// a genuinely password-protected PDF (e.g. to exercise `Document::load_with_password`).
+pub(crate) fn encrypt_test_pdf(
+    mut doc: Document,
+    owner_password: &str,
+    user_password: &str,
+) -> Document {
+    // Key derivation hashes in the trailer's file ID; a freshly built in-memory
+    // document has none, so it must be set before computing the encryption state.
+    doc.trailer.set(
+        "ID",
+        vec![
+            Object::string_literal("test-file-id"),
+            Object::string_literal("test-file-id"),
+        ],
+    );
+
+    let state = EncryptionState::try_from(EncryptionVersion::V2 {
+        document: &doc,
+        owner_password,
+        user_password,
+        key_length: 128,
+        permissions: Permissions::all(),
+    })
+    .expect("creazione stato di cifratura di test");
+
+    doc.encrypt(&state).expect("cifratura PDF di test");
+    doc
 }

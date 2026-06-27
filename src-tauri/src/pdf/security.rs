@@ -81,6 +81,31 @@ pub fn get_security_info(path: &str) -> Result<SecurityInfo, PdfError> {
     })
 }
 
+/// Decrypts a password-protected PDF and saves an unencrypted copy at `destination`.
+pub fn remove_password(path: &str, password: &str, destination: &str) -> Result<(), PdfError> {
+    let file_path = Path::new(path);
+    if !file_path.exists() {
+        return Err(PdfError::FileNotFound(path.to_string()));
+    }
+
+    // A plain, password-less load is enough to check the trailer's /Encrypt
+    // entry, but NOT enough to decrypt and re-save: lopdf only resolves a
+    // document's objects against an encrypted PDF's cross-reference stream
+    // once it has the password (see `Document::load_with_password` below),
+    // so this first load exists purely for the "is this even encrypted?" guard.
+    if !Document::load(file_path)?.is_encrypted() {
+        return Err(PdfError::NotEncrypted);
+    }
+
+    let mut doc =
+        Document::load_with_password(file_path, password).map_err(|_| PdfError::WrongPassword)?;
+
+    doc.trailer.remove(b"Encrypt");
+    doc.save(destination)?;
+
+    Ok(())
+}
+
 /// Checks bit `n` (1-indexed, per PDF32000-1:2008 Table 22) of the `/P` permissions integer.
 fn has_permission(permissions: i64, bit: u8) -> bool {
     permissions & (1 << (bit - 1)) != 0
@@ -104,14 +129,15 @@ fn describe_encryption(
 
 /// Reads `/CF/StdCF/CFM` for `V4` documents, which use crypt filters instead of a flat algorithm.
 fn crypt_filter_method(encrypt_dict: &lopdf::Dictionary) -> Option<(String, Option<u32>)> {
-    let cfm = encrypt_dict
+    let cfm_bytes = encrypt_dict
         .get(b"CF")
         .and_then(|o| o.as_dict())
         .and_then(|cf| cf.get(b"StdCF"))
         .and_then(|o| o.as_dict())
         .and_then(|std_cf| std_cf.get(b"CFM"))
-        .and_then(|o| o.as_name_str())
+        .and_then(|o| o.as_name())
         .ok()?;
+    let cfm = std::str::from_utf8(cfm_bytes).ok()?;
 
     Some(match cfm {
         "V2" => ("RC4".to_string(), Some(128)),

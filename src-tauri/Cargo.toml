@@ -27,7 +27,7 @@ tauri-plugin-fs = "2.0"
 tauri-plugin-shell = "2.0"
 
 # PDF parsing and writing
-lopdf = { version = "0.33", features = ["nom_parser"] }
+lopdf = "0.42"
 
 # PDF rendering via PDFium
 pdfium-render = { version = "0.8", features = ["thread_safe"] }

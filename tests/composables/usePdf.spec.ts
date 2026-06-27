@@ -278,4 +278,57 @@ describe('usePdf', () => {
       expect(docStore.error).toBeNull();
     });
   });
+
+  describe('removePassword', () => {
+    it('returns null without calling the backend when no document is open', async () => {
+      const { removePassword } = usePdf();
+
+      const result = await removePassword('/test/out.pdf');
+
+      expect(result).toBeNull();
+      expect(invoke).not.toHaveBeenCalled();
+    });
+
+    it('returns null without calling the backend when the document has no password', async () => {
+      const docStore = useDocumentStore();
+      docStore.setLoading('/test/doc.pdf');
+      docStore.setReady(mockInfo);
+      const { removePassword } = usePdf();
+
+      const result = await removePassword('/test/out.pdf');
+
+      expect(result).toBeNull();
+      expect(invoke).not.toHaveBeenCalled();
+    });
+
+    it('calls remove_password with the in-memory password and returns null on success', async () => {
+      const docStore = useDocumentStore();
+      docStore.setLoading(mockInfo.path);
+      docStore.setReady(mockInfo, 'secret');
+      invoke.mockResolvedValue(undefined);
+      const { removePassword } = usePdf();
+
+      const result = await removePassword('/test/out.pdf');
+
+      expect(invoke).toHaveBeenCalledWith('remove_password', {
+        path: mockInfo.path,
+        password: 'secret',
+        destination: '/test/out.pdf',
+      });
+      expect(result).toBeNull();
+    });
+
+    it('returns the PdfError on failure', async () => {
+      const docStore = useDocumentStore();
+      docStore.setLoading(mockInfo.path);
+      docStore.setReady(mockInfo, 'secret');
+      const err: PdfError = { kind: 'WrongPassword', message: 'nope' };
+      invoke.mockRejectedValue(err);
+      const { removePassword } = usePdf();
+
+      const result = await removePassword('/test/out.pdf');
+
+      expect(result).toEqual(err);
+    });
+  });
 });

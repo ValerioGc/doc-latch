@@ -6,12 +6,14 @@
   import { usePdf } from '@/composables/usePdf';
   import DocInfoDialog from '@/components/dialogs/DocInfoDialog.vue';
   import SecurityInfoDialog from '@/components/dialogs/SecurityInfoDialog.vue';
+  import RemovePasswordDialog from '@/components/dialogs/RemovePasswordDialog.vue';
   import InfoDialog from '@/components/dialogs/InfoDialog.vue';
   import SettingsDialog from '@/components/dialogs/SettingsDialog.vue';
   import fileIcon from '@/assets/icons/file.svg?raw';
   import settingsIcon from '@/assets/icons/settings.svg?raw';
   import infoIcon from '@/assets/icons/info.svg?raw';
   import shieldIcon from '@/assets/icons/shield.svg?raw';
+  import unlockIcon from '@/assets/icons/unlock.svg?raw';
   import chevronDownIcon from '@/assets/icons/chevron-down.svg?raw';
   import chevronRightIcon from '@/assets/icons/chevron-right.svg?raw';
   import recentIcon from '@/assets/icons/recent.svg?raw';
@@ -28,6 +30,7 @@
   // Dialogs visibility
   const showDocInfo = ref(false);
   const showSecurityInfo = ref(false);
+  const showRemovePassword = ref(false);
   const showInfo = ref(false);
   const showSettings = ref(false);
 
@@ -76,6 +79,11 @@
   function handleSecurityInfo(): void {
     closeMenus();
     showSecurityInfo.value = true;
+  }
+
+  function handleRemovePassword(): void {
+    closeMenus();
+    showRemovePassword.value = true;
   }
 
   function handleInfo(): void {
@@ -170,6 +178,17 @@
           <span class="drop-item-icon" aria-hidden="true" v-html="shieldIcon" />
           {{ t('menu.securityInfo') }}
         </button>
+        <div class="drop-sep" />
+        <button
+          class="drop-item"
+          role="menuitem"
+          :disabled="!docStore.info?.isEncrypted"
+          :class="{ disabled: !docStore.info?.isEncrypted }"
+          @click="handleRemovePassword"
+        >
+          <span class="drop-item-icon" aria-hidden="true" v-html="unlockIcon" />
+          {{ t('menu.removePassword') }}
+        </button>
       </div>
     </div>
 
@@ -199,6 +218,7 @@
 
   <DocInfoDialog v-if="showDocInfo" @close="showDocInfo = false" />
   <SecurityInfoDialog v-if="showSecurityInfo" @close="showSecurityInfo = false" />
+  <RemovePasswordDialog v-if="showRemovePassword" @close="showRemovePassword = false" />
   <InfoDialog v-if="showInfo" @close="showInfo = false" />
   <SettingsDialog v-if="showSettings" @close="showSettings = false" />
 </template>

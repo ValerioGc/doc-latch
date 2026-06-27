@@ -9,9 +9,16 @@ import Toolbar from '@/components/layout/Toolbar.vue';
 const openFile = vi.fn();
 const openRecentFile = vi.fn();
 const getSecurityInfo = vi.fn();
+const removePassword = vi.fn();
 
 vi.mock('@/composables/usePdf', () => ({
-  usePdf: () => ({ openFile, openRecentFile, openWithPassword: vi.fn(), getSecurityInfo }),
+  usePdf: () => ({
+    openFile,
+    openRecentFile,
+    openWithPassword: vi.fn(),
+    getSecurityInfo,
+    removePassword,
+  }),
 }));
 
 function mountToolbar() {
@@ -31,6 +38,7 @@ describe('Toolbar', () => {
     openRecentFile.mockReset();
     getSecurityInfo.mockReset();
     getSecurityInfo.mockResolvedValue(null);
+    removePassword.mockReset();
   });
 
   it('toggles the file dropdown when the File button is clicked', async () => {
@@ -258,6 +266,66 @@ describe('Toolbar', () => {
     await wrapper.findComponent({ name: 'SecurityInfoDialog' }).vm.$emit('close');
 
     expect(wrapper.findComponent({ name: 'SecurityInfoDialog' }).exists()).toBe(false);
+  });
+
+  it('disables remove password when the document is not encrypted and enables it once encrypted', async () => {
+    const docStore = useDocumentStore();
+    const wrapper = mountToolbar();
+
+    const protectionMenuBtn = wrapper.findAll('.menu-btn')[1];
+    await protectionMenuBtn.trigger('click');
+    let removePasswordBtn = wrapper.findAll('.dropdown .drop-item').at(-1);
+    expect(removePasswordBtn?.attributes('disabled')).toBeDefined();
+
+    docStore.setReady({
+      path: '/test/doc.pdf',
+      pageCount: 1,
+      title: null,
+      author: null,
+      subject: null,
+      creator: null,
+      producer: null,
+      creationDate: null,
+      modDate: null,
+      pdfVersion: '1.7',
+      pageWidthPt: 595,
+      pageHeightPt: 842,
+      isEncrypted: true,
+    });
+    await wrapper.vm.$nextTick();
+
+    removePasswordBtn = wrapper.findAll('.dropdown .drop-item').at(-1);
+    expect(removePasswordBtn?.attributes('disabled')).toBeUndefined();
+
+    await removePasswordBtn?.trigger('click');
+    expect(wrapper.findComponent({ name: 'RemovePasswordDialog' }).exists()).toBe(true);
+    expect(wrapper.find('.dropdown').exists()).toBe(false);
+  });
+
+  it('closes the remove password dialog when it emits close', async () => {
+    const docStore = useDocumentStore();
+    docStore.setReady({
+      path: '/test/doc.pdf',
+      pageCount: 1,
+      title: null,
+      author: null,
+      subject: null,
+      creator: null,
+      producer: null,
+      creationDate: null,
+      modDate: null,
+      pdfVersion: '1.7',
+      pageWidthPt: 595,
+      pageHeightPt: 842,
+      isEncrypted: true,
+    });
+    const wrapper = mountToolbar();
+    await wrapper.findAll('.menu-btn')[1].trigger('click');
+    await wrapper.findAll('.dropdown .drop-item').at(-1)?.trigger('click');
+
+    await wrapper.findComponent({ name: 'RemovePasswordDialog' }).vm.$emit('close');
+
+    expect(wrapper.findComponent({ name: 'RemovePasswordDialog' }).exists()).toBe(false);
   });
 
   it('closes the doc info dialog when it emits close', async () => {

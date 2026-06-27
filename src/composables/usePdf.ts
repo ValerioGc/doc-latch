@@ -124,5 +124,24 @@ export function usePdf() {
     }
   }
 
-  return { openFile, openRecentFile, openWithPassword, renderPage, getSecurityInfo };
+  /**
+   * Decrypts the current document and saves an unencrypted copy at `destination`.
+   * Uses the password already held in memory from when the document was opened.
+   * Returns `null` on success, or the `PdfError` on failure.
+   */
+  async function removePassword(destination: string): Promise<PdfError | null> {
+    const path = docStore.filePath;
+    const password = docStore.password;
+    if (!path || !password)
+      return null;
+
+    try {
+      await invoke('remove_password', { path, password, destination });
+      return null;
+    } catch (err) {
+      return err as PdfError;
+    }
+  }
+
+  return { openFile, openRecentFile, openWithPassword, renderPage, getSecurityInfo, removePassword };
 }
