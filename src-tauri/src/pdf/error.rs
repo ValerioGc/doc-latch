@@ -18,6 +18,9 @@ pub enum PdfError {
     #[error("Il documento non è protetto da password")]
     NotEncrypted,
 
+    #[error("Il documento è già protetto da password")]
+    AlreadyEncrypted,
+
     #[error("Errore di rendering: {0}")]
     RenderError(String),
 

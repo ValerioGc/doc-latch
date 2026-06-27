@@ -12,6 +12,7 @@
     "docInfo": "Document info…",
     "protection": "Protection",
     "securityInfo": "Security info…",
+    "addPassword": "Add password…",
     "removePassword": "Remove password…",
     "settings": "Settings",
     "info": "Info"
@@ -94,6 +95,17 @@
       "success": "Unprotected copy saved successfully.",
       "error": "Couldn't remove the password.",
       "suggestedSuffix": "no password",
+      "close": "Close"
+    },
+    "addPassword": {
+      "title": "Add password",
+      "description": "A copy of the document protected with AES-256 encryption will be created. The original file is left untouched.",
+      "placeholder": "Password",
+      "confirm": "Save as…",
+      "cancel": "Cancel",
+      "success": "Protected copy saved successfully.",
+      "error": "Couldn't add the password.",
+      "suggestedSuffix": "protected",
       "close": "Close"
     },
     "about": {

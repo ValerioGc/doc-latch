@@ -12,6 +12,7 @@
     "docInfo": "Informations du document…",
     "protection": "Protection",
     "securityInfo": "Informations de sécurité…",
+    "addPassword": "Ajouter un mot de passe…",
     "removePassword": "Supprimer le mot de passe…",
     "settings": "Paramètres",
     "info": "Infos"
@@ -94,6 +95,17 @@
       "success": "Copie non protégée enregistrée avec succès.",
       "error": "Impossible de supprimer le mot de passe.",
       "suggestedSuffix": "sans mot de passe",
+      "close": "Fermer"
+    },
+    "addPassword": {
+      "title": "Ajouter un mot de passe",
+      "description": "Une copie du document protégée par un chiffrement AES-256 sera créée. Le fichier original reste inchangé.",
+      "placeholder": "Mot de passe",
+      "confirm": "Enregistrer sous…",
+      "cancel": "Annuler",
+      "success": "Copie protégée enregistrée avec succès.",
+      "error": "Impossible d'ajouter le mot de passe.",
+      "suggestedSuffix": "protégé",
       "close": "Fermer"
     },
     "about": {

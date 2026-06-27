@@ -18,5 +18,11 @@ pub fn remove_password(
     crate::pdf::security::remove_password(&path, &password, &destination)
 }
 
+/// Encrypts an unprotected PDF with AES-256 and saves the protected copy at `destination`.
+#[command]
+pub fn add_password(path: String, password: String, destination: String) -> Result<(), PdfError> {
+    crate::pdf::security::add_password(&path, &password, &destination)
+}
+
 #[cfg(test)]
 mod tests;

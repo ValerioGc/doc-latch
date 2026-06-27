@@ -193,6 +193,88 @@ fn remove_password_saves_an_unencrypted_copy_on_success() {
 }
 
 #[test]
+fn add_password_returns_file_not_found_for_missing_file() {
+    let result = add_password("/nonexistent/path/file.pdf", "secret", "/tmp/out.pdf");
+
+    assert!(matches!(result, Err(PdfError::FileNotFound(_))));
+}
+
+#[test]
+fn add_password_returns_already_encrypted_for_protected_document() {
+    let mut doc = encrypt_test_pdf(build_test_pdf(), "owner-secret", "user-secret");
+    let file = save_to_temp(&mut doc);
+    let destination = NamedTempFile::new().expect("creazione file temporaneo");
+
+    let result = add_password(
+        file.path().to_str().unwrap(),
+        "new-secret",
+        destination.path().to_str().unwrap(),
+    );
+
+    assert!(matches!(result, Err(PdfError::AlreadyEncrypted)));
+}
+
+#[test]
+fn add_password_saves_an_encrypted_copy_on_success() {
+    let mut doc = build_test_pdf();
+    let file = save_to_temp(&mut doc);
+    let destination = NamedTempFile::new().expect("creazione file temporaneo");
+
+    add_password(
+        file.path().to_str().unwrap(),
+        "new-secret",
+        destination.path().to_str().unwrap(),
+    )
+    .expect("aggiunta password");
+
+    let unauthenticated = Document::load(destination.path()).expect("lettura copia cifrata");
+    assert!(unauthenticated.is_encrypted());
+
+    let decrypted = Document::load_with_password(destination.path(), "new-secret")
+        .expect("apertura con la nuova password");
+    assert_eq!(decrypted.get_pages().len(), 1);
+}
+
+#[test]
+fn add_password_rejects_the_wrong_password_afterwards() {
+    let mut doc = build_test_pdf();
+    let file = save_to_temp(&mut doc);
+    let destination = NamedTempFile::new().expect("creazione file temporaneo");
+
+    add_password(
+        file.path().to_str().unwrap(),
+        "new-secret",
+        destination.path().to_str().unwrap(),
+    )
+    .expect("aggiunta password");
+
+    let result = Document::load_with_password(destination.path(), "wrong-password");
+    assert!(result.is_err());
+}
+
+#[test]
+fn add_password_encrypts_with_aes_256() {
+    let mut doc = build_test_pdf();
+    let file = save_to_temp(&mut doc);
+    let destination = NamedTempFile::new().expect("creazione file temporaneo");
+
+    add_password(
+        file.path().to_str().unwrap(),
+        "new-secret",
+        destination.path().to_str().unwrap(),
+    )
+    .expect("aggiunta password");
+
+    let info = get_security_info(destination.path().to_str().unwrap())
+        .expect("lettura informazioni di sicurezza");
+
+    assert_eq!(info.encryption_method.as_deref(), Some("AES"));
+    assert_eq!(info.key_length_bits, Some(256));
+    assert!(info.can_print);
+    assert!(info.can_modify);
+}
+
+#[test]
 fn permission_bits_are_decoded_individually() {
     // print (bit3=4) + copy (bit5=16) + fill forms (bit9=256) + assemble (bit11=1024)
     let permissions = 4 + 16 + 256 + 1024;

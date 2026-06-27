@@ -331,4 +331,45 @@ describe('usePdf', () => {
       expect(result).toEqual(err);
     });
   });
+
+  describe('addPassword', () => {
+    it('returns null without calling the backend when no document is open', async () => {
+      const { addPassword } = usePdf();
+
+      const result = await addPassword('new-secret', '/test/out.pdf');
+
+      expect(result).toBeNull();
+      expect(invoke).not.toHaveBeenCalled();
+    });
+
+    it('calls add_password with the chosen password and returns null on success', async () => {
+      const docStore = useDocumentStore();
+      docStore.setLoading(mockInfo.path);
+      docStore.setReady(mockInfo);
+      invoke.mockResolvedValue(undefined);
+      const { addPassword } = usePdf();
+
+      const result = await addPassword('new-secret', '/test/out.pdf');
+
+      expect(invoke).toHaveBeenCalledWith('add_password', {
+        path: mockInfo.path,
+        password: 'new-secret',
+        destination: '/test/out.pdf',
+      });
+      expect(result).toBeNull();
+    });
+
+    it('returns the PdfError on failure', async () => {
+      const docStore = useDocumentStore();
+      docStore.setLoading(mockInfo.path);
+      docStore.setReady(mockInfo);
+      const err: PdfError = { kind: 'AlreadyEncrypted', message: 'già protetto' };
+      invoke.mockRejectedValue(err);
+      const { addPassword } = usePdf();
+
+      const result = await addPassword('new-secret', '/test/out.pdf');
+
+      expect(result).toEqual(err);
+    });
+  });
 });

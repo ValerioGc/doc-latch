@@ -143,5 +143,30 @@ export function usePdf() {
     }
   }
 
-  return { openFile, openRecentFile, openWithPassword, renderPage, getSecurityInfo, removePassword };
+  /**
+   * Encrypts the current document with AES-256 and saves the protected copy at `destination`.
+   * Returns `null` on success, or the `PdfError` on failure.
+   */
+  async function addPassword(password: string, destination: string): Promise<PdfError | null> {
+    const path = docStore.filePath;
+    if (!path)
+      return null;
+
+    try {
+      await invoke('add_password', { path, password, destination });
+      return null;
+    } catch (err) {
+      return err as PdfError;
+    }
+  }
+
+  return {
+    openFile,
+    openRecentFile,
+    openWithPassword,
+    renderPage,
+    getSecurityInfo,
+    removePassword,
+    addPassword,
+  };
 }

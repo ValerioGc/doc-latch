@@ -7,6 +7,7 @@
   import DocInfoDialog from '@/components/dialogs/DocInfoDialog.vue';
   import SecurityInfoDialog from '@/components/dialogs/SecurityInfoDialog.vue';
   import RemovePasswordDialog from '@/components/dialogs/RemovePasswordDialog.vue';
+  import AddPasswordDialog from '@/components/dialogs/AddPasswordDialog.vue';
   import InfoDialog from '@/components/dialogs/InfoDialog.vue';
   import SettingsDialog from '@/components/dialogs/SettingsDialog.vue';
   import fileIcon from '@/assets/icons/file.svg?raw';
@@ -14,6 +15,7 @@
   import infoIcon from '@/assets/icons/info.svg?raw';
   import shieldIcon from '@/assets/icons/shield.svg?raw';
   import unlockIcon from '@/assets/icons/unlock.svg?raw';
+  import lockIcon from '@/assets/icons/lock.svg?raw';
   import chevronDownIcon from '@/assets/icons/chevron-down.svg?raw';
   import chevronRightIcon from '@/assets/icons/chevron-right.svg?raw';
   import recentIcon from '@/assets/icons/recent.svg?raw';
@@ -31,11 +33,26 @@
   const showDocInfo = ref(false);
   const showSecurityInfo = ref(false);
   const showRemovePassword = ref(false);
+  const showAddPassword = ref(false);
   const showInfo = ref(false);
   const showSettings = ref(false);
 
   function toggle(menu: string): void {
     openMenu.value = openMenu.value === menu ? null : menu;
+  }
+
+  function toggleProtectionMenu(): void {
+    if (!docStore.isOpen)
+      return;
+
+    toggle('protection');
+  }
+
+  function openProtectionMenu(): void {
+    if (!docStore.isOpen)
+      return;
+
+    openMenu.value = 'protection';
   }
 
   function closeMenus(): void {
@@ -84,6 +101,11 @@
   function handleRemovePassword(): void {
     closeMenus();
     showRemovePassword.value = true;
+  }
+
+  function handleAddPassword(): void {
+    closeMenus();
+    showAddPassword.value = true;
   }
 
   function handleInfo(): void {
@@ -161,24 +183,33 @@
     </div>
 
     <!-- Protection menu -->
-    <div class="menu-item" @mouseenter="openMenu = 'protection'" @mouseleave="closeMenus">
-      <button class="menu-btn" :class="{ open: openMenu === 'protection' }" @click="toggle('protection')">
+    <div class="menu-item" @mouseenter="openProtectionMenu" @mouseleave="closeMenus">
+      <button
+        class="menu-btn"
+        :class="{ open: openMenu === 'protection', disabled: !docStore.isOpen }"
+        :disabled="!docStore.isOpen"
+        @click="toggleProtectionMenu"
+      >
         <span class="menu-btn-icon" aria-hidden="true" v-html="shieldIcon" />
         {{ t('menu.protection') }}
         <span class="menu-btn-icon chev" aria-hidden="true" v-html="chevronDownIcon" />
       </button>
       <div v-if="openMenu === 'protection'" class="dropdown" role="menu">
-        <button
-          class="drop-item"
-          role="menuitem"
-          :disabled="!docStore.isOpen"
-          :class="{ disabled: !docStore.isOpen }"
-          @click="handleSecurityInfo"
-        >
+        <button class="drop-item" role="menuitem" @click="handleSecurityInfo">
           <span class="drop-item-icon" aria-hidden="true" v-html="shieldIcon" />
           {{ t('menu.securityInfo') }}
         </button>
         <div class="drop-sep" />
+        <button
+          class="drop-item"
+          role="menuitem"
+          :disabled="docStore.info?.isEncrypted"
+          :class="{ disabled: docStore.info?.isEncrypted }"
+          @click="handleAddPassword"
+        >
+          <span class="drop-item-icon" aria-hidden="true" v-html="lockIcon" />
+          {{ t('menu.addPassword') }}
+        </button>
         <button
           class="drop-item"
           role="menuitem"
@@ -219,6 +250,7 @@
   <DocInfoDialog v-if="showDocInfo" @close="showDocInfo = false" />
   <SecurityInfoDialog v-if="showSecurityInfo" @close="showSecurityInfo = false" />
   <RemovePasswordDialog v-if="showRemovePassword" @close="showRemovePassword = false" />
+  <AddPasswordDialog v-if="showAddPassword" @close="showAddPassword = false" />
   <InfoDialog v-if="showInfo" @close="showInfo = false" />
   <SettingsDialog v-if="showSettings" @close="showSettings = false" />
 </template>
@@ -300,9 +332,14 @@
     cursor: pointer;
   }
 
-  .menu-btn:hover,
+  .menu-btn:hover:not(.disabled),
   .menu-btn.open {
     background: var(--color-bg-secondary);
+  }
+
+  .menu-btn.disabled {
+    opacity: 0.35;
+    cursor: default;
   }
 
   .menu-btn-icon {

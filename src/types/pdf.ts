@@ -51,6 +51,7 @@ export type PdfErrorKind =
   | 'PasswordRequired'
   | 'InvalidPdf'
   | 'NotEncrypted'
+  | 'AlreadyEncrypted'
   | 'RenderError'
   | 'Unknown';
 

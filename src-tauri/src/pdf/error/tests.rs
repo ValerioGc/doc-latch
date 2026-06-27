@@ -27,6 +27,10 @@ fn unit_variants_have_fixed_messages() {
         PdfError::NotEncrypted.to_string(),
         "Il documento non è protetto da password"
     );
+    assert_eq!(
+        PdfError::AlreadyEncrypted.to_string(),
+        "Il documento è già protetto da password"
+    );
 }
 
 #[test]

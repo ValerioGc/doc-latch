@@ -29,6 +29,9 @@ tauri-plugin-shell = "2.0"
 # PDF parsing and writing
 lopdf = "0.42"
 
+# Random file-encryption keys/IDs for PDF encryption
+rand = "0.10"
+
 # PDF rendering via PDFium
 pdfium-render = { version = "0.8", features = ["thread_safe"] }
 

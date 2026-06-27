@@ -1,6 +1,11 @@
-use lopdf::Document;
+use lopdf::encryption::crypt_filters::{Aes256CryptFilter, CryptFilter};
+use lopdf::encryption::{EncryptionState, EncryptionVersion, Permissions};
+use lopdf::{Document, Object};
+use rand::RngExt;
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 use std::path::Path;
+use std::sync::Arc;
 
 use super::error::PdfError;
 
@@ -104,6 +109,66 @@ pub fn remove_password(path: &str, password: &str, destination: &str) -> Result<
     doc.save(destination)?;
 
     Ok(())
+}
+
+/// Encrypts an unprotected PDF with AES-256 (single password, full permissions)
+/// and saves the protected copy at `destination`.
+pub fn add_password(path: &str, password: &str, destination: &str) -> Result<(), PdfError> {
+    let file_path = Path::new(path);
+    if !file_path.exists() {
+        return Err(PdfError::FileNotFound(path.to_string()));
+    }
+
+    let mut doc = Document::load(file_path)?;
+
+    if doc.is_encrypted() {
+        return Err(PdfError::AlreadyEncrypted);
+    }
+
+    ensure_file_id(&mut doc);
+
+    let file_encryption_key = random_bytes::<32>();
+    let crypt_filter: Arc<dyn CryptFilter> = Arc::new(Aes256CryptFilter);
+
+    let state = EncryptionState::try_from(EncryptionVersion::V5 {
+        encrypt_metadata: true,
+        crypt_filters: BTreeMap::from([(b"StdCF".to_vec(), crypt_filter)]),
+        file_encryption_key: &file_encryption_key,
+        stream_filter: b"StdCF".to_vec(),
+        string_filter: b"StdCF".to_vec(),
+        owner_password: password,
+        user_password: password,
+        permissions: Permissions::all(),
+    })?;
+
+    doc.encrypt(&state)?;
+    doc.save(destination)?;
+
+    Ok(())
+}
+
+/// Sets the trailer's `/ID` entry if missing — required for encryption key
+/// derivation, but freshly-built or already-decrypted documents may lack one.
+fn ensure_file_id(doc: &mut Document) {
+    if doc.trailer.get(b"ID").is_ok() {
+        return;
+    }
+
+    let id = random_bytes::<16>().to_vec();
+    doc.trailer.set(
+        "ID",
+        vec![
+            Object::string_literal(id.clone()),
+            Object::string_literal(id),
+        ],
+    );
+}
+
+/// Fills an array of `N` bytes from a CSPRNG, for file IDs and encryption keys.
+fn random_bytes<const N: usize>() -> [u8; N] {
+    let mut bytes = [0u8; N];
+    rand::rng().fill(&mut bytes);
+    bytes
 }
 
 /// Checks bit `n` (1-indexed, per PDF32000-1:2008 Table 22) of the `/P` permissions integer.

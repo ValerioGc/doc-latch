@@ -10,6 +10,7 @@ const openFile = vi.fn();
 const openRecentFile = vi.fn();
 const getSecurityInfo = vi.fn();
 const removePassword = vi.fn();
+const addPassword = vi.fn();
 
 vi.mock('@/composables/usePdf', () => ({
   usePdf: () => ({
@@ -18,6 +19,7 @@ vi.mock('@/composables/usePdf', () => ({
     openWithPassword: vi.fn(),
     getSecurityInfo,
     removePassword,
+    addPassword,
   }),
 }));
 
@@ -39,6 +41,7 @@ describe('Toolbar', () => {
     getSecurityInfo.mockReset();
     getSecurityInfo.mockResolvedValue(null);
     removePassword.mockReset();
+    addPassword.mockReset();
   });
 
   it('toggles the file dropdown when the File button is clicked', async () => {
@@ -209,14 +212,18 @@ describe('Toolbar', () => {
     expect(wrapper.findComponent({ name: 'InfoDialog' }).exists()).toBe(false);
   });
 
-  it('disables security info when no document is open and enables it once open', async () => {
+  it('disables the protection menu when no document is open and enables it once open', async () => {
     const docStore = useDocumentStore();
     const wrapper = mountToolbar();
 
     const protectionMenuBtn = wrapper.findAll('.menu-btn')[1];
+    expect(protectionMenuBtn.attributes('disabled')).toBeDefined();
+
     await protectionMenuBtn.trigger('click');
-    let securityInfoBtn = wrapper.find('.dropdown .drop-item');
-    expect(securityInfoBtn.attributes('disabled')).toBeDefined();
+    expect(wrapper.find('.dropdown').exists()).toBe(false);
+
+    await wrapper.findAll('.menu-item')[1].trigger('mouseenter');
+    expect(wrapper.find('.dropdown').exists()).toBe(false);
 
     docStore.setReady({
       path: '/test/doc.pdf',
@@ -235,8 +242,11 @@ describe('Toolbar', () => {
     });
     await wrapper.vm.$nextTick();
 
-    securityInfoBtn = wrapper.find('.dropdown .drop-item');
-    expect(securityInfoBtn.attributes('disabled')).toBeUndefined();
+    expect(protectionMenuBtn.attributes('disabled')).toBeUndefined();
+
+    await protectionMenuBtn.trigger('click');
+    const securityInfoBtn = wrapper.find('.dropdown .drop-item');
+    expect(securityInfoBtn.exists()).toBe(true);
 
     await securityInfoBtn.trigger('click');
     expect(wrapper.findComponent({ name: 'SecurityInfoDialog' }).exists()).toBe(true);
@@ -266,6 +276,91 @@ describe('Toolbar', () => {
     await wrapper.findComponent({ name: 'SecurityInfoDialog' }).vm.$emit('close');
 
     expect(wrapper.findComponent({ name: 'SecurityInfoDialog' }).exists()).toBe(false);
+  });
+
+  it('disables add password when no document is open and enables it for an unencrypted document', async () => {
+    const docStore = useDocumentStore();
+    const wrapper = mountToolbar();
+
+    const protectionMenuBtn = wrapper.findAll('.menu-btn')[1];
+    await protectionMenuBtn.trigger('click');
+    let addPasswordBtn = wrapper.findAll('.dropdown .drop-item')[1];
+    expect(addPasswordBtn.attributes('disabled')).toBeDefined();
+
+    docStore.setReady({
+      path: '/test/doc.pdf',
+      pageCount: 1,
+      title: null,
+      author: null,
+      subject: null,
+      creator: null,
+      producer: null,
+      creationDate: null,
+      modDate: null,
+      pdfVersion: '1.7',
+      pageWidthPt: 595,
+      pageHeightPt: 842,
+      isEncrypted: false,
+    });
+    await wrapper.vm.$nextTick();
+
+    addPasswordBtn = wrapper.findAll('.dropdown .drop-item')[1];
+    expect(addPasswordBtn.attributes('disabled')).toBeUndefined();
+
+    await addPasswordBtn.trigger('click');
+    expect(wrapper.findComponent({ name: 'AddPasswordDialog' }).exists()).toBe(true);
+    expect(wrapper.find('.dropdown').exists()).toBe(false);
+  });
+
+  it('disables add password for an already encrypted document', async () => {
+    const docStore = useDocumentStore();
+    docStore.setReady({
+      path: '/test/doc.pdf',
+      pageCount: 1,
+      title: null,
+      author: null,
+      subject: null,
+      creator: null,
+      producer: null,
+      creationDate: null,
+      modDate: null,
+      pdfVersion: '1.7',
+      pageWidthPt: 595,
+      pageHeightPt: 842,
+      isEncrypted: true,
+    });
+    const wrapper = mountToolbar();
+
+    await wrapper.findAll('.menu-btn')[1].trigger('click');
+    const addPasswordBtn = wrapper.findAll('.dropdown .drop-item')[1];
+
+    expect(addPasswordBtn.attributes('disabled')).toBeDefined();
+  });
+
+  it('closes the add password dialog when it emits close', async () => {
+    const docStore = useDocumentStore();
+    docStore.setReady({
+      path: '/test/doc.pdf',
+      pageCount: 1,
+      title: null,
+      author: null,
+      subject: null,
+      creator: null,
+      producer: null,
+      creationDate: null,
+      modDate: null,
+      pdfVersion: '1.7',
+      pageWidthPt: 595,
+      pageHeightPt: 842,
+      isEncrypted: false,
+    });
+    const wrapper = mountToolbar();
+    await wrapper.findAll('.menu-btn')[1].trigger('click');
+    await wrapper.findAll('.dropdown .drop-item')[1].trigger('click');
+
+    await wrapper.findComponent({ name: 'AddPasswordDialog' }).vm.$emit('close');
+
+    expect(wrapper.findComponent({ name: 'AddPasswordDialog' }).exists()).toBe(false);
   });
 
   it('disables remove password when the document is not encrypted and enables it once encrypted', async () => {
