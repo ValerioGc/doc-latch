@@ -35,7 +35,8 @@
     "resetZoom": "Reimposta zoom al 100%"
   },
   "home": {
-    "noRecent": "Nessun documento recente"
+    "noRecent": "Nessun documento recente",
+    "removeRecent": "Rimuovi dai recenti"
   },
   "dialog": {
     "password": {

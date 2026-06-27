@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { mount, flushPromises } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
 import { useDocumentStore } from '@/stores/document';
 import { useUiStore } from '@/stores/ui';
@@ -73,6 +73,20 @@ describe('Sidebar', () => {
     await wrapper.findAll('.thumb')[2].trigger('click');
 
     expect(docStore.currentPage).toBe(3);
+  });
+
+  it('scrolls the active thumbnail into view when the page changes from outside the sidebar', async () => {
+    const docStore = useDocumentStore();
+    docStore.setReady(mockInfo);
+    const wrapper = mountSidebar();
+    const target = wrapper.findAll('.thumb')[2].element as HTMLElement;
+    const scrollSpy = vi.fn();
+    target.scrollIntoView = scrollSpy;
+
+    docStore.setPage(3);
+    await flushPromises();
+
+    expect(scrollSpy).toHaveBeenCalledWith({ block: 'nearest' });
   });
 
   it('toggles sidebarCollapsed when the rail toggle is clicked', async () => {

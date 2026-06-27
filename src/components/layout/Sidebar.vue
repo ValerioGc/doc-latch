@@ -1,5 +1,6 @@
 <script setup lang="ts">
 
+  import { nextTick, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
   import { useUiStore } from '@/stores/ui';
@@ -9,6 +10,16 @@
   const { t } = useI18n();
   const docStore = useDocumentStore();
   const uiStore = useUiStore();
+
+  const thumbRefs = ref<HTMLButtonElement[]>([]);
+
+  // The active thumbnail's `.active` class is reactive, but the sidebar's own
+  // scroll position isn't — without this it stays put when the page changes
+  // from outside the sidebar (e.g. the footer page selector).
+  watch(() => docStore.currentPage, async (page) => {
+    await nextTick();
+    thumbRefs.value[page - 1]?.scrollIntoView?.({ block: 'nearest' });
+  });
 
   function onResizeStart(e: MouseEvent): void {
     e.preventDefault();
@@ -53,6 +64,7 @@
 
         <!-- PDF pages thumbnails -->
         <button v-for="page in docStore.totalPages" :key="`${docStore.filePath}-${page}`"
+          ref="thumbRefs"
           type="button"
           class="thumb"
           :class="{ active: page === docStore.currentPage }"

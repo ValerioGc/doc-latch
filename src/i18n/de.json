@@ -35,7 +35,8 @@
     "resetZoom": "Zoom auf 100% zurücksetzen"
   },
   "home": {
-    "noRecent": "Keine zuletzt geöffneten Dokumente"
+    "noRecent": "Keine zuletzt geöffneten Dokumente",
+    "removeRecent": "Aus den zuletzt geöffneten entfernen"
   },
   "dialog": {
     "password": {
