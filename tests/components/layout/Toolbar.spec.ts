@@ -8,9 +8,10 @@ import Toolbar from '@/components/layout/Toolbar.vue';
 
 const openFile = vi.fn();
 const openRecentFile = vi.fn();
+const getSecurityInfo = vi.fn();
 
 vi.mock('@/composables/usePdf', () => ({
-  usePdf: () => ({ openFile, openRecentFile, openWithPassword: vi.fn() }),
+  usePdf: () => ({ openFile, openRecentFile, openWithPassword: vi.fn(), getSecurityInfo }),
 }));
 
 function mountToolbar() {
@@ -28,6 +29,8 @@ describe('Toolbar', () => {
     localStorage.clear();
     openFile.mockReset();
     openRecentFile.mockReset();
+    getSecurityInfo.mockReset();
+    getSecurityInfo.mockResolvedValue(null);
   });
 
   it('toggles the file dropdown when the File button is clicked', async () => {
@@ -196,6 +199,65 @@ describe('Toolbar', () => {
     await wrapper.findComponent({ name: 'InfoDialog' }).vm.$emit('close');
 
     expect(wrapper.findComponent({ name: 'InfoDialog' }).exists()).toBe(false);
+  });
+
+  it('disables security info when no document is open and enables it once open', async () => {
+    const docStore = useDocumentStore();
+    const wrapper = mountToolbar();
+
+    const protectionMenuBtn = wrapper.findAll('.menu-btn')[1];
+    await protectionMenuBtn.trigger('click');
+    let securityInfoBtn = wrapper.find('.dropdown .drop-item');
+    expect(securityInfoBtn.attributes('disabled')).toBeDefined();
+
+    docStore.setReady({
+      path: '/test/doc.pdf',
+      pageCount: 1,
+      title: null,
+      author: null,
+      subject: null,
+      creator: null,
+      producer: null,
+      creationDate: null,
+      modDate: null,
+      pdfVersion: '1.7',
+      pageWidthPt: 595,
+      pageHeightPt: 842,
+      isEncrypted: false,
+    });
+    await wrapper.vm.$nextTick();
+
+    securityInfoBtn = wrapper.find('.dropdown .drop-item');
+    expect(securityInfoBtn.attributes('disabled')).toBeUndefined();
+
+    await securityInfoBtn.trigger('click');
+    expect(wrapper.findComponent({ name: 'SecurityInfoDialog' }).exists()).toBe(true);
+  });
+
+  it('closes the security info dialog when it emits close', async () => {
+    const docStore = useDocumentStore();
+    docStore.setReady({
+      path: '/test/doc.pdf',
+      pageCount: 1,
+      title: null,
+      author: null,
+      subject: null,
+      creator: null,
+      producer: null,
+      creationDate: null,
+      modDate: null,
+      pdfVersion: '1.7',
+      pageWidthPt: 595,
+      pageHeightPt: 842,
+      isEncrypted: false,
+    });
+    const wrapper = mountToolbar();
+    await wrapper.findAll('.menu-btn')[1].trigger('click');
+    await wrapper.find('.dropdown .drop-item').trigger('click');
+
+    await wrapper.findComponent({ name: 'SecurityInfoDialog' }).vm.$emit('close');
+
+    expect(wrapper.findComponent({ name: 'SecurityInfoDialog' }).exists()).toBe(false);
   });
 
   it('closes the doc info dialog when it emits close', async () => {

@@ -1,0 +1,156 @@
+use lopdf::{dictionary, Object};
+
+use super::*;
+use crate::test_support::{build_test_pdf, save_to_temp};
+
+/// Builds on top of the shared unencrypted test PDF by attaching a hand-crafted
+/// `/Encrypt` dictionary to the trailer. The `/O` and `/U` hashes are placeholders
+/// (lopdf 0.33 can't write real encryption) — `get_security_info` never decrypts
+/// content, it only reads the dictionary fields, so this is enough to test it.
+fn build_encrypted_test_pdf(
+    version: i64,
+    length: i64,
+    permissions: i64,
+    cfm: Option<&str>,
+) -> lopdf::Document {
+    let mut doc = build_test_pdf();
+
+    let mut encrypt_dict = dictionary! {
+        "Filter" => "Standard",
+        "V" => version,
+        "R" => 3,
+        "Length" => length,
+        "P" => permissions,
+        "O" => Object::string_literal("owner-hash-placeholder"),
+        "U" => Object::string_literal("user-hash-placeholder"),
+    };
+
+    if let Some(cfm_name) = cfm {
+        let std_cf = dictionary! {
+            "CFM" => Object::Name(cfm_name.as_bytes().to_vec()),
+            "AuthEvent" => "DocOpen",
+            "Length" => length / 8,
+        };
+        let cf = dictionary! {
+            "StdCF" => Object::Dictionary(std_cf),
+        };
+        encrypt_dict.set("CF", Object::Dictionary(cf));
+        encrypt_dict.set("StmF", Object::Name(b"StdCF".to_vec()));
+        encrypt_dict.set("StrF", Object::Name(b"StdCF".to_vec()));
+    }
+
+    let encrypt_id = doc.add_object(Object::Dictionary(encrypt_dict));
+    doc.trailer.set("Encrypt", encrypt_id);
+    doc
+}
+
+#[test]
+fn returns_file_not_found_for_missing_file() {
+    let result = get_security_info("/nonexistent/path/file.pdf");
+
+    assert!(matches!(result, Err(PdfError::FileNotFound(_))));
+}
+
+#[test]
+fn unencrypted_document_has_no_restrictions() {
+    let mut doc = build_test_pdf();
+    let file = save_to_temp(&mut doc);
+
+    let info = get_security_info(file.path().to_str().unwrap()).expect("lettura PDF di test");
+
+    assert!(!info.is_encrypted);
+    assert_eq!(info.encryption_method, None);
+    assert!(info.can_print);
+    assert!(info.can_modify);
+    assert!(info.can_copy);
+    assert!(info.can_annotate);
+    assert!(info.can_fill_forms);
+    assert!(info.can_extract_for_accessibility);
+    assert!(info.can_assemble);
+    assert!(info.can_print_high_res);
+}
+
+#[test]
+fn rc4_40bit_reports_fixed_key_length_regardless_of_length_field() {
+    let mut doc = build_encrypted_test_pdf(1, 128, 0, None);
+    let file = save_to_temp(&mut doc);
+
+    let info = get_security_info(file.path().to_str().unwrap()).expect("lettura PDF di test");
+
+    assert!(info.is_encrypted);
+    assert_eq!(info.encryption_method.as_deref(), Some("RC4"));
+    assert_eq!(info.key_length_bits, Some(40));
+}
+
+#[test]
+fn rc4_variable_length_reports_length_field() {
+    let mut doc = build_encrypted_test_pdf(2, 128, 0, None);
+    let file = save_to_temp(&mut doc);
+
+    let info = get_security_info(file.path().to_str().unwrap()).expect("lettura PDF di test");
+
+    assert_eq!(info.encryption_method.as_deref(), Some("RC4"));
+    assert_eq!(info.key_length_bits, Some(128));
+}
+
+#[test]
+fn crypt_filter_aesv2_reports_aes_128() {
+    let mut doc = build_encrypted_test_pdf(4, 128, 0, Some("AESV2"));
+    let file = save_to_temp(&mut doc);
+
+    let info = get_security_info(file.path().to_str().unwrap()).expect("lettura PDF di test");
+
+    assert_eq!(info.encryption_method.as_deref(), Some("AES"));
+    assert_eq!(info.key_length_bits, Some(128));
+}
+
+#[test]
+fn crypt_filter_aesv3_reports_aes_256() {
+    let mut doc = build_encrypted_test_pdf(4, 256, 0, Some("AESV3"));
+    let file = save_to_temp(&mut doc);
+
+    let info = get_security_info(file.path().to_str().unwrap()).expect("lettura PDF di test");
+
+    assert_eq!(info.encryption_method.as_deref(), Some("AES"));
+    assert_eq!(info.key_length_bits, Some(256));
+}
+
+#[test]
+fn version_5_reports_aes_256() {
+    let mut doc = build_encrypted_test_pdf(5, 256, 0, None);
+    let file = save_to_temp(&mut doc);
+
+    let info = get_security_info(file.path().to_str().unwrap()).expect("lettura PDF di test");
+
+    assert_eq!(info.encryption_method.as_deref(), Some("AES"));
+    assert_eq!(info.key_length_bits, Some(256));
+}
+
+#[test]
+fn unknown_version_reports_a_fallback_label() {
+    let mut doc = build_encrypted_test_pdf(99, 128, 0, None);
+    let file = save_to_temp(&mut doc);
+
+    let info = get_security_info(file.path().to_str().unwrap()).expect("lettura PDF di test");
+
+    assert_eq!(info.encryption_method.as_deref(), Some("Sconosciuto"));
+}
+
+#[test]
+fn permission_bits_are_decoded_individually() {
+    // print (bit3=4) + copy (bit5=16) + fill forms (bit9=256) + assemble (bit11=1024)
+    let permissions = 4 + 16 + 256 + 1024;
+    let mut doc = build_encrypted_test_pdf(2, 128, permissions, None);
+    let file = save_to_temp(&mut doc);
+
+    let info = get_security_info(file.path().to_str().unwrap()).expect("lettura PDF di test");
+
+    assert!(info.can_print);
+    assert!(!info.can_modify);
+    assert!(info.can_copy);
+    assert!(!info.can_annotate);
+    assert!(info.can_fill_forms);
+    assert!(!info.can_extract_for_accessibility);
+    assert!(info.can_assemble);
+    assert!(!info.can_print_high_res);
+}

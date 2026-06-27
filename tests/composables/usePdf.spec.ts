@@ -4,7 +4,7 @@ import { useDocumentStore } from '@/stores/document';
 import { useRecentStore } from '@/stores/recent';
 import { useUiStore } from '@/stores/ui';
 import { usePdf } from '@/composables/usePdf';
-import type { DocumentInfo, PdfError } from '@/types/pdf';
+import type { DocumentInfo, PdfError, SecurityInfo } from '@/types/pdf';
 
 const invoke = vi.fn();
 const openDialog = vi.fn();
@@ -238,6 +238,44 @@ describe('usePdf', () => {
 
       expect(result).toBeNull();
       expect(docStore.error?.kind).toBe('RenderError');
+    });
+  });
+
+  describe('getSecurityInfo', () => {
+    const mockSecurityInfo: SecurityInfo = {
+      isEncrypted: false,
+      encryptionMethod: null,
+      keyLengthBits: null,
+      canPrint: true,
+      canPrintHighRes: true,
+      canModify: true,
+      canCopy: true,
+      canAnnotate: true,
+      canFillForms: true,
+      canExtractForAccessibility: true,
+      canAssemble: true,
+    };
+
+    it('returns the security info on success', async () => {
+      invoke.mockResolvedValue(mockSecurityInfo);
+      const { getSecurityInfo } = usePdf();
+
+      const result = await getSecurityInfo('/test/doc.pdf');
+
+      expect(invoke).toHaveBeenCalledWith('get_security_info', { path: '/test/doc.pdf' });
+      expect(result).toEqual(mockSecurityInfo);
+    });
+
+    it('returns null without touching the document store on failure', async () => {
+      const err: PdfError = { kind: 'FileNotFound', message: 'missing' };
+      invoke.mockRejectedValue(err);
+      const docStore = useDocumentStore();
+      const { getSecurityInfo } = usePdf();
+
+      const result = await getSecurityInfo('/test/doc.pdf');
+
+      expect(result).toBeNull();
+      expect(docStore.error).toBeNull();
     });
   });
 });

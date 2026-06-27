@@ -31,6 +31,20 @@ export interface PageRenderResult {
   heightPx: number
 };
 
+export interface SecurityInfo {
+  isEncrypted: boolean
+  encryptionMethod: string | null
+  keyLengthBits: number | null
+  canPrint: boolean
+  canPrintHighRes: boolean
+  canModify: boolean
+  canCopy: boolean
+  canAnnotate: boolean
+  canFillForms: boolean
+  canExtractForAccessibility: boolean
+  canAssemble: boolean
+};
+
 export type PdfErrorKind =
   | 'FileNotFound'
   | 'WrongPassword'

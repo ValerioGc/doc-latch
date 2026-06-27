@@ -73,8 +73,7 @@ fn extract_info(path: &str, doc: &Document) -> Result<DocumentInfo, PdfError> {
     let is_encrypted = doc.is_encrypted();
 
     // Read optional Info dictionary
-    let (title, author, subject, creator, producer, creation_date, mod_date) =
-        read_info_dict(doc);
+    let (title, author, subject, creator, producer, creation_date, mod_date) = read_info_dict(doc);
 
     // Read first page size
     let (page_width_pt, page_height_pt) = read_first_page_size(doc);
@@ -96,7 +95,7 @@ fn extract_info(path: &str, doc: &Document) -> Result<DocumentInfo, PdfError> {
     })
 }
 
-/// Decodes a raw PDF string per the spec 
+/// Decodes a raw PDF string per the spec
 fn decode_pdf_string(bytes: &[u8]) -> String {
     if let [0xFE, 0xFF, rest @ ..] = bytes {
         let utf16: Vec<u16> = rest
@@ -144,7 +143,10 @@ fn read_info_dict(
     )
 }
 
-fn find_media_box<'a>(doc: &'a Document, page_id: lopdf::ObjectId) -> Option<&'a Vec<lopdf::Object>> {
+fn find_media_box<'a>(
+    doc: &'a Document,
+    page_id: lopdf::ObjectId,
+) -> Option<&'a Vec<lopdf::Object>> {
     let mut current_id = page_id;
 
     for _ in 0..32 {
@@ -154,7 +156,10 @@ fn find_media_box<'a>(doc: &'a Document, page_id: lopdf::ObjectId) -> Option<&'a
             return Some(arr);
         }
 
-        current_id = dict.get(b"Parent").and_then(|obj| obj.as_reference()).ok()?;
+        current_id = dict
+            .get(b"Parent")
+            .and_then(|obj| obj.as_reference())
+            .ok()?;
     }
 
     None

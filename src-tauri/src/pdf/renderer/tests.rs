@@ -62,7 +62,13 @@ fn render_page_with_password_renders_unencrypted_document() {
     let mut doc = build_test_pdf();
     let file = save_to_temp(&mut doc);
 
-    let result = render_page(Some(dir), file.path().to_str().unwrap(), 0, 1.0, Some("anything"));
+    let result = render_page(
+        Some(dir),
+        file.path().to_str().unwrap(),
+        0,
+        1.0,
+        Some("anything"),
+    );
 
     assert!(result.is_ok());
 }

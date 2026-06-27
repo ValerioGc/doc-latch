@@ -5,11 +5,13 @@
   import { useRecentStore } from '@/stores/recent';
   import { usePdf } from '@/composables/usePdf';
   import DocInfoDialog from '@/components/dialogs/DocInfoDialog.vue';
+  import SecurityInfoDialog from '@/components/dialogs/SecurityInfoDialog.vue';
   import InfoDialog from '@/components/dialogs/InfoDialog.vue';
   import SettingsDialog from '@/components/dialogs/SettingsDialog.vue';
   import fileIcon from '@/assets/icons/file.svg?raw';
   import settingsIcon from '@/assets/icons/settings.svg?raw';
   import infoIcon from '@/assets/icons/info.svg?raw';
+  import shieldIcon from '@/assets/icons/shield.svg?raw';
   import chevronDownIcon from '@/assets/icons/chevron-down.svg?raw';
   import chevronRightIcon from '@/assets/icons/chevron-right.svg?raw';
   import recentIcon from '@/assets/icons/recent.svg?raw';
@@ -25,6 +27,7 @@
 
   // Dialogs visibility
   const showDocInfo = ref(false);
+  const showSecurityInfo = ref(false);
   const showInfo = ref(false);
   const showSettings = ref(false);
 
@@ -68,6 +71,11 @@
   function handleDocInfo(): void {
     closeMenus();
     showDocInfo.value = true;
+  }
+
+  function handleSecurityInfo(): void {
+    closeMenus();
+    showSecurityInfo.value = true;
   }
 
   function handleInfo(): void {
@@ -144,6 +152,27 @@
       </div>
     </div>
 
+    <!-- Protection menu -->
+    <div class="menu-item" @mouseenter="openMenu = 'protection'" @mouseleave="closeMenus">
+      <button class="menu-btn" :class="{ open: openMenu === 'protection' }" @click="toggle('protection')">
+        <span class="menu-btn-icon" aria-hidden="true" v-html="shieldIcon" />
+        {{ t('menu.protection') }}
+        <span class="menu-btn-icon chev" aria-hidden="true" v-html="chevronDownIcon" />
+      </button>
+      <div v-if="openMenu === 'protection'" class="dropdown" role="menu">
+        <button
+          class="drop-item"
+          role="menuitem"
+          :disabled="!docStore.isOpen"
+          :class="{ disabled: !docStore.isOpen }"
+          @click="handleSecurityInfo"
+        >
+          <span class="drop-item-icon" aria-hidden="true" v-html="shieldIcon" />
+          {{ t('menu.securityInfo') }}
+        </button>
+      </div>
+    </div>
+
     <div class="toolbar-spacer" />
     <div class="toolbar-sep" />
 
@@ -169,6 +198,7 @@
   </header>
 
   <DocInfoDialog v-if="showDocInfo" @close="showDocInfo = false" />
+  <SecurityInfoDialog v-if="showSecurityInfo" @close="showSecurityInfo = false" />
   <InfoDialog v-if="showInfo" @close="showInfo = false" />
   <SettingsDialog v-if="showSettings" @close="showSettings = false" />
 </template>

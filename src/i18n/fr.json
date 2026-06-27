@@ -10,6 +10,8 @@
     "recent": "Récents",
     "close": "Fermer le document",
     "docInfo": "Informations du document…",
+    "protection": "Protection",
+    "securityInfo": "Informations de sécurité…",
     "settings": "Paramètres",
     "info": "Infos"
   },
@@ -60,6 +62,27 @@
       "yes": "Oui",
       "no": "Non",
       "notAvailable": "N/D",
+      "close": "Fermer"
+    },
+    "securityInfo": {
+      "title": "Informations de sécurité",
+      "loading": "Chargement…",
+      "encrypted": "Protégé par mot de passe",
+      "method": "Méthode de chiffrement",
+      "keyLength": "Longueur de clé",
+      "permissions": "Autorisations",
+      "print": "Impression",
+      "printHighRes": "Impression haute résolution",
+      "modify": "Modification du contenu",
+      "copy": "Copier texte/images",
+      "annotate": "Annotations",
+      "fillForms": "Remplir des formulaires",
+      "accessibility": "Extraction pour l'accessibilité",
+      "assemble": "Assemblage de pages",
+      "allowed": "Autorisé",
+      "notAllowed": "Non autorisé",
+      "notEncrypted": "Ce document n'est pas protégé par mot de passe : aucune restriction ne s'applique.",
+      "loadError": "Impossible de lire les informations de sécurité.",
       "close": "Fermer"
     },
     "about": {

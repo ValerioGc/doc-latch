@@ -3,7 +3,7 @@ import { open as openDialog } from '@tauri-apps/plugin-dialog';
 import { useDocumentStore } from '@/stores/document';
 import { useRecentStore } from '@/stores/recent';
 import { useUiStore } from '@/stores/ui';
-import type { DocumentInfo, PageRenderResult, PdfError } from '@/types/pdf';
+import type { DocumentInfo, PageRenderResult, PdfError, SecurityInfo } from '@/types/pdf';
 
 /**
  * Composable that wraps all Tauri IPC calls related to PDF operations.
@@ -112,5 +112,17 @@ export function usePdf() {
     }
   }
 
-  return { openFile, openRecentFile, openWithPassword, renderPage };
+  /**
+   * Reads encryption status and permissions for a PDF, without needing its password.
+   * Returns null on error; callers handle their own error display.
+   */
+  async function getSecurityInfo(path: string): Promise<SecurityInfo | null> {
+    try {
+      return await invoke<SecurityInfo>('get_security_info', { path });
+    } catch {
+      return null;
+    }
+  }
+
+  return { openFile, openRecentFile, openWithPassword, renderPage, getSecurityInfo };
 }

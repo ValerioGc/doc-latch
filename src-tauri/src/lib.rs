@@ -6,6 +6,7 @@ mod test_support;
 use commands::document::{
     open_pdf, open_pdf_with_password, render_page, render_page_with_password,
 };
+use commands::security::get_security_info;
 
 /// Tauri application entry point
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -19,6 +20,7 @@ pub fn run() {
             open_pdf_with_password,
             render_page,
             render_page_with_password,
+            get_security_info,
         ])
         .run(tauri::generate_context!())
         .expect("Error during the startup of the Tauri application");

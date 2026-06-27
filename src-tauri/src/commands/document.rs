@@ -53,7 +53,13 @@ pub fn render_page_with_password(
     zoom: f32,
     password: String,
 ) -> Result<PageRenderResult, PdfError> {
-    render_page_impl(app.path().resource_dir().ok(), &path, page, zoom, Some(&password))
+    render_page_impl(
+        app.path().resource_dir().ok(),
+        &path,
+        page,
+        zoom,
+        Some(&password),
+    )
 }
 
 /// Resource-dir-only composition for both render commands; see

@@ -10,6 +10,8 @@
     "recent": "Recent",
     "close": "Close document",
     "docInfo": "Document info…",
+    "protection": "Protection",
+    "securityInfo": "Security info…",
     "settings": "Settings",
     "info": "Info"
   },
@@ -60,6 +62,27 @@
       "yes": "Yes",
       "no": "No",
       "notAvailable": "N/A",
+      "close": "Close"
+    },
+    "securityInfo": {
+      "title": "Security info",
+      "loading": "Loading…",
+      "encrypted": "Password protected",
+      "method": "Encryption method",
+      "keyLength": "Key length",
+      "permissions": "Permissions",
+      "print": "Print",
+      "printHighRes": "High-resolution printing",
+      "modify": "Modify content",
+      "copy": "Copy text/images",
+      "annotate": "Annotations",
+      "fillForms": "Fill form fields",
+      "accessibility": "Extract for accessibility",
+      "assemble": "Assemble pages",
+      "allowed": "Allowed",
+      "notAllowed": "Not allowed",
+      "notEncrypted": "This document isn't password protected: no restrictions apply.",
+      "loadError": "Couldn't read the security information.",
       "close": "Close"
     },
     "about": {

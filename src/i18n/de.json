@@ -10,6 +10,8 @@
     "recent": "Zuletzt geöffnet",
     "close": "Dokument schließen",
     "docInfo": "Dokumentinformationen…",
+    "protection": "Schutz",
+    "securityInfo": "Sicherheitsinformationen…",
     "settings": "Einstellungen",
     "info": "Info"
   },
@@ -60,6 +62,27 @@
       "yes": "Ja",
       "no": "Nein",
       "notAvailable": "N/V",
+      "close": "Schließen"
+    },
+    "securityInfo": {
+      "title": "Sicherheitsinformationen",
+      "loading": "Wird geladen…",
+      "encrypted": "Passwortgeschützt",
+      "method": "Verschlüsselungsmethode",
+      "keyLength": "Schlüssellänge",
+      "permissions": "Berechtigungen",
+      "print": "Drucken",
+      "printHighRes": "Hochauflösender Druck",
+      "modify": "Inhalt bearbeiten",
+      "copy": "Text/Bilder kopieren",
+      "annotate": "Anmerkungen",
+      "fillForms": "Formularfelder ausfüllen",
+      "accessibility": "Extraktion für Barrierefreiheit",
+      "assemble": "Seiten zusammenstellen",
+      "allowed": "Erlaubt",
+      "notAllowed": "Nicht erlaubt",
+      "notEncrypted": "Dieses Dokument ist nicht passwortgeschützt: es gelten keine Einschränkungen.",
+      "loadError": "Sicherheitsinformationen konnten nicht gelesen werden.",
       "close": "Schließen"
     },
     "about": {

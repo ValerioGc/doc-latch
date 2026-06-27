@@ -19,7 +19,10 @@ fn unit_variants_have_fixed_messages() {
         PdfError::PasswordRequired.to_string(),
         "Password richiesta per aprire il documento"
     );
-    assert_eq!(PdfError::InvalidPdf.to_string(), "PDF non valido o corrotto");
+    assert_eq!(
+        PdfError::InvalidPdf.to_string(),
+        "PDF non valido o corrotto"
+    );
 }
 
 #[test]
