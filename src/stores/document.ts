@@ -61,7 +61,7 @@ export const useDocumentStore = defineStore('document', () => {
     activeTabId.value = id;
   }
 
-  // Façade over the active tab: most of the app reads/writes "the current
+  // Facade over the active tab: most of the app reads/writes "the current
   // document" without needing to know tabs exist.
   const info = computed(() => activeTab.value?.info ?? null);
   const totalPages = computed(() => info.value?.pageCount ?? 0);
@@ -72,6 +72,7 @@ export const useDocumentStore = defineStore('document', () => {
 
     return filePath.value.split(/[\\/]/).pop() ?? filePath.value;
   });
+
   const state = computed<DocumentState>(() => activeTab.value?.state ?? 'idle');
   const currentPage = computed(() => activeTab.value?.currentPage ?? 1);
   const error = computed(() => activeTab.value?.error ?? null);
@@ -79,9 +80,7 @@ export const useDocumentStore = defineStore('document', () => {
   const password = computed(() => activeTab.value?.password ?? null);
   const zoom = computed(() => activeTab.value?.zoom ?? 100);
 
-  // Most loads go through setLoading first, but setReady is also called
-  // directly in a few places (and by a lot of tests) as a shortcut — fall
-  // back to creating a tab from the document's own path when needed.
+  /** Ensures there's an active tab, creating one if necessary. Returns the active tab. */
   function ensureActiveTab(path: string): DocumentTab {
     if (activeTab.value)
       return activeTab.value;

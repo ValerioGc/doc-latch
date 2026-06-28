@@ -1,35 +1,33 @@
 // ─── Color tokens ────────────────────────────────────────────────────────────
-// (light/dark palette and accent-hover live directly in _themes.scss: each
-// value is only ever consumed there to build the themed CSS custom properties)
 
 $accent: #e24b4a;
 
 // ─── Typography ──────────────────────────────────────────────────────────────
 
-$font-size-xs:   11px;
-$font-size-sm:   12px;
-$font-size-base: 13px;
-$font-size-md:   14px;
-$font-size-lg:   15px;
-$font-size-xl:   16px;
+$font-size-xs:11px;
+$font-size-sm:12px;
+$font-size-base:13px;
+$font-size-md:14px;
+$font-size-lg:15px;
+$font-size-xl:16px;
 
 // ─── Spacing ─────────────────────────────────────────────────────────────────
 
-$space-1: 4px;
-$space-2: 8px;
-$space-3: 12px;
-$space-4: 16px;
-$space-5: 20px;
-$space-6: 24px;
+$space-1:4px;
+$space-2:8px;
+$space-3:12px;
+$space-4:16px;
+$space-5:20px;
+$space-6:24px;
 
 // ─── Border radius ───────────────────────────────────────────────────────────
 
-$radius-sm: 4px;
-$radius-md: 6px;
-$radius-lg: 8px;
-$radius-xl: 12px;
+$radius-sm:4px;
+$radius-md:6px;
+$radius-lg:8px;
+$radius-xl:12px;
 
 // ─── Transitions ─────────────────────────────────────────────────────────────
 
-$transition-fast: 0.1s ease;
-$transition-base: 0.2s ease;
+$transition-fast:0.1s ease;
+$transition-base:0.2s ease;

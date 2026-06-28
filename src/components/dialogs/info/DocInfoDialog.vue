@@ -3,12 +3,15 @@
   import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
+  import { useUiStore } from '@/stores/ui';
+  import { formatPdfDate, formatPageSize } from '@/composables/usePdfFormat';
   import BaseDialog from '@/components/dialogs/BaseDialog.vue';
 
   const emit = defineEmits<{ close: [] }>();
 
   const { t } = useI18n();
   const docStore = useDocumentStore();
+  const uiStore = useUiStore();
 
   const notAvailable = computed(() => t('dialog.docInfo.notAvailable'));
 
@@ -46,21 +49,21 @@
         label: t('dialog.docInfo.producer'), 
         value: info.producer ?? notAvailable.value 
       },
-      { 
-        label: t('dialog.docInfo.creationDate'), 
-        value: info.creationDate ?? notAvailable.value 
+      {
+        label: t('dialog.docInfo.creationDate'),
+        value: info.creationDate ? formatPdfDate(info.creationDate, uiStore.locale) : notAvailable.value
       },
-      { 
-        label: t('dialog.docInfo.modDate'), 
-        value: info.modDate ?? notAvailable.value 
+      {
+        label: t('dialog.docInfo.modDate'),
+        value: info.modDate ? formatPdfDate(info.modDate, uiStore.locale) : notAvailable.value
       },
-      { 
-        label: t('dialog.docInfo.version'), 
-        value: info.pdfVersion 
+      {
+        label: t('dialog.docInfo.version'),
+        value: info.pdfVersion
       },
-      { 
-        label: t('dialog.docInfo.size'), 
-        value: `${info.pageWidthPt} × ${info.pageHeightPt} pt` 
+      {
+        label: t('dialog.docInfo.size'),
+        value: formatPageSize(info.pageWidthPt, info.pageHeightPt)
       },
       { 
         label: t('dialog.docInfo.encrypted'), 

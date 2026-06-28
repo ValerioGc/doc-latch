@@ -18,7 +18,7 @@
       <p class="home_title">{{ $t('viewer.noDocument') }}</p>
       <p class="home_hint">{{ $t('viewer.openHint') }}</p>
       
-      <button class="btn btn_primary home_open-btn" @click="openFile">
+      <button class="btn btn_primary home_open_btn" @click="openFile">
         {{ $t('menu.open') }}
       </button>
     </div>
@@ -65,7 +65,7 @@
       color: var(--color-text-tertiary);
     }
 
-    &_open-btn {
+    &_open_btn {
       margin-top: $space-2;
     }    
   }

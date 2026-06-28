@@ -21,7 +21,7 @@ function handleThemeToggle(): void {
                     :checked="uiStore.theme === 'dark'"
                     @change="handleThemeToggle"
                 />
-                <span class="toggle-slider"></span>
+                <span class="toggle_slider"></span>
             </label>
         </template>
     </SettingsSection>

@@ -47,3 +47,116 @@
   border: none;
   border-top: 0.5px solid var(--color-border);
 }
+
+// ─── Toolbar menu ────────────────────────────────────────────────────────────
+
+%menu_item {
+  @extend %flex-row;
+
+  position: relative;
+  height: 40px;
+}
+
+%menu_btn {
+  @include flex-row($space-1);
+
+  height: 32px;
+  padding: 0 10px;
+  font-size: $font-size-base;
+  color: var(--color-text-primary);
+  background: transparent;
+  border: none;
+  border-radius: $radius-md;
+  cursor: pointer;
+
+  &:hover:not(.disabled),
+  &.open {
+    background: var(--color-bg-secondary);
+  }
+
+  &.disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+}
+
+%menu_btn_icon {
+  display: flex;
+  color: var(--color-text-secondary);
+
+  :deep(svg) {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+%chev {
+  color: var(--color-text-tertiary);
+
+  :deep(svg) {
+    width: 11px;
+    height: 11px;
+  }
+}
+
+%dropdown {
+  position: absolute;
+  top: 38px;
+  left: 0;
+  min-width: 230px;
+  background: var(--color-bg-primary);
+  border: 0.5px solid var(--color-border-strong);
+  border-radius: $radius-lg;
+  padding: $space-1;
+  z-index: 200;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+%drop_item {
+  @include flex-row(10px);
+
+  padding: 7px 10px;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+
+  &:hover:not(.disabled) {
+    background: var(--color-bg-secondary);
+  }
+
+  &.disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+}
+
+%drop_item_icon {
+  display: flex;
+  flex-shrink: 0;
+
+  :deep(svg) {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+%drop_item_label {
+  @extend %truncate;
+}
+
+%kbd {
+  @extend %text-xs;
+
+  margin-left: auto;
+}
+
+%drop_sep {
+  @extend %divider-x;
+
+  margin: 3px 4px;
+}

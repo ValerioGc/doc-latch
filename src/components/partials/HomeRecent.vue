@@ -20,13 +20,13 @@ const { openRecentFile } = usePdf();
         <ul v-else class="recent_list">
             <li v-for="entry in recentStore.entries" :key="entry.path" class="recent_row">
                 <button class="recent_item" :title="entry.path" @click="openRecentFile(entry.path)">
-                    <span class="recent_item-icon" aria-hidden="true" v-html="documentIcon"></span>
+                    <span class="recent_item_icon" aria-hidden="true" v-html="documentIcon"></span>
                     <span class="recent_name">{{ entry.name }}</span>
                 </button>
 
                 <button class="recent_remove" :title="$t('home.removeRecent')" :aria-label="$t('home.removeRecent')"
                     @click.stop="recentStore.remove(entry.path)">
-                    <span class="recent_remove-icon" aria-hidden="true" v-html="closeIcon"></span>
+                    <span class="recent_remove_icon" aria-hidden="true" v-html="closeIcon"></span>
                 </button>
             </li>
         </ul>
@@ -90,7 +90,7 @@ const { openRecentFile } = usePdf();
         text-align: left;
     }
 
-    &_item-icon {
+    &_item_icon {
         display: flex;
         flex-shrink: 0;
         color: var(--color-text-secondary);
@@ -126,7 +126,7 @@ const { openRecentFile } = usePdf();
         }
     }
 
-    &_remove-icon {
+    &_remove_icon {
         display: flex;
 
         :deep(svg) {

@@ -40,26 +40,26 @@
 
 <template>
   <div class="page_selector">
-    <button class="page_selector-trigger"
+    <button class="page_selector_trigger"
       :aria-label="$t('statusBar.goToPageLabel')"
       @click="toggle"
     >
-      <span class="page_selector-icon" aria-hidden="true" v-html="pageIcon"></span>
+      <span class="page_selector_icon" aria-hidden="true" v-html="pageIcon"></span>
       {{ $t('statusBar.page', { current: docStore.currentPage, total: docStore.totalPages }) }}
-      <span class="page_selector-chev" aria-hidden="true" v-html="chevronDownIcon"></span>
+      <span class="page_selector_chev" aria-hidden="true" v-html="chevronDownIcon"></span>
     </button>
 
-    <div v-if="open" class="page_selector-overlay" @click="close"></div>
+    <div v-if="open" class="page_selector_overlay" @click="close"></div>
 
-    <dialog v-if="open" open class="page_selector-panel" :aria-label="$t('statusBar.goToPageLabel')">
-      <input ref="inputRef" type="number" class="page_selector-input"
+    <dialog v-if="open" open class="page_selector_panel" :aria-label="$t('statusBar.goToPageLabel')">
+      <input ref="inputRef" type="number" class="page_selector_input"
         v-model="pageInput"
         min="1"
         :max="docStore.totalPages"
         @keydown.enter="goToPage"
         @keydown.escape="close"
       />
-      <button class="btn btn_primary page_selector-go" @click="goToPage">
+      <button class="btn btn_primary page_selector_go" @click="goToPage">
         {{ $t('statusBar.goToPage') }}
       </button>
     </dialog>
@@ -72,7 +72,7 @@
     position: relative;
     height: 100%;
 
-    &-trigger {
+    &_trigger {
       @include flex-row(5px);
 
       height: 100%;
@@ -89,7 +89,7 @@
       }
     }
 
-    &-icon {
+    &_icon {
       display: flex;
 
       :deep(svg) {
@@ -98,7 +98,7 @@
       }
     }
 
-    &-chev {
+    &_chev {
       display: flex;
       color: var(--color-text-tertiary);
 
@@ -108,13 +108,13 @@
       }
     }
 
-    &-overlay {
+    &_overlay {
       position: fixed;
       inset: 0;
       z-index: 199;
     }
 
-    &-panel {
+    &_panel {
       @include flex-row($space-1);
 
       position: absolute;
@@ -129,7 +129,7 @@
       z-index: 200;
     }
 
-    &-input {
+    &_input {
       width: 60px;
       height: 24px;
       padding: 0 $space-2;
@@ -146,7 +146,7 @@
       }
     }
 
-    &-go {
+    &_go {
       height: 24px;
       padding: 0 $space-3;
       font-size: $font-size-xs;

@@ -52,10 +52,10 @@
   <div class="titlebar">
     <div class="titlebar_drag" data-tauri-drag-region>
       <div class="titlebar_logo">
-        <div class="titlebar_logo-icon" aria-hidden="true">
+        <div class="titlebar_logo_icon" aria-hidden="true">
           <img src="@/assets/logo.svg" alt="" width="13" height="13" />
         </div>
-        <span class="titlebar_logo-text">DocLatch</span>
+        <span class="titlebar_logo_text">DocLatch</span>
       </div>
     </div>
 
@@ -92,7 +92,7 @@
     &_logo {
       @include flex-row($space-2);
     
-      &-icon {
+      &_icon {
         @extend %flex-center;
 
         width: 18px;
@@ -102,7 +102,7 @@
         flex-shrink: 0;
       }
 
-      &-text {
+      &_text {
         font-size: $font-size-base;
         font-weight: 500;
         color: var(--color-text-primary);

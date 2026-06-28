@@ -34,23 +34,23 @@ const currentLocale = computed(
 <template>
     <SettingsSection :img="languageIcon" :lang="$t('settings.languageLabel')" :title="$t('settings.language')">
         <template #settings>
-            <div class="lang-select">
+            <div class="lang_select">
 
                 <!-- Overlay to close the menu on outside click -->
-                <div v-if="langMenuOpen" class="lang-select_overlay" @click="langMenuOpen = false" />
+                <div v-if="langMenuOpen" class="lang_select_overlay" @click="langMenuOpen = false" />
 
-                <button type="button" class="lang-select_trigger" aria-haspopup="menu" :aria-expanded="langMenuOpen"
+                <button type="button" class="lang_select_trigger" aria-haspopup="menu" :aria-expanded="langMenuOpen"
                     :aria-label="$t('settings.languageLabel')" @click="langMenuOpen = !langMenuOpen">
-                    <img :src="currentLocale.flag" alt="" class="lang-select_flag" />
+                    <img :src="currentLocale.flag" alt="" class="lang_select_flag" />
                     {{ currentLocale.label }}
                 </button>
 
-                <ul v-if="langMenuOpen" class="lang-select_menu">
+                <ul v-if="langMenuOpen" class="lang_select_menu">
                     <li v-for="locale in locales" :key="locale.value">
-                        <button type="button" class="lang-select_option"
+                        <button type="button" class="lang_select_option"
                             :aria-current="locale.value === uiStore.locale"
                             @click="selectLocale(locale.value)">
-                            <img :src="locale.flag" alt="" class="lang-select_flag" />
+                            <img :src="locale.flag" alt="" class="lang_select_flag" />
                             {{ locale.label }}
                         </button>
                     </li>
@@ -62,7 +62,7 @@ const currentLocale = computed(
 
 <style lang="scss" scoped>
 
-    .lang-select {
+    .lang_select {
         position: relative;
 
         &_overlay {

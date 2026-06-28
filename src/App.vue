@@ -32,7 +32,9 @@
 <template>
   <div class="app">
     <TitleBar />
+    
     <Toolbar />
+
     <div class="app_body">
       <Sidebar v-if="docStore.isOpen && !uiStore.sidebarHidden" />
 
@@ -48,6 +50,7 @@
         </div>
       </div>
     </div>
+
     <StatusBar />
   </div>
 </template>

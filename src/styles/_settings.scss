@@ -1,10 +1,6 @@
 @use 'variables' as *;
 
 // ─── Settings dialog — shared toggle switch ──────────────────────────────────
-// Used by the settings partials (src/components/partials/settings/*) that
-// render a toggle into SettingsSection.vue's slot — slot content keeps the
-// scope of the component that wrote it, so each partial needs this mixin
-// locally rather than relying on a parent's <style scoped>.
 
 @mixin toggle-switch {
   position: relative;
@@ -19,7 +15,7 @@
     position: absolute;
   }
 
-  .toggle-slider {
+  .toggle_slider {
     position: absolute;
     inset: 0;
     background: var(--color-border-strong);
@@ -40,11 +36,11 @@
     }
   }
 
-  input:checked + .toggle-slider {
+  input:checked + .toggle_slider {
     background: var(--color-accent);
   }
 
-  input:checked + .toggle-slider::before {
+  input:checked + .toggle_slider::before {
     transform: translateX(14px);
   }
 }

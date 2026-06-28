@@ -42,22 +42,22 @@
 <template>
   <aside class="sidebar" aria-label="Miniature pagine">
 
-    <div class="sidebar-content">
+    <div class="sidebar_content">
 
       <!-- Toggle row -->
-      <div class="sidebar-top">
+      <div class="sidebar_top">
         <button :title="uiStore.sidebarCollapsed ? t('settings.expandSidebar') : t('settings.collapseSidebar')"
-          class="sidebar-toggle"
+          class="sidebar_toggle"
           :class="{ collapsed: uiStore.sidebarCollapsed }"
           :aria-label="uiStore.sidebarCollapsed ? t('settings.expandSidebar') : t('settings.collapseSidebar')"
           @click="uiStore.toggleSidebar()"
         >
-          <span class="sidebar-toggle-icon" aria-hidden="true" v-html="chevronIcon" />
+          <span class="sidebar_toggle_icon" aria-hidden="true" v-html="chevronIcon" />
         </button>
       </div>
 
       <div v-show="!uiStore.sidebarCollapsed"
-        class="sidebar-inner"
+        class="sidebar_inner"
         :style="{ width: `${uiStore.sidebarWidth}px` }"
       >
 
@@ -71,22 +71,22 @@
           :aria-current="page === docStore.currentPage ? 'page' : undefined"
           @click="docStore.setPage(page)"
         >
-          <div class="thumb-preview">
+          <div class="thumb_preview">
             <ThumbCanvas :page="page" />
           </div>
-          <span class="thumb-num">{{ page }}</span>
+          <span class="thumb_num">{{ page }}</span>
         </button>
 
         <!-- placeholder -->
-        <div v-if="docStore.totalPages === 0" class="empty-sidebar" aria-hidden="true">
-          <div class="thumb-placeholder-empty"> </div>
-          <div class="thumb-placeholder-empty" style="opacity: 0.5"></div>
+        <div v-if="docStore.totalPages === 0" class="empty_sidebar" aria-hidden="true">
+          <div class="thumb_placeholder_empty"> </div>
+          <div class="thumb_placeholder_empty" style="opacity: 0.5"></div>
         </div>
       </div>
     </div>
 
     <!-- Resize handle -->
-    <hr v-if="!uiStore.sidebarCollapsed" class="sidebar-resize"
+    <hr v-if="!uiStore.sidebarCollapsed" class="sidebar_resize"
       aria-orientation="vertical"
       :aria-label="t('settings.resizeSidebar')"
       @mousedown="onResizeStart"
@@ -103,14 +103,14 @@
     height: 100%;
     border-right: 0.5px solid var(--color-border);
 
-    &-content {
+    &_content {
       @extend %flex-col;
 
       flex-shrink: 0;
       background: var(--color-bg-secondary);
     }
 
-    &-top {
+    &_top {
       @extend %flex-center;
 
       height: 32px;
@@ -118,7 +118,7 @@
       flex-shrink: 0;
     }
 
-    &-inner {
+    &_inner {
       @include scrollbar(8px);
       @include flex-col($space-2);
 
@@ -130,7 +130,7 @@
       min-height: 0;
     }
 
-    &-resize {
+    &_resize {
       width: 5px;
       flex-shrink: 0;
       border: none;
@@ -144,7 +144,7 @@
     }
   }
 
-  .sidebar-toggle {
+  .sidebar_toggle {
     @extend %flex-center;
 
     width: 32px;
@@ -155,7 +155,7 @@
     cursor: pointer;
     color: var(--color-text-tertiary);
 
-    &-icon {
+    &_icon {
       display: flex;
     }
 
@@ -200,19 +200,19 @@
       border-color: var(--color-accent);
     }
     
-    &-preview {
+    &_preview {
       flex: 1;
       min-height: 0;
       width: 100%;
     }
-    
-    &-num {
+
+    &_num {
       font-size: 10px;
       color: var(--color-text-tertiary);
       flex-shrink: 0;
     }
 
-    &-placeholder-empty {
+    &_placeholder_empty {
       width: 100%;
       max-width: 150px;
       aspect-ratio: 4 / 5;
@@ -220,8 +220,8 @@
       border-radius: $radius-sm;
     }
   }
-    
-  .empty-sidebar {
+
+  .empty_sidebar {
     @include flex-col($space-2);
     width: 100%;
     align-items: center;

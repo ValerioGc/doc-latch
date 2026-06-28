@@ -17,7 +17,7 @@
                     :checked="uiStore.sidebarHidden"
                     @change="uiStore.setSidebarHidden(!uiStore.sidebarHidden)"
                 />
-                <span class="toggle-slider"></span>
+                <span class="toggle_slider"></span>
             </label>
         </template>
     </SettingsSection>
