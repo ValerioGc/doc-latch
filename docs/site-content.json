@@ -1,9 +1,9 @@
 {
   "site": {
     "name": "DocLatch",
-    "basePath": "https://valeriogc.github.io/doclatch/",
+    "basePath": "https://valeriogc.github.io/doc-latch/",
     "defaultLocale": "it",
-    "repositoryUrl": "https://github.com/ValerioGc/doclatch"
+    "repositoryUrl": "https://github.com/ValerioGc/doc-latch"
   },
   "locales": {
     "it": {
