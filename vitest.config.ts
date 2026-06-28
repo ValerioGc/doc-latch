@@ -24,6 +24,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    testTimeout: 15000,
     setupFiles: ['./tests/setup.ts'],
     coverage: {
       provider: 'v8',
