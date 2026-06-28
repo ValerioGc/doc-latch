@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
 import { useDocumentStore } from '@/stores/document';
 import { createTestI18n } from '../../helpers/testPlugins';
-import PasswordDialog from '@/components/dialogs/PasswordDialog.vue';
+import PasswordDialog from '@/components/dialogs/password/PasswordDialog.vue';
 
 const openWithPassword = vi.fn();
 

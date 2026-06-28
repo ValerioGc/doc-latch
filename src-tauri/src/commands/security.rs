@@ -23,6 +23,3 @@ pub fn remove_password(
 pub fn add_password(path: String, password: String, destination: String) -> Result<(), PdfError> {
     crate::pdf::security::add_password(&path, &password, &destination)
 }
-
-#[cfg(test)]
-mod tests;

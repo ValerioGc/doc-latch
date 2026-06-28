@@ -43,6 +43,3 @@ impl From<std::io::Error> for PdfError {
         }
     }
 }
-
-#[cfg(test)]
-mod tests;

@@ -27,7 +27,6 @@ pub struct SecurityInfo {
 }
 
 impl SecurityInfo {
-    /// An unencrypted document has no restrictions.
     fn unrestricted() -> Self {
         SecurityInfo {
             is_encrypted: false,
@@ -211,6 +210,3 @@ fn crypt_filter_method(encrypt_dict: &lopdf::Dictionary) -> Option<(String, Opti
         other => (other.to_string(), None),
     })
 }
-
-#[cfg(test)]
-mod tests;

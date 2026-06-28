@@ -1,10 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
 import { useDocumentStore } from '@/stores/document';
 import { useRecentStore } from '@/stores/recent';
 import { createTestI18n } from '../../helpers/testPlugins';
 import Toolbar from '@/components/layout/Toolbar.vue';
+
+// Toolbar lazy-loads its dialogs via defineAsyncComponent. Statically importing
+// them here once primes Vitest's module cache — without this, the dynamic
+// import() triggered the first time a dialog opens never resolves in this
+// test environment, leaving the component stuck in its pending state forever.
+import '@/components/dialogs/info/DocInfoDialog.vue';
+import '@/components/dialogs/info/SecurityInfoDialog.vue';
+import '@/components/dialogs/password/RemovePasswordDialog.vue';
+import '@/components/dialogs/password/AddPasswordDialog.vue';
+import '@/components/dialogs/info/InfoDialog.vue';
+import '@/components/dialogs/SettingsDialog.vue';
 
 const openFile = vi.fn();
 const openRecentFile = vi.fn();
@@ -49,28 +60,28 @@ describe('Toolbar', () => {
 
     expect(wrapper.find('.dropdown').exists()).toBe(false);
 
-    await wrapper.find('.menu-btn').trigger('click');
+    await wrapper.find('.menu_btn').trigger('click');
     expect(wrapper.find('.dropdown').exists()).toBe(true);
 
-    await wrapper.find('.menu-btn').trigger('click');
+    await wrapper.find('.menu_btn').trigger('click');
     expect(wrapper.find('.dropdown').exists()).toBe(false);
   });
 
   it('closes the dropdown when the overlay is clicked', async () => {
     const wrapper = mountToolbar();
 
-    await wrapper.find('.menu-btn').trigger('click');
+    await wrapper.find('.menu_btn').trigger('click');
     expect(wrapper.find('.dropdown').exists()).toBe(true);
 
-    await wrapper.find('.menu-overlay').trigger('click');
+    await wrapper.find('.menu_overlay').trigger('click');
     expect(wrapper.find('.dropdown').exists()).toBe(false);
   });
 
   it('calls openFile and closes the menu when "Apri file" is clicked', async () => {
     const wrapper = mountToolbar();
 
-    await wrapper.find('.menu-btn').trigger('click');
-    await wrapper.find('.drop-item').trigger('click');
+    await wrapper.find('.menu_btn').trigger('click');
+    await wrapper.find('.drop_item').trigger('click');
 
     expect(openFile).toHaveBeenCalledTimes(1);
     expect(wrapper.find('.dropdown').exists()).toBe(false);
@@ -79,8 +90,8 @@ describe('Toolbar', () => {
   it('disables the recent-files entry when there are no recent files', async () => {
     const wrapper = mountToolbar();
 
-    await wrapper.find('.menu-btn').trigger('click');
-    const recentBtn = wrapper.findAll('.drop-item')[1];
+    await wrapper.find('.menu_btn').trigger('click');
+    const recentBtn = wrapper.findAll('.drop_item')[1];
 
     expect(recentBtn.attributes('disabled')).toBeDefined();
   });
@@ -88,8 +99,8 @@ describe('Toolbar', () => {
   it('does not open the recent-files submenu when there are no recent files', async () => {
     const wrapper = mountToolbar();
 
-    await wrapper.find('.menu-btn').trigger('click');
-    const recentBtn = wrapper.findAll('.drop-item')[1];
+    await wrapper.find('.menu_btn').trigger('click');
+    const recentBtn = wrapper.findAll('.drop_item')[1];
     await recentBtn.trigger('click');
 
     expect(wrapper.find('.submenu').exists()).toBe(false);
@@ -98,10 +109,10 @@ describe('Toolbar', () => {
   it('opens the file menu on hover and closes it on mouse leave', async () => {
     const wrapper = mountToolbar();
 
-    await wrapper.find('.menu-item').trigger('mouseenter');
+    await wrapper.find('.menu_item').trigger('mouseenter');
     expect(wrapper.find('.dropdown').exists()).toBe(true);
 
-    await wrapper.find('.menu-item').trigger('mouseleave');
+    await wrapper.find('.menu_item').trigger('mouseleave');
     expect(wrapper.find('.dropdown').exists()).toBe(false);
   });
 
@@ -109,20 +120,20 @@ describe('Toolbar', () => {
     const recentStore = useRecentStore();
     recentStore.add('/path/to/file.pdf');
     const wrapper = mountToolbar();
-    await wrapper.find('.menu-btn').trigger('click');
+    await wrapper.find('.menu_btn').trigger('click');
 
-    await wrapper.find('.drop-item-wrap').trigger('mouseenter');
+    await wrapper.find('.drop_item_wrap').trigger('mouseenter');
     expect(wrapper.find('.submenu').exists()).toBe(true);
 
-    await wrapper.find('.drop-item-wrap').trigger('mouseleave');
+    await wrapper.find('.drop_item_wrap').trigger('mouseleave');
     expect(wrapper.find('.submenu').exists()).toBe(false);
   });
 
   it('does not open the recent-files submenu on hover when there are no recent files', async () => {
     const wrapper = mountToolbar();
-    await wrapper.find('.menu-btn').trigger('click');
+    await wrapper.find('.menu_btn').trigger('click');
 
-    await wrapper.find('.drop-item-wrap').trigger('mouseenter');
+    await wrapper.find('.drop_item_wrap').trigger('mouseenter');
 
     expect(wrapper.find('.submenu').exists()).toBe(false);
   });
@@ -132,11 +143,11 @@ describe('Toolbar', () => {
     recentStore.add('/path/to/file.pdf');
     const wrapper = mountToolbar();
 
-    await wrapper.find('.menu-btn').trigger('click');
-    const recentBtn = wrapper.findAll('.drop-item')[1];
+    await wrapper.find('.menu_btn').trigger('click');
+    const recentBtn = wrapper.findAll('.drop_item')[1];
     await recentBtn.trigger('click');
 
-    const submenuItem = wrapper.find('.submenu .drop-item');
+    const submenuItem = wrapper.find('.submenu .drop_item');
     expect(submenuItem.exists()).toBe(true);
     expect(submenuItem.text()).toContain('file.pdf');
 
@@ -148,8 +159,8 @@ describe('Toolbar', () => {
     const docStore = useDocumentStore();
     const wrapper = mountToolbar();
 
-    await wrapper.find('.menu-btn').trigger('click');
-    let docInfoBtn = wrapper.findAll('.drop-item').at(-1);
+    await wrapper.find('.menu_btn').trigger('click');
+    let docInfoBtn = wrapper.findAll('.drop_item').at(-1);
     expect(docInfoBtn?.attributes('disabled')).toBeDefined();
 
     docStore.setReady({
@@ -169,34 +180,38 @@ describe('Toolbar', () => {
     });
     await wrapper.vm.$nextTick();
 
-    docInfoBtn = wrapper.findAll('.drop-item').at(-1);
+    docInfoBtn = wrapper.findAll('.drop_item').at(-1);
     expect(docInfoBtn?.attributes('disabled')).toBeUndefined();
 
     await docInfoBtn?.trigger('click');
+    await flushPromises();
     expect(wrapper.findComponent({ name: 'DocInfoDialog' }).exists()).toBe(true);
   });
 
   it('opens the settings dialog when the settings icon is clicked', async () => {
     const wrapper = mountToolbar();
-    const settingsBtn = wrapper.findAll('.icon-btn')[0];
+    const settingsBtn = wrapper.findAll('.icon_btn')[0];
 
     await settingsBtn.trigger('click');
+    await flushPromises();
 
     expect(wrapper.findComponent({ name: 'SettingsDialog' }).exists()).toBe(true);
   });
 
   it('opens the info dialog when the info icon is clicked', async () => {
     const wrapper = mountToolbar();
-    const infoBtn = wrapper.findAll('.icon-btn')[1];
+    const infoBtn = wrapper.findAll('.icon_btn')[1];
 
     await infoBtn.trigger('click');
+    await flushPromises();
 
     expect(wrapper.findComponent({ name: 'InfoDialog' }).exists()).toBe(true);
   });
 
   it('closes the settings dialog when it emits close', async () => {
     const wrapper = mountToolbar();
-    await wrapper.findAll('.icon-btn')[0].trigger('click');
+    await wrapper.findAll('.icon_btn')[0].trigger('click');
+    await flushPromises();
 
     await wrapper.findComponent({ name: 'SettingsDialog' }).vm.$emit('close');
 
@@ -205,7 +220,8 @@ describe('Toolbar', () => {
 
   it('closes the info dialog when it emits close', async () => {
     const wrapper = mountToolbar();
-    await wrapper.findAll('.icon-btn')[1].trigger('click');
+    await wrapper.findAll('.icon_btn')[1].trigger('click');
+    await flushPromises();
 
     await wrapper.findComponent({ name: 'InfoDialog' }).vm.$emit('close');
 
@@ -216,13 +232,13 @@ describe('Toolbar', () => {
     const docStore = useDocumentStore();
     const wrapper = mountToolbar();
 
-    const protectionMenuBtn = wrapper.findAll('.menu-btn')[1];
+    const protectionMenuBtn = wrapper.findAll('.menu_btn')[1];
     expect(protectionMenuBtn.attributes('disabled')).toBeDefined();
 
     await protectionMenuBtn.trigger('click');
     expect(wrapper.find('.dropdown').exists()).toBe(false);
 
-    await wrapper.findAll('.menu-item')[1].trigger('mouseenter');
+    await wrapper.findAll('.menu_item')[1].trigger('mouseenter');
     expect(wrapper.find('.dropdown').exists()).toBe(false);
 
     docStore.setReady({
@@ -245,10 +261,11 @@ describe('Toolbar', () => {
     expect(protectionMenuBtn.attributes('disabled')).toBeUndefined();
 
     await protectionMenuBtn.trigger('click');
-    const securityInfoBtn = wrapper.find('.dropdown .drop-item');
+    const securityInfoBtn = wrapper.find('.dropdown .drop_item');
     expect(securityInfoBtn.exists()).toBe(true);
 
     await securityInfoBtn.trigger('click');
+    await flushPromises();
     expect(wrapper.findComponent({ name: 'SecurityInfoDialog' }).exists()).toBe(true);
   });
 
@@ -270,8 +287,9 @@ describe('Toolbar', () => {
       isEncrypted: false,
     });
     const wrapper = mountToolbar();
-    await wrapper.findAll('.menu-btn')[1].trigger('click');
-    await wrapper.find('.dropdown .drop-item').trigger('click');
+    await wrapper.findAll('.menu_btn')[1].trigger('click');
+    await wrapper.find('.dropdown .drop_item').trigger('click');
+    await flushPromises();
 
     await wrapper.findComponent({ name: 'SecurityInfoDialog' }).vm.$emit('close');
 
@@ -297,11 +315,12 @@ describe('Toolbar', () => {
     });
     const wrapper = mountToolbar();
 
-    await wrapper.findAll('.menu-btn')[1].trigger('click');
-    const addPasswordBtn = wrapper.findAll('.dropdown .drop-item')[1];
+    await wrapper.findAll('.menu_btn')[1].trigger('click');
+    const addPasswordBtn = wrapper.findAll('.dropdown .drop_item')[1];
     expect(addPasswordBtn.attributes('disabled')).toBeUndefined();
 
     await addPasswordBtn.trigger('click');
+    await flushPromises();
     expect(wrapper.findComponent({ name: 'AddPasswordDialog' }).exists()).toBe(true);
     expect(wrapper.find('.dropdown').exists()).toBe(false);
   });
@@ -325,8 +344,8 @@ describe('Toolbar', () => {
     });
     const wrapper = mountToolbar();
 
-    await wrapper.findAll('.menu-btn')[1].trigger('click');
-    const addPasswordBtn = wrapper.findAll('.dropdown .drop-item')[1];
+    await wrapper.findAll('.menu_btn')[1].trigger('click');
+    const addPasswordBtn = wrapper.findAll('.dropdown .drop_item')[1];
 
     expect(addPasswordBtn.attributes('disabled')).toBeDefined();
   });
@@ -349,8 +368,9 @@ describe('Toolbar', () => {
       isEncrypted: false,
     });
     const wrapper = mountToolbar();
-    await wrapper.findAll('.menu-btn')[1].trigger('click');
-    await wrapper.findAll('.dropdown .drop-item')[1].trigger('click');
+    await wrapper.findAll('.menu_btn')[1].trigger('click');
+    await wrapper.findAll('.dropdown .drop_item')[1].trigger('click');
+    await flushPromises();
 
     await wrapper.findComponent({ name: 'AddPasswordDialog' }).vm.$emit('close');
 
@@ -376,8 +396,8 @@ describe('Toolbar', () => {
     });
     const wrapper = mountToolbar();
 
-    await wrapper.findAll('.menu-btn')[1].trigger('click');
-    let removePasswordBtn = wrapper.findAll('.dropdown .drop-item').at(-1);
+    await wrapper.findAll('.menu_btn')[1].trigger('click');
+    let removePasswordBtn = wrapper.findAll('.dropdown .drop_item').at(-1);
     expect(removePasswordBtn?.attributes('disabled')).toBeDefined();
 
     docStore.setReady({
@@ -397,10 +417,11 @@ describe('Toolbar', () => {
     });
     await wrapper.vm.$nextTick();
 
-    removePasswordBtn = wrapper.findAll('.dropdown .drop-item').at(-1);
+    removePasswordBtn = wrapper.findAll('.dropdown .drop_item').at(-1);
     expect(removePasswordBtn?.attributes('disabled')).toBeUndefined();
 
     await removePasswordBtn?.trigger('click');
+    await flushPromises();
     expect(wrapper.findComponent({ name: 'RemovePasswordDialog' }).exists()).toBe(true);
     expect(wrapper.find('.dropdown').exists()).toBe(false);
   });
@@ -423,8 +444,9 @@ describe('Toolbar', () => {
       isEncrypted: true,
     });
     const wrapper = mountToolbar();
-    await wrapper.findAll('.menu-btn')[1].trigger('click');
-    await wrapper.findAll('.dropdown .drop-item').at(-1)?.trigger('click');
+    await wrapper.findAll('.menu_btn')[1].trigger('click');
+    await wrapper.findAll('.dropdown .drop_item').at(-1)?.trigger('click');
+    await flushPromises();
 
     await wrapper.findComponent({ name: 'RemovePasswordDialog' }).vm.$emit('close');
 
@@ -449,8 +471,9 @@ describe('Toolbar', () => {
       isEncrypted: false,
     });
     const wrapper = mountToolbar();
-    await wrapper.find('.menu-btn').trigger('click');
-    await wrapper.findAll('.drop-item').at(-1)?.trigger('click');
+    await wrapper.find('.menu_btn').trigger('click');
+    await wrapper.findAll('.drop_item').at(-1)?.trigger('click');
+    await flushPromises();
 
     await wrapper.findComponent({ name: 'DocInfoDialog' }).vm.$emit('close');
 

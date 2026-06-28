@@ -1,4 +1,4 @@
-use super::*;
+use doclatch_lib::pdf::error::PdfError;
 
 #[test]
 fn file_not_found_message_includes_the_path() {

@@ -40,7 +40,7 @@ describe('PageSelector', () => {
     docStore.setPage(3);
     const wrapper = mountSelector();
 
-    expect(wrapper.find('.page_selector-trigger').text()).toContain('Pag. 3 / 5');
+    expect(wrapper.find('.page_selector_trigger').text()).toContain('Pag. 3 / 5');
   });
 
   it('does not show the panel until the trigger is clicked', () => {
@@ -48,7 +48,7 @@ describe('PageSelector', () => {
     docStore.setReady(mockInfo);
     const wrapper = mountSelector();
 
-    expect(wrapper.find('.page_selector-panel').exists()).toBe(false);
+    expect(wrapper.find('.page_selector_panel').exists()).toBe(false);
   });
 
   it('opens the panel when the trigger is clicked', async () => {
@@ -56,9 +56,9 @@ describe('PageSelector', () => {
     docStore.setReady(mockInfo);
     const wrapper = mountSelector();
 
-    await wrapper.find('.page_selector-trigger').trigger('click');
+    await wrapper.find('.page_selector_trigger').trigger('click');
 
-    expect(wrapper.find('.page_selector-panel').exists()).toBe(true);
+    expect(wrapper.find('.page_selector_panel').exists()).toBe(true);
   });
 
   it('closes the panel when the trigger is clicked again', async () => {
@@ -66,10 +66,10 @@ describe('PageSelector', () => {
     docStore.setReady(mockInfo);
     const wrapper = mountSelector();
 
-    await wrapper.find('.page_selector-trigger').trigger('click');
-    await wrapper.find('.page_selector-trigger').trigger('click');
+    await wrapper.find('.page_selector_trigger').trigger('click');
+    await wrapper.find('.page_selector_trigger').trigger('click');
 
-    expect(wrapper.find('.page_selector-panel').exists()).toBe(false);
+    expect(wrapper.find('.page_selector_panel').exists()).toBe(false);
   });
 
   it('closes the panel when the overlay is clicked', async () => {
@@ -77,10 +77,10 @@ describe('PageSelector', () => {
     docStore.setReady(mockInfo);
     const wrapper = mountSelector();
 
-    await wrapper.find('.page_selector-trigger').trigger('click');
-    await wrapper.find('.page_selector-overlay').trigger('click');
+    await wrapper.find('.page_selector_trigger').trigger('click');
+    await wrapper.find('.page_selector_overlay').trigger('click');
 
-    expect(wrapper.find('.page_selector-panel').exists()).toBe(false);
+    expect(wrapper.find('.page_selector_panel').exists()).toBe(false);
   });
 
   it('jumps to the typed page when the go button is clicked', async () => {
@@ -88,12 +88,12 @@ describe('PageSelector', () => {
     docStore.setReady(mockInfo);
     const wrapper = mountSelector();
 
-    await wrapper.find('.page_selector-trigger').trigger('click');
-    await wrapper.find('.page_selector-input').setValue('4');
-    await wrapper.find('.page_selector-go').trigger('click');
+    await wrapper.find('.page_selector_trigger').trigger('click');
+    await wrapper.find('.page_selector_input').setValue('4');
+    await wrapper.find('.page_selector_go').trigger('click');
 
     expect(docStore.currentPage).toBe(4);
-    expect(wrapper.find('.page_selector-panel').exists()).toBe(false);
+    expect(wrapper.find('.page_selector_panel').exists()).toBe(false);
   });
 
   it('jumps to the typed page when Enter is pressed', async () => {
@@ -101,9 +101,9 @@ describe('PageSelector', () => {
     docStore.setReady(mockInfo);
     const wrapper = mountSelector();
 
-    await wrapper.find('.page_selector-trigger').trigger('click');
-    await wrapper.find('.page_selector-input').setValue('2');
-    await wrapper.find('.page_selector-input').trigger('keydown.enter');
+    await wrapper.find('.page_selector_trigger').trigger('click');
+    await wrapper.find('.page_selector_input').setValue('2');
+    await wrapper.find('.page_selector_input').trigger('keydown.enter');
 
     expect(docStore.currentPage).toBe(2);
   });
@@ -114,11 +114,11 @@ describe('PageSelector', () => {
     docStore.setPage(3);
     const wrapper = mountSelector();
 
-    await wrapper.find('.page_selector-trigger').trigger('click');
-    await wrapper.find('.page_selector-input').setValue('5');
-    await wrapper.find('.page_selector-input').trigger('keydown.escape');
+    await wrapper.find('.page_selector_trigger').trigger('click');
+    await wrapper.find('.page_selector_input').setValue('5');
+    await wrapper.find('.page_selector_input').trigger('keydown.escape');
 
-    expect(wrapper.find('.page_selector-panel').exists()).toBe(false);
+    expect(wrapper.find('.page_selector_panel').exists()).toBe(false);
     expect(docStore.currentPage).toBe(3);
   });
 
@@ -128,9 +128,9 @@ describe('PageSelector', () => {
     docStore.setPage(3);
     const wrapper = mountSelector();
 
-    await wrapper.find('.page_selector-trigger').trigger('click');
-    await wrapper.find('.page_selector-input').setValue('99');
-    await wrapper.find('.page_selector-go').trigger('click');
+    await wrapper.find('.page_selector_trigger').trigger('click');
+    await wrapper.find('.page_selector_input').setValue('99');
+    await wrapper.find('.page_selector_go').trigger('click');
 
     expect(docStore.currentPage).toBe(3);
   });

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createTestI18n } from '../../helpers/testPlugins';
-import InfoDialog from '@/components/dialogs/InfoDialog.vue';
+import InfoDialog from '@/components/dialogs/info/InfoDialog.vue';
 
 const open = vi.fn();
 

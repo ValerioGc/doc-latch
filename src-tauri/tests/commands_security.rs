@@ -1,4 +1,5 @@
-use super::*;
+use doclatch_lib::commands::security::{add_password, get_security_info};
+use doclatch_lib::pdf::error::PdfError;
 
 #[test]
 fn get_security_info_delegates_to_the_pdf_security_module() {

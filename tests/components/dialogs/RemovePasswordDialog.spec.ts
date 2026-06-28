@@ -3,7 +3,7 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
 import { useDocumentStore } from '@/stores/document';
 import { createTestI18n } from '../../helpers/testPlugins';
-import RemovePasswordDialog from '@/components/dialogs/RemovePasswordDialog.vue';
+import RemovePasswordDialog from '@/components/dialogs/password/RemovePasswordDialog.vue';
 import type { PdfError } from '@/types/pdf';
 
 const removePassword = vi.fn();

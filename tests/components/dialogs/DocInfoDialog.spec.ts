@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
 import { useDocumentStore } from '@/stores/document';
 import { createTestI18n } from '../../helpers/testPlugins';
-import DocInfoDialog from '@/components/dialogs/DocInfoDialog.vue';
+import DocInfoDialog from '@/components/dialogs/info/DocInfoDialog.vue';
 import type { DocumentInfo } from '@/types/pdf';
 
 const fullInfo: DocumentInfo = {
@@ -38,11 +38,11 @@ describe('DocInfoDialog', () => {
     docStore.setReady(fullInfo);
     const wrapper = mountDialog();
 
-    expect(wrapper.find('.info_list').text()).toContain('/test/doc.pdf');
-    expect(wrapper.find('.info_list').text()).toContain('Test Doc');
-    expect(wrapper.find('.info_list').text()).toContain('Author');
-    expect(wrapper.find('.info_list').text()).toContain('1.7');
-    expect(wrapper.find('.info_list').text()).toContain('595 × 842 pt');
+    expect(wrapper.find('.info').text()).toContain('/test/doc.pdf');
+    expect(wrapper.find('.info').text()).toContain('Test Doc');
+    expect(wrapper.find('.info').text()).toContain('Author');
+    expect(wrapper.find('.info').text()).toContain('1.7');
+    expect(wrapper.find('.info').text()).toContain('595 × 842 pt');
   });
 
   it('shows "yes" for encrypted documents', () => {
@@ -50,7 +50,7 @@ describe('DocInfoDialog', () => {
     docStore.setReady(fullInfo);
     const wrapper = mountDialog();
 
-    expect(wrapper.find('.info_list').text()).toContain('Sì');
+    expect(wrapper.find('.info').text()).toContain('Sì');
   });
 
   it('shows "no" for non-encrypted documents', () => {
@@ -58,7 +58,7 @@ describe('DocInfoDialog', () => {
     docStore.setReady({ ...fullInfo, isEncrypted: false });
     const wrapper = mountDialog();
 
-    expect(wrapper.find('.info_list').text()).toContain('No');
+    expect(wrapper.find('.info').text()).toContain('No');
   });
 
   it('falls back to "N/D" for missing optional fields', () => {
@@ -66,7 +66,7 @@ describe('DocInfoDialog', () => {
     docStore.setReady({ ...fullInfo, subject: null, creator: null, producer: null });
     const wrapper = mountDialog();
 
-    const notAvailableCount = wrapper.find('.info_list').text().match(/N\/D/g) ?? [];
+    const notAvailableCount = wrapper.find('.info').text().match(/N\/D/g) ?? [];
     expect(notAvailableCount.length).toBe(3);
   });
 

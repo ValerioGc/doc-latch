@@ -42,8 +42,8 @@ describe('TabBar', () => {
 
     const rows = wrapper.findAll('.tab_row');
     expect(rows).toHaveLength(2);
-    expect(rows[0].find('.tab_select-name').text()).toBe('first.pdf');
-    expect(rows[1].find('.tab_select-name').text()).toBe('second.pdf');
+    expect(rows[0].find('.tab_select_name').text()).toBe('first.pdf');
+    expect(rows[1].find('.tab_select_name').text()).toBe('second.pdf');
   });
 
   it('marks the active tab', () => {
@@ -107,7 +107,7 @@ describe('TabBar', () => {
 
     const wrapper = mountTabBar();
 
-    expect(wrapper.find('.tab_select-name').text()).toBe('Nuova scheda');
+    expect(wrapper.find('.tab_select_name').text()).toBe('Nuova scheda');
   });
 
   it('hides the tab shown in the split pane from the tab list', () => {
@@ -124,6 +124,6 @@ describe('TabBar', () => {
 
     const rows = wrapper.findAll('.tab_row');
     expect(rows).toHaveLength(1);
-    expect(rows[0].find('.tab_select-name').text()).toBe('first.pdf');
+    expect(rows[0].find('.tab_select_name').text()).toBe('first.pdf');
   });
 });

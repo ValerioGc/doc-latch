@@ -51,7 +51,7 @@ describe('SplitTabHeader', () => {
 
     const tab = wrapper.find('.split_header_tab');
     expect(tab.exists()).toBe(true);
-    expect(tab.find('.split_header_tab-name').text()).toBe('first.pdf');
+    expect(tab.find('.split_header_tab_name').text()).toBe('first.pdf');
   });
 
   it('renders nothing when there is no split tab', () => {

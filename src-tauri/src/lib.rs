@@ -1,7 +1,7 @@
-mod commands;
-mod pdf;
-#[cfg(test)]
-mod test_support;
+pub mod commands;
+pub mod pdf;
+#[cfg(any(test, feature = "test-support"))]
+pub mod test_support;
 
 use commands::document::{
     open_pdf, open_pdf_with_password, render_page, render_page_with_password,

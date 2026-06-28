@@ -36,7 +36,7 @@ describe('HomeScreen', () => {
   it('calls openFile when the main open button is clicked', async () => {
     const wrapper = mountHome();
 
-    await wrapper.find('.home_open-btn').trigger('click');
+    await wrapper.find('.home_open_btn').trigger('click');
 
     expect(openFile).toHaveBeenCalledTimes(1);
   });

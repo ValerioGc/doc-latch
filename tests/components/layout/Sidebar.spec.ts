@@ -41,7 +41,7 @@ describe('Sidebar', () => {
   it('shows the empty placeholder when no document is open', () => {
     const wrapper = mountSidebar();
 
-    expect(wrapper.find('.empty-sidebar').exists()).toBe(true);
+    expect(wrapper.find('.empty_sidebar').exists()).toBe(true);
     expect(wrapper.findAll('.thumb')).toHaveLength(0);
   });
 
@@ -51,7 +51,7 @@ describe('Sidebar', () => {
     const wrapper = mountSidebar();
 
     expect(wrapper.findAll('.thumb')).toHaveLength(3);
-    expect(wrapper.find('.empty-sidebar').exists()).toBe(false);
+    expect(wrapper.find('.empty_sidebar').exists()).toBe(false);
   });
 
   it('marks the current page thumbnail as active', () => {
@@ -94,7 +94,7 @@ describe('Sidebar', () => {
     const wrapper = mountSidebar();
 
     expect(uiStore.sidebarCollapsed).toBe(false);
-    await wrapper.find('.sidebar-toggle').trigger('click');
+    await wrapper.find('.sidebar_toggle').trigger('click');
     expect(uiStore.sidebarCollapsed).toBe(true);
   });
 
@@ -102,10 +102,10 @@ describe('Sidebar', () => {
     const uiStore = useUiStore();
     const wrapper = mountSidebar();
 
-    expect(wrapper.find('.sidebar-resize').exists()).toBe(true);
+    expect(wrapper.find('.sidebar_resize').exists()).toBe(true);
     uiStore.toggleSidebar();
     await wrapper.vm.$nextTick();
-    expect(wrapper.find('.sidebar-resize').exists()).toBe(false);
+    expect(wrapper.find('.sidebar_resize').exists()).toBe(false);
   });
 
   it('resizes the sidebar by dragging the resize handle', async () => {
@@ -113,7 +113,7 @@ describe('Sidebar', () => {
     uiStore.setSidebarWidth(150);
     const wrapper = mountSidebar();
 
-    await wrapper.find('.sidebar-resize').trigger('mousedown', { clientX: 100 });
+    await wrapper.find('.sidebar_resize').trigger('mousedown', { clientX: 100 });
     window.dispatchEvent(new MouseEvent('mousemove', { clientX: 130 }));
     window.dispatchEvent(new MouseEvent('mouseup'));
 

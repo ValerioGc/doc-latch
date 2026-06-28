@@ -20,10 +20,7 @@ pub fn open_pdf_with_password(
     open_pdf_with_password_impl(app.path().resource_dir().ok(), &path, &password)
 }
 
-/// Resource-dir-only composition for `open_pdf_with_password`, kept free of
-/// `AppHandle` so it can be unit-tested directly (constructing a real
-/// `AppHandle` in tests requires `tauri::test::mock_app()`, which crashes the
-/// test binary on this dev machine).
+/// Resource-dir-only composition for `open_pdf_with_password
 fn open_pdf_with_password_impl(
     resource_dir: Option<PathBuf>,
     path: &str,
@@ -62,8 +59,7 @@ pub fn render_page_with_password(
     )
 }
 
-/// Resource-dir-only composition for both render commands; see
-/// `open_pdf_with_password_impl` for why `AppHandle` isn't used here.
+/// Resource-dir-only composition for both render commands
 fn render_page_impl(
     resource_dir: Option<PathBuf>,
     path: &str,

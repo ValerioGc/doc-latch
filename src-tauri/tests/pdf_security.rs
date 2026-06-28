@@ -1,8 +1,8 @@
+use doclatch_lib::pdf::error::PdfError;
+use doclatch_lib::pdf::security::{add_password, get_security_info, remove_password};
+use doclatch_lib::test_support::{build_test_pdf, encrypt_test_pdf, save_to_temp};
 use lopdf::{dictionary, Document, Object};
 use tempfile::NamedTempFile;
-
-use super::*;
-use crate::test_support::{build_test_pdf, encrypt_test_pdf, save_to_temp};
 
 /// Builds on top of the shared unencrypted test PDF by attaching a hand-crafted
 /// `/Encrypt` dictionary to the trailer. The `/O` and `/U` hashes are placeholders

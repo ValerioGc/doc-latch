@@ -3,7 +3,7 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
 import { useDocumentStore } from '@/stores/document';
 import { createTestI18n } from '../../helpers/testPlugins';
-import SecurityInfoDialog from '@/components/dialogs/SecurityInfoDialog.vue';
+import SecurityInfoDialog from '@/components/dialogs/info/SecurityInfoDialog.vue';
 import type { SecurityInfo } from '@/types/pdf';
 
 const getSecurityInfo = vi.fn();
@@ -101,8 +101,8 @@ describe('SecurityInfoDialog', () => {
     const wrapper = mountDialog();
     await flushPromises();
 
-    expect(wrapper.find('.security_list').text()).toContain('AES');
-    expect(wrapper.find('.security_list').text()).toContain('256 bit');
+    expect(wrapper.find('.security').text()).toContain('AES');
+    expect(wrapper.find('.security').text()).toContain('256 bit');
     expect(wrapper.findAll('.security_value--denied')).toHaveLength(4);
   });
 

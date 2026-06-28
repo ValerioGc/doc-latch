@@ -8,9 +8,23 @@ const DATE_LOCALES: Record<SupportedLocale, string> = {
 };
 
 // PDF date format: "D:YYYYMMDDHHmmSSOHH'mm'" (e.g. "D:20220820125845+01'00'").
-// Every part after the year is optional, per the PDF spec.
-const PDF_DATE_PATTERN =
-  /^D:(?<year>\d{4})(?<month>\d{2})?(?<day>\d{2})?(?<hour>\d{2})?(?<minute>\d{2})?(?<second>\d{2})?(?<tzSign>[+\-Zz])?(?<tzHour>\d{2})?'?(?<tzMinute>\d{2})?/;
+// The date-time digits are captured as a single run and the timezone
+// separately; slicing the digit run below handles the "every part after the
+// year is optional" rule without a pile of individually optional groups.
+const PDF_DATE_PATTERN = /^D:(\d{4,14})(Z|[+-]\d{2}'?\d{2}'?)?/i;
+
+/** Converts a PDF timezone suffix (e.g. "+01'00'", "-05'00'", "Z") to a UTC offset in minutes. */
+function parseTzOffsetMinutes(tz: string | undefined): number {
+  if (!tz || tz.toUpperCase() === 'Z')
+    return 0;
+
+  const sign = tz.startsWith('-') ? -1 : 1;
+  const digits = tz.slice(1).replace(/'/g, '');
+  const hours = Number(digits.slice(0, 2));
+  const minutes = Number(digits.slice(2, 4) || '0');
+
+  return sign * (hours * 60 + minutes);
+}
 
 /**
  * Formats a raw PDF date string for display, localized to `locale` (EU-style
@@ -19,15 +33,19 @@ const PDF_DATE_PATTERN =
  */
 export function formatPdfDate(raw: string, locale: SupportedLocale): string {
   const match = PDF_DATE_PATTERN.exec(raw);
-  if (!match?.groups)
+  if (!match)
     return raw;
 
-  const { year, month = '01', day = '01', hour = '00', minute = '00', second = '00', tzSign, tzHour, tzMinute = '00' } = match.groups;
+  const digits = match[1];
+  const year = digits.slice(0, 4);
+  const month = digits.slice(4, 6) || '01';
+  const day = digits.slice(6, 8) || '01';
+  const hour = digits.slice(8, 10) || '00';
+  const minute = digits.slice(10, 12) || '00';
+  const second = digits.slice(12, 14) || '00';
 
   const utcMs = Date.UTC(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second));
-  const offsetMs = tzSign && tzSign !== 'Z' && tzSign !== 'z'
-    ? (tzSign === '-' ? -1 : 1) * (Number(tzHour ?? '0') * 60 + Number(tzMinute)) * 60000
-    : 0;
+  const offsetMs = parseTzOffsetMinutes(match[2]) * 60000;
 
   const date = new Date(utcMs - offsetMs);
   if (Number.isNaN(date.getTime()))
