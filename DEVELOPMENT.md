@@ -86,7 +86,3 @@ To publish a release:
 4. Tag and push: `git tag vX.Y.Z && git push origin vX.Y.Z`.
 
 The `scripts/extract-changelog.cjs <version>` script extracts only the changelog section for a given version (used by both `verify-release` and the release notes).
-
-## Roadmap
-
-Planned features and open questions are tracked in [ROADMAP.md](ROADMAP.md).
