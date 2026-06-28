@@ -52,11 +52,7 @@ pub fn save_to_temp(doc: &mut Document) -> NamedTempFile {
 
 /// Encrypts a document with real RC4-128 (V2/R3) encryption, for tests that need
 /// a genuinely password-protected PDF (e.g. to exercise `Document::load_with_password`).
-pub fn encrypt_test_pdf(
-    mut doc: Document,
-    owner_password: &str,
-    user_password: &str,
-) -> Document {
+pub fn encrypt_test_pdf(mut doc: Document, owner_password: &str, user_password: &str) -> Document {
     // Key derivation hashes in the trailer's file ID; a freshly built in-memory
     // document has none, so it must be set before computing the encryption state.
     doc.trailer.set(
