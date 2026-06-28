@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
+import { clearPageCache } from '@/composables/usePageRenderCache';
 import type { DocumentInfo, PdfError } from '@/types/pdf';
 
 export type DocumentState = 'idle' | 'loading' | 'ready' | 'password-required' | 'error';
 
 export interface DocumentTab {
   id: string
-  filePath: string
+  filePath: string | null
   info: DocumentInfo | null
   state: DocumentState
   currentPage: number
@@ -16,12 +17,13 @@ export interface DocumentTab {
   zoom: number
 }
 
-function createTab(path: string): DocumentTab {
+/** Creates a tab. With no path, it's an empty "new tab" placeholder showing the home screen. */
+function createTab(path: string | null = null): DocumentTab {
   return {
     id: crypto.randomUUID(),
     filePath: path,
     info: null,
-    state: 'loading',
+    state: path ? 'loading' : 'idle',
     currentPage: 1,
     error: null,
     password: null,
@@ -32,8 +34,32 @@ function createTab(path: string): DocumentTab {
 export const useDocumentStore = defineStore('document', () => {
   const tabs = ref<DocumentTab[]>([]);
   const activeTabId = ref<string | null>(null);
+  // The tab shown in the secondary split pane, alongside the active tab.
+  const splitTabId = ref<string | null>(null);
 
   const activeTab = computed(() => tabs.value.find((tab) => tab.id === activeTabId.value) ?? null);
+  const splitEnabled = computed(() => splitTabId.value !== null);
+
+  function getTab(id: string): DocumentTab | null {
+    return tabs.value.find((tab) => tab.id === id) ?? null;
+  }
+
+  /**
+   * Makes `id` the active tab. If `id` was shown in the split pane, the panes
+   * swap instead — the previously active tab takes its place there — so
+   * switching tabs never collapses the split view on its own.
+   */
+  function activateTab(id: string): void {
+    if (splitTabId.value === id) {
+      const previousActiveId = activeTabId.value;
+      const previousStillOpen = previousActiveId !== null && tabs.value.some((tab) => tab.id === previousActiveId);
+      activeTabId.value = id;
+      splitTabId.value = previousStillOpen ? previousActiveId : null;
+      return;
+    }
+
+    activeTabId.value = id;
+  }
 
   // Façade over the active tab: most of the app reads/writes "the current
   // document" without needing to know tabs exist.
@@ -66,11 +92,27 @@ export const useDocumentStore = defineStore('document', () => {
     return tab;
   }
 
-  /** Opens a new tab for `path` in the loading state and makes it active. */
+  /**
+   * Opens `path` in the loading state and makes it active. Reuses the active tab
+   * if it's an empty "new tab" placeholder, otherwise opens a new tab.
+   */
   function setLoading(path: string): void {
+    if (activeTab.value && activeTab.value.filePath === null) {
+      activeTab.value.filePath = path;
+      activeTab.value.state = 'loading';
+      return;
+    }
+
     const tab = createTab(path);
     tabs.value.push(tab);
-    activeTabId.value = tab.id;
+    activateTab(tab.id);
+  }
+
+  /** Opens an empty "new tab" placeholder showing the home screen, and makes it active. */
+  function newTab(): void {
+    const tab = createTab();
+    tabs.value.push(tab);
+    activateTab(tab.id);
   }
 
   /** Switches to the tab already open for `path`, if any. Returns whether one was found. */
@@ -79,7 +121,7 @@ export const useDocumentStore = defineStore('document', () => {
     if (!tab)
       return false;
 
-    activeTabId.value = tab.id;
+    activateTab(tab.id);
     return true;
   }
 
@@ -96,12 +138,14 @@ export const useDocumentStore = defineStore('document', () => {
       activeTab.value.state = 'password-required';
   }
 
-  function setError(err: PdfError): void {
-    if (!activeTab.value)
+  /** Sets the error on `tabId`, or on the active tab when omitted. */
+  function setError(err: PdfError, tabId?: string): void {
+    const tab = tabId ? getTab(tabId) : activeTab.value;
+    if (!tab)
       return;
 
-    activeTab.value.state = 'error';
-    activeTab.value.error = err;
+    tab.state = 'error';
+    tab.error = err;
   }
 
   function setPage(page: number): void {
@@ -121,7 +165,7 @@ export const useDocumentStore = defineStore('document', () => {
   /** Switches the active tab. */
   function setActiveTab(id: string): void {
     if (tabs.value.some((tab) => tab.id === id))
-      activeTabId.value = id;
+      activateTab(id);
   }
 
   /** Switches to the next (`delta` 1) or previous (`delta` -1) tab, wrapping around. */
@@ -131,7 +175,7 @@ export const useDocumentStore = defineStore('document', () => {
 
     const currentIndex = tabs.value.findIndex((tab) => tab.id === activeTabId.value);
     const nextIndex = (currentIndex + delta + tabs.value.length) % tabs.value.length;
-    activeTabId.value = tabs.value[nextIndex].id;
+    activateTab(tabs.value[nextIndex].id);
   }
 
   /** Closes the tab with the given id, activating a neighboring tab if it was the active one. */
@@ -141,11 +185,19 @@ export const useDocumentStore = defineStore('document', () => {
       return;
 
     tabs.value.splice(index, 1);
+    clearPageCache(id);
+
+    if (splitTabId.value === id)
+      splitTabId.value = null;
 
     if (activeTabId.value !== id)
       return;
 
-    activeTabId.value = (tabs.value[index] ?? tabs.value[index - 1] ?? null)?.id ?? null;
+    const nextId = (tabs.value[index] ?? tabs.value[index - 1] ?? null)?.id ?? null;
+    if (nextId)
+      activateTab(nextId);
+    else
+      activeTabId.value = null;
   }
 
   /** Closes the active tab. */
@@ -154,9 +206,31 @@ export const useDocumentStore = defineStore('document', () => {
       closeTab(activeTabId.value);
   }
 
+  /** Opens the split pane with the first ready tab other than the active one, if any. */
+  function openSplit(): void {
+    const candidate = tabs.value.find((tab) => tab.state === 'ready' && tab.id !== activeTabId.value);
+    if (candidate)
+      splitTabId.value = candidate.id;
+  }
+
+  /** Closes the split pane. */
+  function closeSplit(): void {
+    splitTabId.value = null;
+  }
+
+  /** Toggles the split pane open/closed. */
+  function toggleSplit(): void {
+    if (splitEnabled.value)
+      closeSplit();
+    else
+      openSplit();
+  }
+
   return {
     tabs,
     activeTabId,
+    splitTabId,
+    splitEnabled,
     state,
     info,
     currentPage,
@@ -167,7 +241,9 @@ export const useDocumentStore = defineStore('document', () => {
     isOpen,
     totalPages,
     fileName,
+    getTab,
     setLoading,
+    newTab,
     focusTabByPath,
     setReady,
     setPasswordRequired,
@@ -179,5 +255,8 @@ export const useDocumentStore = defineStore('document', () => {
     cycleTab,
     closeTab,
     close,
+    openSplit,
+    closeSplit,
+    toggleSplit,
   };
 });

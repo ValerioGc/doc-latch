@@ -113,6 +113,34 @@ export function usePdf() {
   }
 
   /**
+   * Renders a page for a specific tab, regardless of which tab is active.
+   * Used by the split pane, which shows a tab other than the active one.
+   * @param page - 0-based page index
+   * @param zoom - zoom factor (1.0 = 100%)
+   */
+  async function renderPageFor(tabId: string, page: number, zoom: number): Promise<PageRenderResult | null> {
+    const tab = docStore.getTab(tabId);
+    if (!tab?.filePath)
+      return null;
+
+    try {
+      if (tab.password) {
+        return await invoke<PageRenderResult>('render_page_with_password', {
+          path: tab.filePath,
+          page,
+          zoom,
+          password: tab.password,
+        });
+      }
+
+      return await invoke<PageRenderResult>('render_page', { path: tab.filePath, page, zoom });
+    } catch (err) {
+      docStore.setError(err as PdfError, tabId);
+      return null;
+    }
+  }
+
+  /**
    * Reads encryption status and permissions for a PDF, without needing its password.
    * Returns null on error; callers handle their own error display.
    */
@@ -165,6 +193,7 @@ export function usePdf() {
     openRecentFile,
     openWithPassword,
     renderPage,
+    renderPageFor,
     getSecurityInfo,
     removePassword,
     addPassword,

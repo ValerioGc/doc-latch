@@ -304,4 +304,162 @@ describe('useDocumentStore', () => {
       expect(store.activeTabId).not.toBe(secondTabId)
     })
   })
+
+  describe('newTab', () => {
+    it('opens an empty idle tab and activates it', () => {
+      const store = useDocumentStore()
+      store.setLoading('/test/doc.pdf')
+      const firstTabId = store.activeTabId
+
+      store.newTab()
+
+      expect(store.tabs).toHaveLength(2)
+      expect(store.activeTabId).not.toBe(firstTabId)
+      expect(store.state).toBe('idle')
+      expect(store.filePath).toBeNull()
+    })
+
+    it('setLoading fills the active empty tab instead of opening a new one', () => {
+      const store = useDocumentStore()
+      store.setLoading('/test/doc.pdf')
+      const firstTabId = store.activeTabId
+      store.newTab()
+      const placeholderTabId = store.activeTabId
+
+      store.setLoading('/test/second.pdf')
+
+      expect(store.tabs).toHaveLength(2)
+      expect(store.activeTabId).toBe(placeholderTabId)
+      expect(store.activeTabId).not.toBe(firstTabId)
+      expect(store.state).toBe('loading')
+      expect(store.filePath).toBe('/test/second.pdf')
+    })
+
+    it('setLoading opens a new tab when the active tab already has a document', () => {
+      const store = useDocumentStore()
+      store.setLoading('/test/doc.pdf')
+
+      store.setLoading('/test/second.pdf')
+
+      expect(store.tabs).toHaveLength(2)
+      expect(store.filePath).toBe('/test/second.pdf')
+    })
+  })
+
+  describe('split view', () => {
+    const secondInfo: DocumentInfo = { ...mockInfo, path: '/test/second.pdf', pageCount: 2 }
+
+    function openTwoReadyTabs() {
+      const store = useDocumentStore()
+      store.setLoading('/test/doc.pdf')
+      store.setReady(mockInfo)
+      const firstTabId = store.activeTabId!
+      store.setLoading('/test/second.pdf')
+      store.setReady(secondInfo)
+      const secondTabId = store.activeTabId!
+      return { store, firstTabId, secondTabId }
+    }
+
+    it('getTab returns the matching tab, or null', () => {
+      const { store, firstTabId } = openTwoReadyTabs()
+
+      expect(store.getTab(firstTabId)?.filePath).toBe('/test/doc.pdf')
+      expect(store.getTab('unknown-id')).toBeNull()
+    })
+
+    it('openSplit shows the first ready tab other than the active one', () => {
+      const { store, firstTabId, secondTabId } = openTwoReadyTabs()
+      expect(store.activeTabId).toBe(secondTabId)
+
+      store.openSplit()
+
+      expect(store.splitEnabled).toBe(true)
+      expect(store.splitTabId).toBe(firstTabId)
+    })
+
+    it('openSplit does nothing when there is no other ready tab', () => {
+      const store = useDocumentStore()
+      store.setLoading('/test/doc.pdf')
+      store.setReady(mockInfo)
+
+      store.openSplit()
+
+      expect(store.splitEnabled).toBe(false)
+    })
+
+    it('closeSplit closes the split pane', () => {
+      const { store } = openTwoReadyTabs()
+      store.openSplit()
+
+      store.closeSplit()
+
+      expect(store.splitEnabled).toBe(false)
+      expect(store.splitTabId).toBeNull()
+    })
+
+    it('toggleSplit opens then closes the split pane', () => {
+      const { store } = openTwoReadyTabs()
+
+      store.toggleSplit()
+      expect(store.splitEnabled).toBe(true)
+
+      store.toggleSplit()
+      expect(store.splitEnabled).toBe(false)
+    })
+
+    it('setActiveTab swaps the panes instead of closing the split when activating the tab shown there', () => {
+      const { store, firstTabId, secondTabId } = openTwoReadyTabs()
+      store.openSplit()
+      expect(store.splitTabId).toBe(firstTabId)
+
+      store.setActiveTab(firstTabId)
+
+      expect(store.splitEnabled).toBe(true)
+      expect(store.activeTabId).toBe(firstTabId)
+      expect(store.splitTabId).toBe(secondTabId)
+    })
+
+    it('cycleTab swaps the panes instead of closing the split when cycling onto the tab shown there', () => {
+      const { store, firstTabId, secondTabId } = openTwoReadyTabs()
+      store.openSplit()
+      expect(store.splitTabId).toBe(firstTabId)
+
+      store.cycleTab(1)
+
+      expect(store.activeTabId).toBe(firstTabId)
+      expect(store.splitEnabled).toBe(true)
+      expect(store.splitTabId).toBe(secondTabId)
+    })
+
+    it('closeTab closes the split pane if it closes the tab shown there', () => {
+      const { store, firstTabId } = openTwoReadyTabs()
+      store.openSplit()
+
+      store.closeTab(firstTabId)
+
+      expect(store.splitEnabled).toBe(false)
+      expect(store.splitTabId).toBeNull()
+    })
+
+    it('closeTab falls back to closing the split pane if the reassigned active tab cannot replace it', () => {
+      // Closing the active tab can force-activate its neighbor, which may be
+      // the tab currently shown in the split pane. The just-closed tab can't
+      // take its place there, so the split pane closes instead of swapping.
+      const store = useDocumentStore()
+      store.setLoading('/test/doc.pdf')
+      store.setReady(mockInfo)
+      const firstTabId = store.activeTabId!
+      store.setLoading('/test/second.pdf')
+      store.setReady(secondInfo)
+      const secondTabId = store.activeTabId!
+      store.setActiveTab(firstTabId)
+      store.openSplit()
+      expect(store.splitTabId).toBe(secondTabId)
+
+      store.closeTab(firstTabId)
+
+      expect(store.activeTabId).toBe(secondTabId)
+      expect(store.splitEnabled).toBe(false)
+    })
+  })
 })

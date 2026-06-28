@@ -1,14 +1,22 @@
 <script setup lang="ts">
 
+  import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
   import documentIcon from '@/assets/icons/document.svg?raw';
   import closeIcon from '@/assets/icons/window-close.svg?raw';
+  import addIcon from '@/assets/icons/zoom-in.svg?raw';
 
   const { t } = useI18n();
   const docStore = useDocumentStore();
 
-  function tabName(filePath: string): string {
+  // The tab shown in the split pane lives only there, not duplicated here.
+  const visibleTabs = computed(() => docStore.tabs.filter((tab) => tab.id !== docStore.splitTabId));
+
+  function tabName(filePath: string | null): string {
+    if (!filePath)
+      return t('menu.newTab');
+
     return filePath.split(/[\\/]/).pop() ?? filePath;
   }
 
@@ -16,14 +24,14 @@
 
 <template>
   <div class="tab_bar" role="tablist">
-    <div v-for="tab in docStore.tabs" :key="tab.id"
+    <div v-for="tab in visibleTabs" :key="tab.id"
       class="tab_row"
       :class="{ active: tab.id === docStore.activeTabId }"
     >
       <button class="tab_select"
         role="tab"
         :aria-selected="tab.id === docStore.activeTabId"
-        :title="tab.filePath"
+        :title="tab.filePath ?? t('menu.newTab')"
         @click="docStore.setActiveTab(tab.id)"
       >
         <span class="tab_select-icon" aria-hidden="true" v-html="documentIcon" />
@@ -37,6 +45,13 @@
         <span class="tab_close-icon" aria-hidden="true" v-html="closeIcon" />
       </button>
     </div>
+    <button class="tab_add"
+      :title="t('menu.newTab')"
+      :aria-label="t('menu.newTab')"
+      @click="docStore.newTab()"
+    >
+      <span class="tab_add-icon" aria-hidden="true" v-html="addIcon" />
+    </button>
   </div>
 </template>
 
@@ -46,6 +61,8 @@
     @include flex-row;
     @include scrollbar(6px);
 
+    flex: 1;
+    min-width: 0;
     background: var(--color-bg-secondary);
     border-bottom: 0.5px solid var(--color-border);
     overflow-x: auto;
@@ -124,5 +141,34 @@
       height: 9px;
     }
   }
+
+  .tab_add {
+    @extend %flex-center;
+
+    width: 28px;
+    height: 100%;
+    flex-shrink: 0;
+    margin-left: $space-1;
+    border: none;
+    background: transparent;
+    border-radius: $radius-sm;
+    color: var(--color-text-tertiary);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--color-bg-tertiary);
+      color: var(--color-accent);
+    }
+  }
+
+  .tab_add-icon {
+    display: flex;
+
+    :deep(svg) {
+      width: 11px;
+      height: 11px;
+    }
+  }
+
 
 </style>

@@ -41,7 +41,7 @@
 </script>
 
 <template>
-  <main ref="viewer" class="viewer" role="main" @wheel="onWheel">
+  <main ref="viewer" class="viewer" :class="{ 'viewer--split': docStore.splitEnabled }" role="main" @wheel="onWheel">
 
     <!-- Empty state -->
     <HomeScreen v-if="docStore.state === 'idle'" />
@@ -81,9 +81,14 @@
     @include scrollbar;
 
     flex: 1;
+    min-width: 0;
     background: var(--color-bg-tertiary);
     overflow-y: auto;
     align-items: center;
+
+    &--split {
+      border-right: 0.5px solid var(--color-border);
+    }
   }
 
   .empty_state {

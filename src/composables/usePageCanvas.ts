@@ -1,11 +1,16 @@
 import { ref, useTemplateRef } from 'vue';
 import { usePdf } from '@/composables/usePdf';
+import { useDocumentStore } from '@/stores/document';
+import { getCachedPage, setCachedPage } from '@/composables/usePageRenderCache';
+import type { PageRenderResult } from '@/types/pdf';
 
 /**
- * Shared canvas-drawing logic for PageCanvas/ThumbCanvas
+ * Shared canvas-drawing logic for PageCanvas/ThumbCanvas.
+ * @param tabId - renders the given tab instead of the active one (used by the split pane)
  */
-export function usePageCanvas() {
-  const { renderPage } = usePdf();
+export function usePageCanvas(tabId?: string) {
+  const docStore = useDocumentStore();
+  const { renderPage, renderPageFor } = usePdf();
   const canvasRef = useTemplateRef<HTMLCanvasElement>('canvas');
   const isLoading = ref(true);
 
@@ -14,7 +19,18 @@ export function usePageCanvas() {
    * @param zoom - zoom factor (1.0 = 100%)
    */
   async function renderToCanvas(page: number, zoom: number): Promise<void> {
-    const result = await renderPage(page - 1, zoom);
+    const resolvedTabId = tabId ?? docStore.activeTabId;
+    const cached = resolvedTabId ? getCachedPage(resolvedTabId, page, zoom) : null;
+
+    let result: PageRenderResult | null;
+    if (cached) {
+      result = cached;
+    } else {
+      result = tabId ? await renderPageFor(tabId, page - 1, zoom) : await renderPage(page - 1, zoom);
+      if (result && resolvedTabId)
+        setCachedPage(resolvedTabId, page, zoom, result);
+    }
+
     const canvas = canvasRef.value;
     if (!result || !canvas) {
       isLoading.value = false;

@@ -1,12 +1,16 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { defineComponent } from 'vue';
 import { mount } from '@vue/test-utils';
+import { setActivePinia, createPinia } from 'pinia';
 import { usePageCanvas } from '@/composables/usePageCanvas';
+import { useDocumentStore } from '@/stores/document';
+import { clearPageCache } from '@/composables/usePageRenderCache';
 
 const renderPage = vi.fn();
+const renderPageFor = vi.fn();
 
 vi.mock('@/composables/usePdf', () => ({
-  usePdf: () => ({ renderPage }),
+  usePdf: () => ({ renderPage, renderPageFor }),
 }));
 
 const HostWithCanvas = defineComponent({
@@ -33,7 +37,9 @@ class FakeImage {
 
 describe('usePageCanvas', () => {
   beforeEach(() => {
+    setActivePinia(createPinia());
     renderPage.mockReset();
+    renderPageFor.mockReset();
   });
 
   afterEach(() => {
@@ -99,5 +105,79 @@ describe('usePageCanvas', () => {
     const canvas = wrapper.find('canvas').element as HTMLCanvasElement;
     expect(canvas.width).toBe(42);
     expect(canvas.height).toBe(24);
+  });
+
+  describe('page cache', () => {
+    beforeEach(() => {
+      vi.spyOn(HTMLCanvasElement.prototype, 'getContext')
+        .mockReturnValue({ drawImage: vi.fn() } as unknown as CanvasRenderingContext2D);
+      vi.stubGlobal('Image', FakeImage);
+      renderPage.mockResolvedValue({ imageBase64: 'abc', widthPx: 10, heightPx: 20 });
+    });
+
+    it('reuses the cached page for the same tab, page and zoom instead of re-rendering', async () => {
+      const docStore = useDocumentStore();
+      docStore.setLoading('/a.pdf');
+
+      const first = mount(HostWithCanvas);
+      await first.vm.renderToCanvas(1, 1);
+      first.unmount();
+
+      const second = mount(HostWithCanvas);
+      await second.vm.renderToCanvas(1, 1);
+
+      expect(renderPage).toHaveBeenCalledTimes(1);
+    });
+
+    it('re-renders when the zoom is different', async () => {
+      const docStore = useDocumentStore();
+      docStore.setLoading('/a.pdf');
+      const wrapper = mount(HostWithCanvas);
+
+      await wrapper.vm.renderToCanvas(1, 1);
+      await wrapper.vm.renderToCanvas(1, 2);
+
+      expect(renderPage).toHaveBeenCalledTimes(2);
+    });
+
+    it('keys the cache by tab so different tabs do not collide', async () => {
+      const docStore = useDocumentStore();
+      docStore.setLoading('/a.pdf');
+      const first = mount(HostWithCanvas);
+      await first.vm.renderToCanvas(1, 1);
+
+      docStore.setLoading('/b.pdf');
+      const second = mount(HostWithCanvas);
+      await second.vm.renderToCanvas(1, 1);
+
+      expect(renderPage).toHaveBeenCalledTimes(2);
+    });
+
+    it('keeps separate cache entries per zoom, so a thumbnail render does not evict the full-page one', async () => {
+      const docStore = useDocumentStore();
+      docStore.setLoading('/a.pdf');
+      const wrapper = mount(HostWithCanvas);
+
+      await wrapper.vm.renderToCanvas(1, 1); // full-page zoom
+      await wrapper.vm.renderToCanvas(1, 0.5); // thumbnail zoom, same tab+page
+      await wrapper.vm.renderToCanvas(1, 1); // back to full-page zoom — should still be cached
+
+      expect(renderPage).toHaveBeenCalledTimes(2);
+    });
+
+    it('clearPageCache evicts entries so a re-opened tab renders again', async () => {
+      const docStore = useDocumentStore();
+      docStore.setLoading('/a.pdf');
+      const tabId = docStore.activeTabId!;
+      const first = mount(HostWithCanvas);
+      await first.vm.renderToCanvas(1, 1);
+
+      clearPageCache(tabId);
+
+      const second = mount(HostWithCanvas);
+      await second.vm.renderToCanvas(1, 1);
+
+      expect(renderPage).toHaveBeenCalledTimes(2);
+    });
   });
 });

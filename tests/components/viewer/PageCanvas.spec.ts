@@ -77,22 +77,22 @@ describe('PageCanvas', () => {
     expect(renderToCanvas).toHaveBeenCalledWith(2, 1);
   });
 
-  it('shows the spinner and hides the canvas while loading', () => {
+  it('shows the spinner over a blurred stale preview while loading', () => {
     useDocumentStore().setReady(mockInfo);
     isLoading.value = true;
     const wrapper = mountPage();
 
     expect(wrapper.find('.page_canvas_spinner').exists()).toBe(true);
-    expect(wrapper.find('canvas').classes()).toContain('page_canvas_el--hidden');
+    expect(wrapper.find('canvas').classes()).toContain('page_canvas_el--stale');
   });
 
-  it('hides the spinner and shows the canvas once loaded', () => {
+  it('hides the spinner and sharpens the canvas once loaded', () => {
     useDocumentStore().setReady(mockInfo);
     isLoading.value = false;
     const wrapper = mountPage();
 
     expect(wrapper.find('.page_canvas_spinner').exists()).toBe(false);
-    expect(wrapper.find('canvas').classes()).not.toContain('page_canvas_el--hidden');
+    expect(wrapper.find('canvas').classes()).not.toContain('page_canvas_el--stale');
   });
 
   it('resizes the box immediately on zoom change, without waiting for the re-render', async () => {

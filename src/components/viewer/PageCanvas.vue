@@ -8,29 +8,37 @@
 
   const props = defineProps<{
     page: number
+    // Renders this tab instead of the active one (used by the split pane).
+    tabId?: string
   }>();
 
   const docStore = useDocumentStore();
-  const { isLoading, renderToCanvas } = usePageCanvas();
+  const { isLoading, renderToCanvas } = usePageCanvas(props.tabId);
+
+  const tab = computed(() => (props.tabId ? docStore.getTab(props.tabId) : null));
+  const info = computed(() => (tab.value ? tab.value.info : docStore.info));
+  const zoom = computed(() => (tab.value ? tab.value.zoom : docStore.zoom));
 
   let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 
   // The box tracks the zoom level immediately (pure layout, no bitmap
   // involved), so the gap between pages stays correct even while the
   // re-render below is still pending.
-  const targetWidth = computed(() => (docStore.info?.pageWidthPt ?? 0) * docStore.zoom / 100);
-  const targetHeight = computed(() => (docStore.info?.pageHeightPt ?? 0) * docStore.zoom / 100);
+  const targetWidth = computed(() => (info.value?.pageWidthPt ?? 0) * zoom.value / 100);
+  const targetHeight = computed(() => (info.value?.pageHeightPt ?? 0) * zoom.value / 100);
 
   async function render(): Promise<void> {
-    await renderToCanvas(props.page, docStore.zoom / 100);
+    await renderToCanvas(props.page, zoom.value / 100);
   }
 
   onMounted(render);
 
-  // Re-render the page on zoom change. The stale canvas is hidden behind the
-  // loading spinner for the duration instead of being CSS-scaled: scaling
-  // blurred the bitmap and let it bleed visually over the gap between pages.
-  watch(() => docStore.zoom, () => {
+  // Re-render the page on zoom change. The container is resized to the new
+  // target dimensions immediately (pure layout), so the stale canvas just
+  // stretches to fill it as a blurry preview — contained within its own box,
+  // never bleeding over the gap between pages — while the spinner overlays
+  // on top until the sharp re-render lands.
+  watch(zoom, () => {
     isLoading.value = true;
 
     if (debounceTimer)
@@ -48,12 +56,12 @@
 
 <template>
   <div class="page_canvas" :style="{ width: `${targetWidth}px`, height: `${targetHeight}px` }">
-    <output v-if="isLoading" class="page_canvas_spinner" aria-label="Caricamento pagina"></output>
     <canvas ref="canvas"
       class="page_canvas_el"
-      :class="{ 'page_canvas_el--hidden': isLoading }"
+      :class="{ 'page_canvas_el--stale': isLoading }"
       :aria-label="`Pagina ${page}`"
     ></canvas>
+    <output v-if="isLoading" class="page_canvas_spinner" aria-label="Caricamento pagina"></output>
   </div>
 </template>
 
@@ -67,15 +75,18 @@
     min-width: 200px;
     min-height: 260px;
     position: relative;
+    overflow: hidden;
     transition: width $transition-fast, height $transition-fast;
 
     &_el {
       display: block;
       width: 100%;
       height: 100%;
+      transition: filter $transition-fast;
 
-      &--hidden {
-        display: none;
+      &--stale {
+        filter: blur(2px);
+        opacity: 0.7;
       }
     }
 
@@ -83,6 +94,10 @@
       display: block;
       width: 28px;
       height: 28px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       border: 2px solid var(--color-border);
       border-top-color: var(--color-accent);
       border-radius: 50%;
