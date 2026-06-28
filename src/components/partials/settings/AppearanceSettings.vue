@@ -13,15 +13,10 @@ function handleThemeToggle(): void {
 </script>
 
 <template>
-    <SettingsSection
-        :img="themeIcon"
-        :lang="$t('settings.darkMode')"
-        :title="$t('settings.appearance')"
-    >
+    <SettingsSection :img="themeIcon" :lang="$t('settings.darkMode')" :title="$t('settings.appearance')">
         <template #settings>
-            <label class="toggle-switch">
-                <input
-                    id="theme-toggle"
+            <label class="toggle_switch">
+                <input id="theme-toggle"
                     type="checkbox"
                     :checked="uiStore.theme === 'dark'"
                     @change="handleThemeToggle"
@@ -33,7 +28,7 @@ function handleThemeToggle(): void {
 </template>
 
 <style lang="scss" scoped>
-    .toggle-switch {
+    .toggle_switch {
         @include toggle-switch;
     }
 </style>

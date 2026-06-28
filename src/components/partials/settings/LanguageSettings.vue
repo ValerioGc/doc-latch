@@ -32,11 +32,7 @@ const currentLocale = computed(
 </script>
 
 <template>
-    <SettingsSection
-        :img="languageIcon"
-        :lang="$t('settings.languageLabel')"
-        :title="$t('settings.language')"
-    >
+    <SettingsSection :img="languageIcon" :lang="$t('settings.languageLabel')" :title="$t('settings.language')">
         <template #settings>
             <div class="lang-select">
 

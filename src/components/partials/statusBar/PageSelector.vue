@@ -1,12 +1,11 @@
 <script setup lang="ts">
 
   import { nextTick, ref } from 'vue';
-  import { useI18n } from 'vue-i18n';
+
   import { useDocumentStore } from '@/stores/document';
   import pageIcon from '@/assets/icons/page.svg?raw';
   import chevronDownIcon from '@/assets/icons/chevron-down.svg?raw';
 
-  const { t } = useI18n();
   const docStore = useDocumentStore();
 
   const open = ref(false);
@@ -19,7 +18,7 @@
       return;
 
     pageInput.value = String(docStore.currentPage);
-    void nextTick(() => {
+    nextTick(() => {
       inputRef.value?.focus();
       inputRef.value?.select();
     });
@@ -42,17 +41,17 @@
 <template>
   <div class="page_selector">
     <button class="page_selector-trigger"
-      :aria-label="t('statusBar.goToPageLabel')"
+      :aria-label="$t('statusBar.goToPageLabel')"
       @click="toggle"
     >
-      <span class="page_selector-icon" aria-hidden="true" v-html="pageIcon" />
-      {{ t('statusBar.page', { current: docStore.currentPage, total: docStore.totalPages }) }}
-      <span class="page_selector-chev" aria-hidden="true" v-html="chevronDownIcon" />
+      <span class="page_selector-icon" aria-hidden="true" v-html="pageIcon"></span>
+      {{ $t('statusBar.page', { current: docStore.currentPage, total: docStore.totalPages }) }}
+      <span class="page_selector-chev" aria-hidden="true" v-html="chevronDownIcon"></span>
     </button>
 
-    <div v-if="open" class="page_selector-overlay" @click="close" />
+    <div v-if="open" class="page_selector-overlay" @click="close"></div>
 
-    <dialog v-if="open" open class="page_selector-panel" :aria-label="t('statusBar.goToPageLabel')">
+    <dialog v-if="open" open class="page_selector-panel" :aria-label="$t('statusBar.goToPageLabel')">
       <input ref="inputRef" type="number" class="page_selector-input"
         v-model="pageInput"
         min="1"
@@ -61,7 +60,7 @@
         @keydown.escape="close"
       />
       <button class="btn btn_primary page_selector-go" @click="goToPage">
-        {{ t('statusBar.goToPage') }}
+        {{ $t('statusBar.goToPage') }}
       </button>
     </dialog>
   </div>

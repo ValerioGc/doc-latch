@@ -72,7 +72,7 @@ function onZoomSelect(e: Event): void {
         padding: 0;
         border: none;
 
-        .zoom_legend {
+        &_legend {
             position: absolute;
             width: 1px;
             height: 1px;
@@ -84,7 +84,7 @@ function onZoomSelect(e: Event): void {
             border: 0;
         }
 
-        .zoom_btn {
+        &_btn {
             @extend %flex-center;
             width: 24px;
             height: 24px;
@@ -109,7 +109,7 @@ function onZoomSelect(e: Event): void {
             }
         }
 
-        .zoom_select {
+        &_select {
             height: 24px;
             border: 0.5px solid var(--color-border-strong);
             background: var(--color-bg-primary);

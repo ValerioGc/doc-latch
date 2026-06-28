@@ -11,9 +11,8 @@
 <template>
     <SettingsSection :img="sidebarIcon" :lang="$t('settings.hideSidebar')">
         <template #settings>
-            <label class="toggle-switch" :aria-label="$t('settings.hideSidebar')">
-                <input
-                    id="sidebar-toggle"
+            <label class="toggle_switch" :aria-label="$t('settings.hideSidebar')">
+                <input id="sidebar-toggle"
                     type="checkbox"
                     :checked="uiStore.sidebarHidden"
                     @change="uiStore.setSidebarHidden(!uiStore.sidebarHidden)"
@@ -26,7 +25,7 @@
 
 <style lang="scss" scoped>
 
-    .toggle-switch {
+    .toggle_switch {
         @include toggle-switch;
     }
 
