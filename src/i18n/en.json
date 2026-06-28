@@ -113,7 +113,7 @@
       "close": "Close"
     },
     "about": {
-      "title": "PDF Reader",
+      "title": "DocLatch",
       "version": "Version {version}",
       "description": "Open source PDF reader built with Tauri 2, Rust and Vue 3.",
       "github": "View on GitHub",

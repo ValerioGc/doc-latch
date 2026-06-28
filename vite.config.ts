@@ -10,7 +10,7 @@ import cssnano from 'cssnano';
 const require = createRequire(import.meta.url);
 const pkg = require('./package.json') as { version: string };
 
-const githubUrl = 'https://github.com/ValerioGc/pdf-reader';
+const githubUrl = 'https://github.com/ValerioGc/doclatch';
 
 export default defineConfig({
   plugins: [vue()],

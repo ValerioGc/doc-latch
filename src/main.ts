@@ -10,7 +10,7 @@ import de from './i18n/de.json';
 
 import type { SupportedLocale } from '@/types/pdf';
 
-const savedLocale = (localStorage.getItem('pdf-reader:locale') ?? 'it') as SupportedLocale;
+const savedLocale = (localStorage.getItem('doclatch:locale') ?? 'it') as SupportedLocale;
 
 const i18n = createI18n({
   legacy: false,

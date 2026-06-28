@@ -1,17 +1,17 @@
 [package]
-name = "pdf-reader"
+name = "doclatch"
 version = "0.1.0"
-description = "PDF Reader/Editor — Tauri 2 + Rust"
+description = "DocLatch — Tauri 2 + Rust"
 authors = []
 edition = "2021"
 rust-version = "1.77"
 
 [[bin]]
-name = "pdf-reader"
+name = "doclatch"
 path = "src/main.rs"
 
 [lib]
-name = "pdf_reader_lib"
+name = "doclatch_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

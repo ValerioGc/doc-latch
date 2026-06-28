@@ -34,7 +34,7 @@ describe('main.ts bootstrap', () => {
   });
 
   it('uses the locale saved in localStorage', async () => {
-    localStorage.setItem('pdf-reader:locale', 'en');
+    localStorage.setItem('doclatch:locale', 'en');
 
     await import('@/main');
 

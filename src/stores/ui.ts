@@ -2,10 +2,10 @@ import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
 import type { Theme, SupportedLocale } from '@/types/pdf';
 
-const STORAGE_KEY_THEME = 'pdf-reader:theme';
-const STORAGE_KEY_LOCALE = 'pdf-reader:locale';
-const STORAGE_KEY_SIDEBAR = 'pdf-reader:sidebar-hidden';
-const STORAGE_KEY_SIDEBAR_WIDTH = 'pdf-reader:sidebar-width';
+const STORAGE_KEY_THEME = 'doclatch:theme';
+const STORAGE_KEY_LOCALE = 'doclatch:locale';
+const STORAGE_KEY_SIDEBAR = 'doclatch:sidebar-hidden';
+const STORAGE_KEY_SIDEBAR_WIDTH = 'doclatch:sidebar-width';
 
 const SIDEBAR_WIDTH_DEFAULT = 130;
 const SIDEBAR_WIDTH_MIN = 100;

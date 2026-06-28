@@ -21,7 +21,7 @@ describe('InfoDialog', () => {
   it('renders the app title and description', () => {
     const wrapper = mountDialog();
 
-    expect(wrapper.find('.dialog_title').text()).toBe('PDF Reader');
+    expect(wrapper.find('.dialog_title').text()).toBe('DocLatch');
     expect(wrapper.find('.dialog_desc').text()).toContain('Tauri 2');
   });
 

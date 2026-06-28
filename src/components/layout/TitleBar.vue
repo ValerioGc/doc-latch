@@ -54,7 +54,7 @@
         <div class="titlebar_logo-icon" aria-hidden="true">
           <img src="@/assets/logo.svg" alt="" width="13" height="13" />
         </div>
-        <span class="titlebar_logo-text">PDFReader</span>
+        <span class="titlebar_logo-text">DocLatch</span>
       </div>
     </div>
 

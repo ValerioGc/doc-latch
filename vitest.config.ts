@@ -10,7 +10,7 @@ export default defineConfig({
   plugins: [vue()],
   define: {
     'import.meta.env.VITE_APP_VERSION': JSON.stringify(pkg.version),
-    'import.meta.env.VITE_GITHUB_URL': JSON.stringify('https://github.com/ValerioGc/pdf-reader'),
+    'import.meta.env.VITE_GITHUB_URL': JSON.stringify('https://github.com/ValerioGc/doclatch'),
   },
   css: {
     preprocessorOptions: {

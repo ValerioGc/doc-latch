@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed, watch } from 'vue';
 
-const STORAGE_KEY_RECENT = 'pdf-reader:recent-files';
+const STORAGE_KEY_RECENT = 'doclatch:recent-files';
 const MAX_RECENT = 8;
 
 function readStoredFiles(): string[] {

@@ -16,14 +16,14 @@ describe('useRecentStore', () => {
   });
 
   it('restores persisted files from storage', () => {
-    localStorage.setItem('pdf-reader:recent-files', JSON.stringify(['/a.pdf', '/b.pdf']));
+    localStorage.setItem('doclatch:recent-files', JSON.stringify(['/a.pdf', '/b.pdf']));
     const store = useRecentStore();
 
     expect(store.files).toEqual(['/a.pdf', '/b.pdf']);
   });
 
   it('falls back to an empty list when storage contains malformed JSON', () => {
-    localStorage.setItem('pdf-reader:recent-files', '{not valid json');
+    localStorage.setItem('doclatch:recent-files', '{not valid json');
     const store = useRecentStore();
 
     expect(store.files).toEqual([]);
@@ -87,6 +87,6 @@ describe('useRecentStore', () => {
 
     await nextTick();
 
-    expect(JSON.parse(localStorage.getItem('pdf-reader:recent-files') ?? '[]')).toEqual(['/a.pdf']);
+    expect(JSON.parse(localStorage.getItem('doclatch:recent-files') ?? '[]')).toEqual(['/a.pdf']);
   });
 });

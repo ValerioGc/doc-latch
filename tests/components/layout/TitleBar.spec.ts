@@ -27,7 +27,7 @@ describe('TitleBar', () => {
   it('renders the app name', () => {
     const wrapper = mountTitleBar();
 
-    expect(wrapper.find('.titlebar_logo-text').text()).toBe('PDFReader');
+    expect(wrapper.find('.titlebar_logo-text').text()).toBe('DocLatch');
   });
 
   it('renders the three window controls with translated labels', () => {
