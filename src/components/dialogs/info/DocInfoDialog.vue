@@ -77,7 +77,7 @@
 
 <template>
   <BaseDialog :title="t('dialog.docInfo.title')" width="420px" @close="close">
-    <dl class="info_list">
+    <dl class="info">
       <template v-for="row in rows" :key="row.label">
         <dt class="info_label">{{ row.label }}</dt>
         <dd class="info_value">{{ row.value }}</dd>
@@ -94,22 +94,22 @@
 
 <style lang="scss" scoped>
 
-  .info_list {
+  .info {
     display: grid;
     grid-template-columns: 130px 1fr;
     row-gap: 10px;
     column-gap: $space-3;
-  }
 
-  .info_label {
-    font-size: $font-size-sm;
-    color: var(--color-text-tertiary);
-  }
+    &_label {
+      font-size: $font-size-sm;
+      color: var(--color-text-tertiary);
+    }
 
-  .info_value {
-    font-size: $font-size-base;
-    color: var(--color-text-primary);
-    word-break: break-word;
+    &_value {
+      font-size: $font-size-base;
+      color: var(--color-text-primary);
+      word-break: break-word;
+    }
   }
 
 </style>

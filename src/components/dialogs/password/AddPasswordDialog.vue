@@ -89,35 +89,38 @@
 
 <style lang="scss" scoped>
 
-  .add_password_desc {
-    font-size: $font-size-base;
-    color: var(--color-text-secondary);
-    margin-bottom: $space-2;
-  }
-
-  .add_password_input {
-    width: 100%;
-    padding: $space-2 $space-3;
-    font-size: $font-size-md;
-    background: var(--color-bg-secondary);
-    border: 0.5px solid var(--color-border-strong);
-    border-radius: $radius-lg;
-    color: var(--color-text-primary);
-    outline: none;
-
-    &:focus {
-      border-color: var(--color-accent);
-      box-shadow: 0 0 0 2px rgba($accent, 0.15);
+  .add_password {
+    
+    &_desc {
+      font-size: $font-size-base;
+      color: var(--color-text-secondary);
+      margin-bottom: $space-2;
     }
-  }
 
-  .add_password_msg {
-    font-size: $font-size-base;
-    color: var(--color-text-primary);
+    &_input {
+      width: 100%;
+      padding: $space-2 $space-3;
+      font-size: $font-size-md;
+      background: var(--color-bg-secondary);
+      border: 0.5px solid var(--color-border-strong);
+      border-radius: $radius-lg;
+      color: var(--color-text-primary);
+      outline: none;
 
-    &--error {
-      color: var(--color-accent);
-      margin-top: $space-2;
+      &:focus {
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 2px rgba($accent, 0.15);
+      }
+    }
+
+    &_msg {
+      font-size: $font-size-base;
+      color: var(--color-text-primary);
+
+      &--error {
+        color: var(--color-accent);
+        margin-top: $space-2;
+      }
     }
   }
 

@@ -1,14 +1,12 @@
 <script setup lang="ts">
 
   import { ref } from 'vue';
-  import { useI18n } from 'vue-i18n';
   import { usePdf } from '@/composables/usePdf';
   import { useDocumentStore } from '@/stores/document';
   import BaseDialog from '@/components/dialogs/BaseDialog.vue';
 
   const MAX_ATTEMPTS = 3;
 
-  const { t } = useI18n();
   const { openWithPassword } = usePdf();
   const docStore = useDocumentStore();
 
@@ -43,16 +41,16 @@
 </script>
 
 <template>
-  <BaseDialog :title="t('dialog.password.title')" width="340px" :close-on-backdrop="false" @close="cancel">
-    <p class="dialog_desc">{{ t('dialog.password.description') }}</p>
+  <BaseDialog :title="$t('dialog.password.title')" width="340px" :close-on-backdrop="false" @close="cancel">
+    <p class="dialog_desc">{{ $t('dialog.password.description') }}</p>
 
     <p v-if="wrongPassword" class="error_msg" role="alert">
-      {{ t('dialog.password.wrongPassword') }}
+      {{ $t('dialog.password.wrongPassword') }}
     </p>
 
     <input type="password" class="password_input"
       v-model="password"
-      :placeholder="t('dialog.password.placeholder')"
+      :placeholder="$t('dialog.password.placeholder')"
       :disabled="isLoading"
       autofocus
       @keydown.enter="submit"
@@ -60,10 +58,10 @@
 
     <template #actions>
       <button class="btn btn_ghost" :disabled="isLoading" @click="cancel">
-        {{ t('dialog.password.cancel') }}
+        {{ $t('dialog.password.cancel') }}
       </button>
       <button class="btn btn_primary" :disabled="isLoading || !password" @click="submit">
-        {{ t('dialog.password.confirm') }}
+        {{ $t('dialog.password.confirm') }}
       </button>
     </template>
   </BaseDialog>

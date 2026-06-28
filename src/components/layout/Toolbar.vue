@@ -1,14 +1,17 @@
 <script setup lang="ts">
+
   import { ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
   import { useRecentStore } from '@/stores/recent';
   import { usePdf } from '@/composables/usePdf';
-  import DocInfoDialog from '@/components/dialogs/DocInfoDialog.vue';
-  import SecurityInfoDialog from '@/components/dialogs/SecurityInfoDialog.vue';
-  import RemovePasswordDialog from '@/components/dialogs/RemovePasswordDialog.vue';
-  import AddPasswordDialog from '@/components/dialogs/AddPasswordDialog.vue';
-  import InfoDialog from '@/components/dialogs/InfoDialog.vue';
+
+  import DocInfoDialog from '@/components/dialogs/info/DocInfoDialog.vue';
+  import SecurityInfoDialog from '@/components/dialogs/info/SecurityInfoDialog.vue';
+  import RemovePasswordDialog from '@/components/dialogs/password/RemovePasswordDialog.vue';
+  import AddPasswordDialog from '@/components/dialogs/password/AddPasswordDialog.vue';
+
+  import InfoDialog from '@/components/dialogs/info/InfoDialog.vue';
   import SettingsDialog from '@/components/dialogs/SettingsDialog.vue';
   import fileIcon from '@/assets/icons/file.svg?raw';
   import settingsIcon from '@/assets/icons/settings.svg?raw';
@@ -120,6 +123,7 @@
 </script>
 
 <template>
+  
   <!-- Overlay to close menus on outside click -->
   <div v-if="openMenu" class="menu-overlay" @click="closeMenus" />
 

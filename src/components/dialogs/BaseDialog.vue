@@ -36,6 +36,7 @@
     dialogRef.value?.showModal();
     globalThis.addEventListener('keydown', onKeydown);
   });
+  
   onUnmounted(() => globalThis.removeEventListener('keydown', onKeydown));
 
 </script>

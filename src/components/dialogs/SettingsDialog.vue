@@ -19,7 +19,7 @@
 
     <SidebarSettings />
 
-    <div class="drop-sep"></div>
+    <div class="sep"></div>
     
     <LanguageSettings />
 
@@ -33,7 +33,7 @@
 
 <style lang="scss" scoped>
   
-  .drop-sep {
+  .sep {
     @extend %divider-x;
     margin: 4px 0;
   }

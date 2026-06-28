@@ -1,12 +1,9 @@
 <script setup lang="ts">
 
-  import { useI18n } from 'vue-i18n';
   import { open } from '@tauri-apps/plugin-shell';
   import BaseDialog from '@/components/dialogs/BaseDialog.vue';
 
   const emit = defineEmits<{ close: [] }>();
-
-  const { t } = useI18n();
 
   const version = import.meta.env.VITE_APP_VERSION;
   const githubUrl = import.meta.env.VITE_GITHUB_URL;
@@ -22,7 +19,7 @@
 </script>
 
 <template>
-  <BaseDialog :title="t('dialog.about.title')" width="340px" centered @close="close">
+  <BaseDialog :title="$t('dialog.about.title')" width="340px" centered @close="close">
     <template #header>
       <div class="dialog_logo">
 
@@ -30,19 +27,19 @@
           <img src="@/assets/logo.svg" alt="" width="16" height="16" />
         </div>
 
-        <h2 class="dialog_title">{{ t('dialog.about.title') }}</h2>
-        <p class="dialog_version">{{ t('dialog.about.version', { version }) }}</p>
+        <h2 class="dialog_title">{{ $t('dialog.about.title') }}</h2>
+        <p class="dialog_version">{{ $t('dialog.about.version', { version }) }}</p>
       </div>
     </template>
 
-    <p class="dialog_desc">{{ t('dialog.about.description') }}</p>
+    <p class="dialog_desc">{{ $t('dialog.about.description') }}</p>
 
     <template #actions>
       <button class="btn btn_ghost" @click="close">
-        {{ t('dialog.about.close') }}
+        {{ $t('dialog.about.close') }}
       </button>
       <button class="btn btn_primary" @click="openGithub">
-        {{ t('dialog.about.github') }}
+        {{ $t('dialog.about.github') }}
       </button>
     </template>
   </BaseDialog>

@@ -53,7 +53,7 @@
       {{ t('dialog.securityInfo.loadError') }}
     </p>
     <template v-else>
-      <dl class="security_list">
+      <dl class="security">
         <dt class="security_label">{{ t('dialog.securityInfo.encrypted') }}</dt>
         <dd class="security_value">
           {{ info.isEncrypted ? t('dialog.docInfo.yes') : t('dialog.docInfo.no') }}
@@ -76,7 +76,7 @@
 
       <template v-else>
         <h3 class="security_subtitle">{{ t('dialog.securityInfo.permissions') }}</h3>
-        <dl class="security_list">
+        <dl class="security">
           <template v-for="row in permissionRows" :key="row.label">
             <dt class="security_label">{{ row.label }}</dt>
             <dd class="security_value" :class="{ 'security_value--denied': !row.allowed }">
@@ -113,25 +113,25 @@
     margin-top: $space-2;
   }
 
-  .security_list {
+  .security {
     display: grid;
     grid-template-columns: 170px 1fr;
     row-gap: 10px;
     column-gap: $space-3;
-  }
 
-  .security_label {
-    font-size: $font-size-sm;
-    color: var(--color-text-tertiary);
-  }
+    &_label {
+      font-size: $font-size-sm;
+      color: var(--color-text-tertiary);
+    }
 
-  .security_value {
-    font-size: $font-size-base;
-    color: var(--color-text-primary);
-    word-break: break-word;
+    &_value {
+      font-size: $font-size-base;
+      color: var(--color-text-primary);
+      word-break: break-word;
 
-    &--denied {
-      color: var(--color-accent);
+      &--denied {
+        color: var(--color-accent);
+      }
     }
   }
 
