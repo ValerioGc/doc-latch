@@ -14,7 +14,7 @@ DocLatch is a lightweight desktop PDF viewer for Windows, Linux and macOS. Open 
 
 ## Installation
 
-Installers for Windows (`.exe`/`.msi`), Linux (`.deb`/`.rpm`/`.AppImage`) and macOS (`.dmg`) are available from the [Releases](https://github.com/ValerioGc/doclatch/releases) section of the repository.
+Installers for Windows (`.exe`/`.msi`), Linux (`.deb`/`.rpm`/`.AppImage`) and macOS (`.dmg`) are available from the [Releases](https://github.com/ValerioGc/doc-latch/releases) section of the repository.
 
 > **Note:** the Windows and macOS installers aren't signed with a paid certificate yet, so it's normal for Windows SmartScreen (or Gatekeeper on macOS) to show a warning on first launch. You can proceed by choosing "More info" → "Run anyway" (Windows) or the equivalent on macOS.
 
