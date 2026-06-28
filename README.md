@@ -30,7 +30,7 @@ DocLatch never uploads your files to any server: opening, browsing and password-
 
 ## Coming up
 
-Planned future work includes page management and reordering, document conversion to other formats, document signing (image/text overlay), filling existing form fields (AcroForm), and a guided demo on first launch. The full, up-to-date list is in [ROADMAP.md](ROADMAP.md).
+Planned future work includes page management and reordering, document conversion to other formats, document signing (image/text overlay), filling existing form fields (AcroForm), and a guided demo on first launch.
 
 ## Contributing or building from source
 
