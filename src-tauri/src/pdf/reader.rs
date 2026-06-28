@@ -59,7 +59,7 @@ pub fn open_pdf_with_password(path: &str, page_count: u32) -> Result<DocumentInf
         producer: None,
         creation_date: None,
         mod_date: None,
-        pdf_version: format!("{}", doc.version),
+        pdf_version: doc.version.to_string(),
         page_width_pt: 0.0,
         page_height_pt: 0.0,
         is_encrypted: true,
@@ -69,7 +69,7 @@ pub fn open_pdf_with_password(path: &str, page_count: u32) -> Result<DocumentInf
 /// Extracts `DocumentInfo` from an already-loaded `lopdf::Document`.
 fn extract_info(path: &str, doc: &Document) -> Result<DocumentInfo, PdfError> {
     let page_count = doc.get_pages().len() as u32;
-    let pdf_version = format!("{}", doc.version);
+    let pdf_version = doc.version.to_string();
     let is_encrypted = doc.is_encrypted();
 
     // Read optional Info dictionary
@@ -108,18 +108,19 @@ fn decode_pdf_string(bytes: &[u8]) -> String {
     bytes.iter().map(|&b| b as char).collect()
 }
 
+/// (title, author, subject, creator, producer, creation_date, mod_date)
+type InfoDictFields = (
+    Option<String>,
+    Option<String>,
+    Option<String>,
+    Option<String>,
+    Option<String>,
+    Option<String>,
+    Option<String>,
+);
+
 /// Reads string fields from the PDF /Info dictionary.
-fn read_info_dict(
-    doc: &Document,
-) -> (
-    Option<String>,
-    Option<String>,
-    Option<String>,
-    Option<String>,
-    Option<String>,
-    Option<String>,
-    Option<String>,
-) {
+fn read_info_dict(doc: &Document) -> InfoDictFields {
     let get_str = |key: &str| -> Option<String> {
         doc.trailer
             .get(b"Info")
@@ -143,10 +144,7 @@ fn read_info_dict(
     )
 }
 
-fn find_media_box<'a>(
-    doc: &'a Document,
-    page_id: lopdf::ObjectId,
-) -> Option<&'a Vec<lopdf::Object>> {
+fn find_media_box(doc: &Document, page_id: lopdf::ObjectId) -> Option<&Vec<lopdf::Object>> {
     let mut current_id = page_id;
 
     for _ in 0..32 {
