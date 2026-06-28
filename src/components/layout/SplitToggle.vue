@@ -1,14 +1,11 @@
 <script setup lang="ts">
 
   import { computed } from 'vue';
-  import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
   import splitIcon from '@/assets/icons/split.svg?raw';
 
-  const { t } = useI18n();
   const docStore = useDocumentStore();
 
-  // At least two ready tabs are needed to show two of them side by side.
   const canSplit = computed(() => docStore.tabs.filter((tab) => tab.state === 'ready').length >= 2);
 
 </script>
@@ -17,12 +14,12 @@
   <button class="split_toggle"
     :class="{ active: docStore.splitEnabled }"
     :disabled="!canSplit && !docStore.splitEnabled"
-    :title="t('menu.splitView')"
-    :aria-label="t('menu.splitView')"
+    :title="$t('menu.splitView')"
+    :aria-label="$t('menu.splitView')"
     :aria-pressed="docStore.splitEnabled"
     @click="docStore.toggleSplit()"
   >
-    <span class="split_toggle-icon" aria-hidden="true" v-html="splitIcon" />
+    <span class="split_toggle_icon" aria-hidden="true" v-html="splitIcon" />
   </button>
 </template>
 
@@ -55,14 +52,14 @@
       opacity: 0.4;
       cursor: default;
     }
-  }
 
-  .split_toggle-icon {
-    display: flex;
+    &_icon {
+      display: flex;
 
-    :deep(svg) {
-      width: 12px;
-      height: 12px;
+      :deep(svg) {
+        width: 12px;
+        height: 12px;
+      }
     }
   }
 

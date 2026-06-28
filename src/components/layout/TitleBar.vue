@@ -2,6 +2,7 @@
 
   import { useI18n } from 'vue-i18n';
   import { getCurrentWindow } from '@tauri-apps/api/window';
+  
   import minimizeIcon from '@/assets/icons/window-minimize.svg?raw';
   import maximizeIcon from '@/assets/icons/window-maximize.svg?raw';
   import closeIcon from '@/assets/icons/window-close.svg?raw';

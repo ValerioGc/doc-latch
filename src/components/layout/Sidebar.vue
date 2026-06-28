@@ -4,6 +4,7 @@
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
   import { useUiStore } from '@/stores/ui';
+
   import ThumbCanvas from '@/components/viewer/ThumbCanvas.vue';
   import chevronIcon from '@/assets/icons/chevron-left.svg?raw';
 
@@ -13,9 +14,6 @@
 
   const thumbRefs = ref<HTMLButtonElement[]>([]);
 
-  // The active thumbnail's `.active` class is reactive, but the sidebar's own
-  // scroll position isn't — without this it stays put when the page changes
-  // from outside the sidebar (e.g. the footer page selector).
   watch(() => docStore.currentPage, async (page) => {
     await nextTick();
     thumbRefs.value[page - 1]?.scrollIntoView?.({ block: 'nearest' });
@@ -45,7 +43,8 @@
   <aside class="sidebar" aria-label="Miniature pagine">
 
     <div class="sidebar-content">
-      <!-- Toggle row, always on top of the aside -->
+
+      <!-- Toggle row -->
       <div class="sidebar-top">
         <button :title="uiStore.sidebarCollapsed ? t('settings.expandSidebar') : t('settings.collapseSidebar')"
           class="sidebar-toggle"

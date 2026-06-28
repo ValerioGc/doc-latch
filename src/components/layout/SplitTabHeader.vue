@@ -23,14 +23,14 @@
 <template>
   <div class="split_header">
     <div v-if="tab" class="split_header_tab" role="tab" aria-selected="true">
-      <span class="split_header_tab-icon" aria-hidden="true" v-html="documentIcon" />
-      <span class="split_header_tab-name">{{ tabName(tab.filePath) }}</span>
+      <span class="split_header_tab_icon" aria-hidden="true" v-html="documentIcon" />
+      <span class="split_header_tab_name">{{ tabName(tab.filePath) }}</span>
       <button class="split_header_close"
         :title="t('menu.close')"
         :aria-label="t('menu.close')"
         @click="docStore.closeTab(tab.id)"
       >
-        <span class="split_header_close-icon" aria-hidden="true" v-html="closeIcon" />
+        <span class="split_header_close_icon" aria-hidden="true" v-html="closeIcon" />
       </button>
     </div>
   </div>
@@ -46,59 +46,58 @@
     border-left: 0.5px solid var(--color-border);
     border-bottom: 0.5px solid var(--color-border);
     background: var(--color-bg-secondary);
-  }
 
-  .split_header_tab {
-    @include flex-row($space-2);
+    &_tab {
+      @include flex-row($space-2);
 
-    min-width: 0;
-    padding: $space-2 $space-2 $space-2 $space-3;
-    font-size: $font-size-base;
-    color: var(--color-text-primary);
-    background: var(--color-bg-primary);
-  }
+      min-width: 0;
+      padding: $space-2 $space-2 $space-2 $space-3;
+      font-size: $font-size-base;
+      color: var(--color-text-primary);
+      background: var(--color-bg-primary);
 
-  .split_header_tab-icon {
-    display: flex;
-    flex-shrink: 0;
-    color: var(--color-text-secondary);
+      &_icon {
+        display: flex;
+        flex-shrink: 0;
+        color: var(--color-text-secondary);
 
-    :deep(svg) {
-      width: 13px;
-      height: 13px;
+        :deep(svg) {
+          width: 13px;
+          height: 13px;
+        }
+      }
+
+      &_name {
+        @extend %truncate;
+        flex: 1;
+      }
     }
-  }
 
-  .split_header_tab-name {
-    @extend %truncate;
+    &_close {
+      @extend %flex-center;
 
-    flex: 1;
-  }
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+      border: none;
+      background: transparent;
+      border-radius: $radius-sm;
+      color: var(--color-text-tertiary);
+      cursor: pointer;
 
-  .split_header_close {
-    @extend %flex-center;
+      &:hover {
+        background: var(--color-bg-tertiary);
+        color: var(--color-accent);
+      }
 
-    width: 26px;
-    height: 26px;
-    flex-shrink: 0;
-    border: none;
-    background: transparent;
-    border-radius: $radius-sm;
-    color: var(--color-text-tertiary);
-    cursor: pointer;
+      &_icon {
+        display: flex;
 
-    &:hover {
-      background: var(--color-bg-tertiary);
-      color: var(--color-accent);
-    }
-  }
-
-  .split_header_close-icon {
-    display: flex;
-
-    :deep(svg) {
-      width: 9px;
-      height: 9px;
+        :deep(svg) {
+          width: 9px;
+          height: 9px;
+        }
+      }
     }
   }
 

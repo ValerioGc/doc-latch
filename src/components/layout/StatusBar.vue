@@ -1,12 +1,11 @@
 <script setup lang="ts">
 
-  import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
   import documentIcon from '@/assets/icons/document.svg?raw';
-  import ZoomControls from '../partials/statusBar/ZoomControls.vue';
-  import PageSelector from '../partials/statusBar/PageSelector.vue';
 
-  const { t } = useI18n();
+  import ZoomControls from '@/components/partials/statusBar/ZoomControls.vue';
+  import PageSelector from '@/components/partials/statusBar/PageSelector.vue';
+
   const docStore = useDocumentStore();
 
 </script>
@@ -16,8 +15,8 @@
   
     <!-- File name -->
     <div class="s_item">
-      <span class="s_item_icon" aria-hidden="true" v-html="documentIcon" />
-      {{ docStore.fileName ?? t('statusBar.noFile') }}
+      <span class="s_item_icon" aria-hidden="true" v-html="documentIcon"></span>
+      {{ docStore.fileName ?? $t('statusBar.noFile') }}
     </div>
 
     <!-- Page info -->
