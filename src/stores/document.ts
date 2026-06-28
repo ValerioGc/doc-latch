@@ -97,7 +97,7 @@ export const useDocumentStore = defineStore('document', () => {
    * if it's an empty "new tab" placeholder, otherwise opens a new tab.
    */
   function setLoading(path: string): void {
-    if (activeTab.value && activeTab.value.filePath === null) {
+    if (activeTab.value?.filePath === null) {
       activeTab.value.filePath = path;
       activeTab.value.state = 'loading';
       return;

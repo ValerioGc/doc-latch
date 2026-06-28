@@ -5,6 +5,18 @@ import { useRecentStore } from '@/stores/recent';
 import type { DocumentInfo, PageRenderResult, PdfError, SecurityInfo } from '@/types/pdf';
 
 /**
+ * Reads encryption status and permissions for a PDF, without needing its password.
+ * Returns null on error; callers handle their own error display.
+ */
+async function getSecurityInfo(path: string): Promise<SecurityInfo | null> {
+  try {
+    return await invoke<SecurityInfo>('get_security_info', { path });
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Composable that wraps all Tauri IPC calls related to PDF operations.
  */
 export function usePdf() {
@@ -136,18 +148,6 @@ export function usePdf() {
       return await invoke<PageRenderResult>('render_page', { path: tab.filePath, page, zoom });
     } catch (err) {
       docStore.setError(err as PdfError, tabId);
-      return null;
-    }
-  }
-
-  /**
-   * Reads encryption status and permissions for a PDF, without needing its password.
-   * Returns null on error; callers handle their own error display.
-   */
-  async function getSecurityInfo(path: string): Promise<SecurityInfo | null> {
-    try {
-      return await invoke<SecurityInfo>('get_security_info', { path });
-    } catch {
       return null;
     }
   }

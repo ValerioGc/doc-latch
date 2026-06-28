@@ -87,12 +87,11 @@
     </div>
 
     <!-- Resize handle -->
-    <div v-if="!uiStore.sidebarCollapsed" class="sidebar-resize"
-      role="separator"
+    <hr v-if="!uiStore.sidebarCollapsed" class="sidebar-resize"
       aria-orientation="vertical"
       :aria-label="t('settings.resizeSidebar')"
       @mousedown="onResizeStart"
-    ></div>
+    />
   </aside>
 </template>
 
@@ -135,6 +134,8 @@
     &-resize {
       width: 5px;
       flex-shrink: 0;
+      border: none;
+      margin: 0;
       cursor: col-resize;
 
       &:hover {
