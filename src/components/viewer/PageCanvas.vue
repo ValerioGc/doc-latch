@@ -8,7 +8,6 @@
 
   const props = defineProps<{
     page: number
-    // Renders this tab instead of the active one (used by the split pane).
     tabId?: string
   }>();
 
@@ -21,9 +20,6 @@
 
   let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 
-  // The box tracks the zoom level immediately (pure layout, no bitmap
-  // involved), so the gap between pages stays correct even while the
-  // re-render below is still pending.
   const targetWidth = computed(() => (info.value?.pageWidthPt ?? 0) * zoom.value / 100);
   const targetHeight = computed(() => (info.value?.pageHeightPt ?? 0) * zoom.value / 100);
 
@@ -31,13 +27,6 @@
     await renderToCanvas(props.page, zoom.value / 100);
   }
 
-  onMounted(render);
-
-  // Re-render the page on zoom change. The container is resized to the new
-  // target dimensions immediately (pure layout), so the stale canvas just
-  // stretches to fill it as a blurry preview — contained within its own box,
-  // never bleeding over the gap between pages — while the spinner overlays
-  // on top until the sharp re-render lands.
   watch(zoom, () => {
     isLoading.value = true;
 
@@ -46,6 +35,8 @@
 
     debounceTimer = setTimeout(render, ZOOM_DEBOUNCE_MS);
   });
+
+  onMounted(render);
 
   onUnmounted(() => {
     if (debounceTimer)
@@ -61,7 +52,7 @@
       :class="{ 'page_canvas_el--stale': isLoading }"
       :aria-label="`Pagina ${page}`"
     ></canvas>
-    <output v-if="isLoading" class="page_canvas_spinner" aria-label="Caricamento pagina"></output>
+    <output v-if="isLoading" class="page_canvas_spinner"></output>
   </div>
 </template>
 

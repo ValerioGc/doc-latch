@@ -29,14 +29,14 @@
     min-width: 0;
     background: var(--color-bg-tertiary);
     overflow-y: auto;
-  }
-
-  .page_list {
-    @include flex-col($space-6);
-
-    align-items: center;
-    padding: $space-5 $space-4;
-    width: 100%;
+    
+    .page_list {
+      @include flex-col($space-6);
+      
+      align-items: center;
+      padding: $space-5 $space-4;
+      width: 100%;
+    }
   }
 
 </style>

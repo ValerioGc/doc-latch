@@ -3,8 +3,7 @@
   import { onMounted, onUnmounted, useTemplateRef } from 'vue';
   import { usePageCanvas } from '@/composables/usePageCanvas';
 
-  // Rendered well above the 150px CSS cap on .thumb so the bitmap never needs
-  // to be upscaled, even on high-DPI displays.
+  // Zoom factor for thumbnail rendering
   const THUMB_ZOOM = 0.5;
 
   const props = defineProps<{

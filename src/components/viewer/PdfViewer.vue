@@ -4,7 +4,7 @@
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
 
-  import PasswordDialog from '@/components/dialogs/PasswordDialog.vue';
+  import PasswordDialog from '@/components/dialogs/password/PasswordDialog.vue';
   import HomeScreen from '@/components/viewer/HomeScreen.vue';
   import PageCanvas from '@/components/viewer/PageCanvas.vue';
   import errorIcon from '@/assets/icons/error.svg?raw';
@@ -51,7 +51,7 @@
       <output class="spinner" aria-label="Caricamento"></output>
     </div>
 
-    <!-- Password required: handled by dialog -->
+    <!-- Password required -->
     <PasswordDialog v-if="docStore.state === 'password-required'" />
 
     <!-- Error state -->
