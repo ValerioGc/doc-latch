@@ -19,7 +19,7 @@ function parseTzOffsetMinutes(tz: string | undefined): number {
     return 0;
 
   const sign = tz.startsWith('-') ? -1 : 1;
-  const digits = tz.slice(1).replace(/'/g, '');
+  const digits = tz.slice(1).replaceAll("'", '');
   const hours = Number(digits.slice(0, 2));
   const minutes = Number(digits.slice(2, 4) || '0');
 
