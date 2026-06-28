@@ -10,6 +10,10 @@ concurrency:
 
 env:
   NODE_VERSION: 22.14.0
+  # Pinned bblanchon/pdfium-binaries release used to provide the native PDFium
+  # libraries that src-tauri/tauri.*.conf.json bundle as resources. Bump this
+  # tag deliberately when updating PDFium.
+  PDFIUM_VERSION: chromium/7906
 
 jobs:
 
@@ -22,6 +26,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Download PDFium binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p src-tauri/pdfium-bin/windows
+          curl -sL "https://github.com/bblanchon/pdfium-binaries/releases/download/${PDFIUM_VERSION//\//%2F}/pdfium-win-x64.tgz" -o pdfium.tgz
+          tar -xzf pdfium.tgz bin/pdfium.dll
+          mv bin/pdfium.dll src-tauri/pdfium-bin/windows/pdfium.dll
+          rm -rf bin pdfium.tgz
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -140,6 +154,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Download PDFium binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p src-tauri/pdfium-bin/windows
+          curl -sL "https://github.com/bblanchon/pdfium-binaries/releases/download/${PDFIUM_VERSION//\//%2F}/pdfium-win-x64.tgz" -o pdfium.tgz
+          tar -xzf pdfium.tgz bin/pdfium.dll
+          mv bin/pdfium.dll src-tauri/pdfium-bin/windows/pdfium.dll
+          rm -rf bin pdfium.tgz
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -190,6 +214,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Download PDFium binary
+        run: |
+          set -euo pipefail
+          mkdir -p src-tauri/pdfium-bin/linux
+          curl -sL "https://github.com/bblanchon/pdfium-binaries/releases/download/${PDFIUM_VERSION//\//%2F}/pdfium-linux-x64.tgz" -o pdfium.tgz
+          tar -xzf pdfium.tgz lib/libpdfium.so
+          mv lib/libpdfium.so src-tauri/pdfium-bin/linux/libpdfium.so
+          rm -rf lib pdfium.tgz
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -248,6 +281,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Download PDFium binary
+        run: |
+          set -euo pipefail
+          mkdir -p src-tauri/pdfium-bin/macos
+          curl -sL "https://github.com/bblanchon/pdfium-binaries/releases/download/${PDFIUM_VERSION//\//%2F}/pdfium-mac-x64.tgz" -o pdfium.tgz
+          tar -xzf pdfium.tgz lib/libpdfium.dylib
+          mv lib/libpdfium.dylib src-tauri/pdfium-bin/macos/libpdfium.dylib
+          rm -rf lib pdfium.tgz
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
