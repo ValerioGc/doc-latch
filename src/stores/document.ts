@@ -124,6 +124,16 @@ export const useDocumentStore = defineStore('document', () => {
       activeTabId.value = id;
   }
 
+  /** Switches to the next (`delta` 1) or previous (`delta` -1) tab, wrapping around. */
+  function cycleTab(delta: number): void {
+    if (tabs.value.length === 0)
+      return;
+
+    const currentIndex = tabs.value.findIndex((tab) => tab.id === activeTabId.value);
+    const nextIndex = (currentIndex + delta + tabs.value.length) % tabs.value.length;
+    activeTabId.value = tabs.value[nextIndex].id;
+  }
+
   /** Closes the tab with the given id, activating a neighboring tab if it was the active one. */
   function closeTab(id: string): void {
     const index = tabs.value.findIndex((tab) => tab.id === id);
@@ -166,6 +176,7 @@ export const useDocumentStore = defineStore('document', () => {
     setZoom,
     adjustZoom,
     setActiveTab,
+    cycleTab,
     closeTab,
     close,
   };

@@ -52,6 +52,19 @@ export function useKeyboard(): void {
           docStore.setZoom(100);
         }
         break;
+      case 'Tab':
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          docStore.cycleTab(e.shiftKey ? -1 : 1);
+        }
+        break;
+      case 'w':
+      case 'W':
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          docStore.close();
+        }
+        break;
     }
   }
 

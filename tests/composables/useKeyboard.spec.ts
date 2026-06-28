@@ -179,6 +179,64 @@ describe('useKeyboard', () => {
     expect(docStore.zoom).toBe(250);
   });
 
+  it('cycles to the next tab on Ctrl/Cmd+Tab', () => {
+    const docStore = useDocumentStore();
+    docStore.setLoading('/test/first.pdf');
+    const firstTabId = docStore.activeTabId;
+    docStore.setLoading('/test/second.pdf');
+    mount(Host);
+
+    press('Tab', { ctrlKey: true });
+
+    expect(docStore.activeTabId).toBe(firstTabId);
+  });
+
+  it('cycles to the previous tab on Ctrl/Cmd+Shift+Tab', () => {
+    const docStore = useDocumentStore();
+    docStore.setLoading('/test/first.pdf');
+    const firstTabId = docStore.activeTabId;
+    docStore.setLoading('/test/second.pdf');
+    mount(Host);
+
+    press('Tab', { ctrlKey: true, shiftKey: true });
+
+    expect(docStore.activeTabId).toBe(firstTabId);
+  });
+
+  it('ignores Tab without Ctrl/Cmd', () => {
+    const docStore = useDocumentStore();
+    docStore.setLoading('/test/first.pdf');
+    docStore.setLoading('/test/second.pdf');
+    const secondTabId = docStore.activeTabId;
+    mount(Host);
+
+    press('Tab');
+
+    expect(docStore.activeTabId).toBe(secondTabId);
+  });
+
+  it('closes the active tab on Ctrl/Cmd+W', () => {
+    const docStore = useDocumentStore();
+    docStore.setLoading('/test/first.pdf');
+    docStore.setLoading('/test/second.pdf');
+    mount(Host);
+
+    press('w', { ctrlKey: true });
+
+    expect(docStore.tabs).toHaveLength(1);
+  });
+
+  it('ignores w without Ctrl/Cmd', () => {
+    const docStore = useDocumentStore();
+    docStore.setLoading('/test/first.pdf');
+    docStore.setLoading('/test/second.pdf');
+    mount(Host);
+
+    press('w');
+
+    expect(docStore.tabs).toHaveLength(2);
+  });
+
   it('ignores shortcuts when typing in an input', () => {
     const docStore = useDocumentStore();
     docStore.setReady(mockInfo);

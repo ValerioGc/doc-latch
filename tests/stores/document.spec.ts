@@ -202,6 +202,50 @@ describe('useDocumentStore', () => {
       expect(store.activeTabId).toBe(activeId)
     })
 
+    it('cycleTab moves to the next tab and wraps around', () => {
+      const store = useDocumentStore()
+      store.setLoading('/test/doc.pdf')
+      const firstTabId = store.activeTabId
+      store.setLoading('/test/second.pdf')
+      const secondTabId = store.activeTabId
+      store.setLoading('/test/third.pdf')
+      const thirdTabId = store.activeTabId
+
+      store.cycleTab(1)
+      expect(store.activeTabId).toBe(firstTabId)
+
+      store.setActiveTab(secondTabId!)
+      store.cycleTab(1)
+      expect(store.activeTabId).toBe(thirdTabId)
+    })
+
+    it('cycleTab moves to the previous tab and wraps around', () => {
+      const store = useDocumentStore()
+      store.setLoading('/test/doc.pdf')
+      const firstTabId = store.activeTabId
+      store.setLoading('/test/second.pdf')
+      const secondTabId = store.activeTabId
+      store.setLoading('/test/third.pdf')
+      const thirdTabId = store.activeTabId
+
+      store.cycleTab(-1)
+      expect(store.activeTabId).toBe(secondTabId)
+
+      store.cycleTab(-1)
+      expect(store.activeTabId).toBe(firstTabId)
+
+      store.cycleTab(-1)
+      expect(store.activeTabId).toBe(thirdTabId)
+    })
+
+    it('cycleTab does nothing when there are no tabs', () => {
+      const store = useDocumentStore()
+
+      store.cycleTab(1)
+
+      expect(store.activeTabId).toBeNull()
+    })
+
     it('closeTab removes the tab and activates a neighbor when it was active', () => {
       const store = useDocumentStore()
       store.setLoading('/test/doc.pdf')
