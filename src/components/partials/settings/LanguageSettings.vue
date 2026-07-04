@@ -8,6 +8,7 @@ import flagGb from '@/assets/icons/flag-gb.svg?url';
 import flagFr from '@/assets/icons/flag-fr.svg?url';
 import flagDe from '@/assets/icons/flag-de.svg?url';
 import languageIcon from '@/assets/icons/language.svg?raw';
+import chevronDownIcon from '@/assets/icons/chevron-down.svg?raw';
 import SettingsSection from './SettingsSection.vue';
 
 const uiStore = useUiStore();
@@ -43,6 +44,7 @@ const currentLocale = computed(
                     :aria-label="$t('settings.languageLabel')" @click="langMenuOpen = !langMenuOpen">
                     <img :src="currentLocale.flag" alt="" class="lang_select_flag" />
                     {{ currentLocale.label }}
+                    <span class="lang_select_chev" :class="{ open: langMenuOpen }" aria-hidden="true" v-html="chevronDownIcon" />
                 </button>
 
                 <ul v-if="langMenuOpen" class="lang_select_menu">
@@ -72,22 +74,42 @@ const currentLocale = computed(
         }
 
         &_trigger {
-            @include flex-row($space-1);
+            @include flex-row($space-2);
             background: var(--color-bg-secondary);
             border: 0.5px solid var(--color-border-strong);
             border-radius: $radius-md;
-            font-size: $font-size-sm;
+            font-size: $font-size-base;
             color: var(--color-text-primary);
-            padding: 3px 8px;
+            padding: 6px 12px;
             cursor: pointer;
+
+            &:hover {
+                background: var(--color-bg-tertiary);
+            }
         }
 
         &_flag {
-            width: 15px;
-            height: 11px;
+            width: 18px;
+            height: 13px;
             border-radius: 2px;
             object-fit: cover;
             flex-shrink: 0;
+        }
+
+        &_chev {
+            display: flex;
+            margin-left: $space-1;
+            color: var(--color-text-tertiary);
+            transition: transform $transition-base;
+
+            :deep(svg) {
+                width: 12px;
+                height: 12px;
+            }
+
+            &.open {
+                transform: rotate(180deg);
+            }
         }
 
         &_menu {
@@ -96,6 +118,7 @@ const currentLocale = computed(
             bottom: calc(100% + 4px);
             right: 0;
             min-width: 140px;
+            list-style: none;
             background: var(--color-bg-primary);
             border: 0.5px solid var(--color-border-strong);
             border-radius: $radius-lg;
@@ -105,12 +128,12 @@ const currentLocale = computed(
         }
 
         &_option {
-            @include flex-row($space-1);
+            @include flex-row($space-2);
 
             width: 100%;
-            padding: 6px 8px;
+            padding: 8px 10px;
             border-radius: $radius-md;
-            font-size: $font-size-sm;
+            font-size: $font-size-base;
             color: var(--color-text-primary);
             background: transparent;
             border: none;

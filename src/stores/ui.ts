@@ -11,6 +11,13 @@ const SIDEBAR_WIDTH_DEFAULT = 130;
 const SIDEBAR_WIDTH_MIN = 100;
 const SIDEBAR_WIDTH_MAX = 260;
 
+const SUPPORTED_LOCALES: SupportedLocale[] = ['it', 'en', 'fr', 'de'];
+
+function resolveSystemLocale(): SupportedLocale {
+  const lang = navigator.language.toLowerCase().split('-')[0] as SupportedLocale;
+  return SUPPORTED_LOCALES.includes(lang) ? lang : 'en';
+}
+
 export const useUiStore = defineStore('ui', () => {
   // theme
   const theme = ref<Theme>((localStorage.getItem(STORAGE_KEY_THEME) as Theme) ?? 'light');
@@ -22,7 +29,7 @@ export const useUiStore = defineStore('ui', () => {
   );
   // locale
   const locale = ref<SupportedLocale>(
-    (localStorage.getItem(STORAGE_KEY_LOCALE) as SupportedLocale) ?? 'it',
+    (localStorage.getItem(STORAGE_KEY_LOCALE) as SupportedLocale) ?? resolveSystemLocale(),
   );
 
 
