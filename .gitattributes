@@ -1,0 +1,16 @@
+# Force LF line endings for all text files on every OS/runner.
+# This overrides core.autocrlf and keeps generated docs reproducible in CI.
+* text=auto eol=lf
+
+# Explicit binary files — no line-ending conversion, no diff
+*.dll binary
+*.so  binary
+*.dylib binary
+*.png binary
+*.jpg  binary
+*.jpeg binary
+*.ico binary
+*.tgz binary
+*.gz binary
+*.zip binary
+*.wasm binary

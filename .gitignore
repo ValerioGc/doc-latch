@@ -39,3 +39,7 @@ npm-debug.log*
 
 # Sonar
 .scannerwork/
+
+# Android signing 
+*.jks
+*.keystore

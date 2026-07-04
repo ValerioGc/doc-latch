@@ -330,9 +330,100 @@ jobs:
           path: release-assets/*
           if-no-files-found: error
 
+  build-android:
+    name: Build Android APK
+    needs: verify-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install Android NDK
+        run: |
+          yes | sdkmanager --licenses > /dev/null 2>&1 || true
+          sdkmanager "ndk;28.2.13676358"
+          echo "NDK_HOME=$ANDROID_HOME/ndk/28.2.13676358" >> "$GITHUB_ENV"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Add Android Rust targets
+        run: rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Initialize Android project
+        run: npx tauri android init
+
+      - name: Write release keystore
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > src-tauri/gen/android/app/doclatch-release.jks
+
+      - name: Inject Android signing config
+        run: |
+          awk '
+            /^    defaultConfig \{/ {
+              print "    signingConfigs {"
+              print "        create(\"release\") {"
+              print "            keyAlias = System.getenv(\"ANDROID_KEY_ALIAS\")"
+              print "            keyPassword = System.getenv(\"ANDROID_KEYSTORE_PASSWORD\")"
+              print "            storeFile = file(\"doclatch-release.jks\")"
+              print "            storePassword = System.getenv(\"ANDROID_KEYSTORE_PASSWORD\")"
+              print "        }"
+              print "    }"
+            }
+            /getByName\("release"\)/ {
+              print
+              print "            signingConfig = signingConfigs.getByName(\"release\")"
+              next
+            }
+            { print }
+          ' src-tauri/gen/android/app/build.gradle.kts > /tmp/build.gradle.kts
+          mv /tmp/build.gradle.kts src-tauri/gen/android/app/build.gradle.kts
+
+      - name: Build Android APK (release)
+        run: npx tauri android build
+
+      - name: Collect Android APK
+        run: |
+          set -euo pipefail
+          mkdir -p release-assets
+          apk=$(find src-tauri/gen/android/app/build/outputs/apk -name '*-release.apk' 2>/dev/null || true)
+          if [[ -z "$apk" ]]; then echo "No signed release APK found."; exit 1; fi
+          cp $apk release-assets/
+
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: release-assets/*.apk
+          if-no-files-found: error
+
   create-release:
     name: Create release
-    needs: [build-windows, build-linux, build-macos]
+    needs: [build-windows, build-linux, build-macos, build-android]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -361,6 +452,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: macos-installers
+          path: release-assets
+
+      - name: Download Android APK
+        uses: actions/download-artifact@v4
+        with:
+          name: android-apk
           path: release-assets
 
       - name: Compute combined checksums
