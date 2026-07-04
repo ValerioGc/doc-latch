@@ -14,6 +14,7 @@ env:
   # libraries that src-tauri/tauri.*.conf.json bundle as resources. Bump this
   # tag deliberately when updating PDFium.
   PDFIUM_VERSION: chromium/7906
+  NDK_VERSION: 28.2.13676358
 
 jobs:
 
@@ -25,9 +26,17 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Cache PDFium binary (Windows)
+        id: cache-pdfium-win
+        uses: actions/cache@v4
+        with:
+          path: src-tauri/pdfium-bin/windows
+          key: pdfium-windows-${{ env.PDFIUM_VERSION }}
 
       - name: Download PDFium binary
+        if: steps.cache-pdfium-win.outputs.cache-hit != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -83,7 +92,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -152,9 +161,17 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Cache PDFium binary (Windows)
+        id: cache-pdfium-win-build
+        uses: actions/cache@v4
+        with:
+          path: src-tauri/pdfium-bin/windows
+          key: pdfium-windows-${{ env.PDFIUM_VERSION }}
 
       - name: Download PDFium binary
+        if: steps.cache-pdfium-win-build.outputs.cache-hit != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -213,9 +230,17 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Cache PDFium binary (Linux)
+        id: cache-pdfium-linux
+        uses: actions/cache@v4
+        with:
+          path: src-tauri/pdfium-bin/linux
+          key: pdfium-linux-${{ env.PDFIUM_VERSION }}
 
       - name: Download PDFium binary
+        if: steps.cache-pdfium-linux.outputs.cache-hit != 'true'
         run: |
           set -euo pipefail
           mkdir -p src-tauri/pdfium-bin/linux
@@ -274,15 +299,23 @@ jobs:
 
   build-macos:
     name: Build macOS installers
-    needs: verify-release
+    needs: [verify-release, build-windows, build-linux]
     runs-on: macos-13
     permissions:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Cache PDFium binary (macOS)
+        id: cache-pdfium-macos
+        uses: actions/cache@v4
+        with:
+          path: src-tauri/pdfium-bin/macos
+          key: pdfium-macos-${{ env.PDFIUM_VERSION }}
 
       - name: Download PDFium binary
+        if: steps.cache-pdfium-macos.outputs.cache-hit != 'true'
         run: |
           set -euo pipefail
           mkdir -p src-tauri/pdfium-bin/macos
@@ -332,7 +365,7 @@ jobs:
 
   build-android:
     name: Build Android APK
-    needs: verify-release
+    needs: [verify-release, build-windows, build-linux]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -341,19 +374,29 @@ jobs:
       ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
 
+      - name: Cache Android NDK
+        id: cache-ndk
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/lib/android/sdk/ndk/${{ env.NDK_VERSION }}
+          key: android-ndk-${{ env.NDK_VERSION }}
+
       - name: Install Android NDK
+        if: steps.cache-ndk.outputs.cache-hit != 'true'
         run: |
           yes | sdkmanager --licenses > /dev/null 2>&1 || true
-          sdkmanager "ndk;28.2.13676358"
-          echo "NDK_HOME=$ANDROID_HOME/ndk/28.2.13676358" >> "$GITHUB_ENV"
+          sdkmanager "ndk;${{ env.NDK_VERSION }}"
+
+      - name: Set NDK_HOME
+        run: echo "NDK_HOME=$ANDROID_HOME/ndk/${{ env.NDK_VERSION }}" >> "$GITHUB_ENV"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -371,6 +414,15 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ hashFiles('src-tauri/Cargo.lock') }}
+          restore-keys: gradle-
 
       - name: Install npm dependencies
         run: npm ci
@@ -429,7 +481,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
