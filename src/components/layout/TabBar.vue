@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-  import { computed } from 'vue';
+  import { computed, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
   
@@ -12,6 +12,31 @@
   const docStore = useDocumentStore();
 
   const visibleTabs = computed(() => docStore.tabs.filter((tab) => tab.id !== docStore.splitTabId));
+
+  const dragOverTabId = ref<string | null>(null);
+
+  function onDragStart(tabId: string, e: DragEvent): void {
+    e.dataTransfer?.setData('doclatch/tab-id', tabId);
+  }
+
+  function onDragOver(tabId: string, e: DragEvent): void {
+    if (!e.dataTransfer?.types.includes('doclatch/tab-id') || !docStore.splitEnabled)
+      return;
+    e.preventDefault();
+    dragOverTabId.value = tabId;
+  }
+
+  function onDragLeave(tabId: string, e: DragEvent): void {
+    if (!(e.currentTarget as HTMLElement).contains(e.relatedTarget as Node))
+      dragOverTabId.value = null;
+  }
+
+  function onDrop(e: DragEvent): void {
+    dragOverTabId.value = null;
+    const draggedId = e.dataTransfer?.getData('doclatch/tab-id');
+    if (draggedId === docStore.splitTabId)
+      docStore.swapSplitTabs();
+  }
 
   function tabName(filePath: string | null): string {
     if (!filePath)
@@ -26,7 +51,12 @@
   <div class="tab" role="tablist">
     <div v-for="tab in visibleTabs" :key="tab.id"
       class="tab_row"
-      :class="{ active: tab.id === docStore.activeTabId }"
+      :class="{ active: tab.id === docStore.activeTabId, 'drop-over': dragOverTabId === tab.id }"
+      draggable="true"
+      @dragstart="onDragStart(tab.id, $event)"
+      @dragover="onDragOver(tab.id, $event)"
+      @dragleave="onDragLeave(tab.id, $event)"
+      @drop="onDrop($event)"
     >
       <button class="tab_select"
         role="tab"
@@ -82,6 +112,11 @@
 
       &.active {
         background: var(--color-bg-primary);
+      }
+
+      &.drop-over {
+        outline: 1.5px solid var(--color-accent);
+        outline-offset: -1.5px;
       }
     }
 

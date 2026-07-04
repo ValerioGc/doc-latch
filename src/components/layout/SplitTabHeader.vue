@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-  import { computed } from 'vue';
+  import { computed, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
   import documentIcon from '@/assets/icons/document.svg?raw';
@@ -10,6 +10,33 @@
   const docStore = useDocumentStore();
 
   const tab = computed(() => (docStore.splitTabId ? docStore.getTab(docStore.splitTabId) : null));
+
+  const dragOver = ref(false);
+
+  function onDragStart(e: DragEvent): void {
+    if (!tab.value)
+      return;
+    e.dataTransfer?.setData('doclatch/tab-id', tab.value.id);
+  }
+
+  function onDragOver(e: DragEvent): void {
+    if (!e.dataTransfer?.types.includes('doclatch/tab-id') || !docStore.splitEnabled)
+      return;
+    e.preventDefault();
+    dragOver.value = true;
+  }
+
+  function onDragLeave(e: DragEvent): void {
+    if (!(e.currentTarget as HTMLElement).contains(e.relatedTarget as Node))
+      dragOver.value = false;
+  }
+
+  function onDrop(e: DragEvent): void {
+    dragOver.value = false;
+    const draggedId = e.dataTransfer?.getData('doclatch/tab-id');
+    if (draggedId && draggedId !== docStore.splitTabId)
+      docStore.swapSplitTabs();
+  }
 
   function tabName(filePath: string | null): string {
     if (!filePath)
@@ -21,8 +48,18 @@
 </script>
 
 <template>
-  <div class="split_header">
-    <div v-if="tab" class="split_header_tab" role="tab" aria-selected="true">
+  <div class="split_header"
+    :class="{ 'drop-over': dragOver }"
+    @dragover="onDragOver"
+    @dragleave="onDragLeave"
+    @drop="onDrop"
+  >
+    <div v-if="tab" class="split_header_tab"
+      role="tab"
+      aria-selected="true"
+      draggable="true"
+      @dragstart="onDragStart"
+    >
       <span class="split_header_tab_icon" aria-hidden="true" v-html="documentIcon" />
       <span class="split_header_tab_name">{{ tabName(tab.filePath) }}</span>
       <button class="split_header_close"
@@ -46,6 +83,11 @@
     border-left: 0.5px solid var(--color-border);
     border-bottom: 0.5px solid var(--color-border);
     background: var(--color-bg-secondary);
+
+    &.drop-over {
+      outline: 1.5px solid var(--color-accent);
+      outline-offset: -1.5px;
+    }
 
     &_tab {
       @include flex-row($space-2);

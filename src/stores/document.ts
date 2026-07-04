@@ -217,6 +217,15 @@ export const useDocumentStore = defineStore('document', () => {
     splitTabId.value = null;
   }
 
+  /** Swaps the active (left) and split (right) pane tabs. */
+  function swapSplitTabs(): void {
+    if (!splitTabId.value || !activeTabId.value)
+      return;
+    const prev = activeTabId.value;
+    activeTabId.value = splitTabId.value;
+    splitTabId.value = prev;
+  }
+
   /** Toggles the split pane open/closed. */
   function toggleSplit(): void {
     if (splitEnabled.value)
@@ -257,5 +266,6 @@ export const useDocumentStore = defineStore('document', () => {
     openSplit,
     closeSplit,
     toggleSplit,
+    swapSplitTabs,
   };
 });
