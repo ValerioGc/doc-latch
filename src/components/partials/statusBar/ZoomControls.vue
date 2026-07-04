@@ -104,8 +104,8 @@ function onZoomSelect(e: Event): void {
             }
 
             & :deep(svg) {
-                width: 12px;
-                height: 12px;
+                width: 13px;
+                height: 13px;
             }
         }
 

@@ -152,8 +152,8 @@
       color: var(--color-text-secondary);
 
       :deep(svg) {
-        width: 18px;
-        height: 18px;
+        width: 19px;
+        height: 19px;
       }
     }
   }

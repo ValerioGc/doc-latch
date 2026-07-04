@@ -160,8 +160,8 @@
     }
 
     :deep(svg) {
-      width: 14px;
-      height: 14px;
+      width: 15px;
+      height: 15px;
       transition: transform $transition-base;
     }
 
@@ -207,8 +207,8 @@
     }
 
     &_num {
-      font-size: 10px;
-      color: var(--color-text-tertiary);
+      font-size: $font-size-sm;
+      color: var(--color-text-secondary);
       flex-shrink: 0;
     }
 

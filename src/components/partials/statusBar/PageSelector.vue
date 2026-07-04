@@ -73,14 +73,14 @@
     height: 100%;
 
     &_trigger {
-      @include flex-row(5px);
+      @include flex-row(6px);
 
       height: 100%;
-      padding: 0 10px;
+      padding: 0 12px;
       border: none;
       border-right: 0.5px solid var(--color-border);
       background: transparent;
-      font-size: $font-size-xs;
+      font-size: $font-size-sm;
       color: var(--color-text-secondary);
       cursor: pointer;
 
@@ -93,8 +93,8 @@
       display: flex;
 
       :deep(svg) {
-        width: 12px;
-        height: 12px;
+        width: 14px;
+        height: 14px;
       }
     }
 
@@ -103,8 +103,8 @@
       color: var(--color-text-tertiary);
 
       :deep(svg) {
-        width: 9px;
-        height: 9px;
+        width: 11px;
+        height: 11px;
       }
     }
 
@@ -130,14 +130,14 @@
     }
 
     &_input {
-      width: 60px;
-      height: 24px;
+      width: 70px;
+      height: 30px;
       padding: 0 $space-2;
       border: 0.5px solid var(--color-border-strong);
       border-radius: $radius-sm;
       background: var(--color-bg-secondary);
       color: var(--color-text-primary);
-      font-size: $font-size-sm;
+      font-size: $font-size-base;
       text-align: center;
 
       &:focus {
@@ -147,9 +147,9 @@
     }
 
     &_go {
-      height: 24px;
-      padding: 0 $space-3;
-      font-size: $font-size-xs;
+      height: 30px;
+      padding: 0 $space-4;
+      font-size: $font-size-sm;
     }
   }
 
