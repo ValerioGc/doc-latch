@@ -79,7 +79,7 @@
 </script>
 
 <template>
-  <BaseDialog :title="t('dialog.docInfo.title')" width="420px" @close="close">
+  <BaseDialog :title="t('dialog.docInfo.title')" width="480px" @close="close">
     <dl class="info">
       <template v-for="row in rows" :key="row.label">
         <dt class="info_label">{{ row.label }}</dt>

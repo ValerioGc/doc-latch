@@ -367,7 +367,7 @@ describe('useDocumentStore', () => {
       expect(store.getTab('unknown-id')).toBeNull()
     })
 
-    it('openSplit shows the first ready tab other than the active one', () => {
+    it('openSplit shows the first tab other than the active one', () => {
       const { store, firstTabId, secondTabId } = openTwoReadyTabs()
       expect(store.activeTabId).toBe(secondTabId)
 
@@ -377,7 +377,18 @@ describe('useDocumentStore', () => {
       expect(store.splitTabId).toBe(firstTabId)
     })
 
-    it('openSplit does nothing when there is no other ready tab', () => {
+    it('openSplit works even when the candidate tab has no document loaded', () => {
+      const store = useDocumentStore()
+      store.setLoading('/test/doc.pdf')
+      store.setReady(mockInfo)
+      store.newTab() // second tab: idle, no document
+
+      store.openSplit()
+
+      expect(store.splitEnabled).toBe(true)
+    })
+
+    it('openSplit does nothing when there is no other tab', () => {
       const store = useDocumentStore()
       store.setLoading('/test/doc.pdf')
       store.setReady(mockInfo)

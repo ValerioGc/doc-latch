@@ -12,7 +12,8 @@ const { openRecentFile } = usePdf();
 <template>
     <div class="recent">
         <p class="recent_title">{{ $t('menu.recent') }}</p>
-
+        <hr />
+        
         <p v-if="recentStore.entries.length === 0" class="recent_empty">
             {{ $t('home.noRecent') }}
         </p>
@@ -21,7 +22,10 @@ const { openRecentFile } = usePdf();
             <li v-for="entry in recentStore.entries" :key="entry.path" class="recent_row">
                 <button class="recent_item" :title="entry.path" @click="openRecentFile(entry.path)">
                     <span class="recent_item_icon" aria-hidden="true" v-html="documentIcon"></span>
-                    <span class="recent_name">{{ entry.name }}</span>
+                    <span class="recent_text">
+                        <span class="recent_name">{{ entry.name }}</span>
+                        <span class="recent_path">{{ entry.path }}</span>
+                    </span>
                 </button>
 
                 <button class="recent_remove" :title="$t('home.removeRecent')" :aria-label="$t('home.removeRecent')"
@@ -39,7 +43,7 @@ const { openRecentFile } = usePdf();
 .recent {
     @include flex-col(6px);
     width: 100%;
-    max-width: 420px;
+    max-width: 70%;
 
     &_title {
         font-size: $font-size-xs;
@@ -70,10 +74,6 @@ const { openRecentFile } = usePdf();
         &:hover {
             background: var(--color-bg-secondary);
         }
-
-        &:hover .recent_remove {
-            opacity: 1;
-        }
     }
 
     &_item {
@@ -81,6 +81,7 @@ const { openRecentFile } = usePdf();
 
         flex: 1;
         min-width: 0;
+        align-items: center;
         padding: 7px $space-3;
         font-size: $font-size-base;
         color: var(--color-text-primary);
@@ -101,15 +102,28 @@ const { openRecentFile } = usePdf();
         }
     }
 
+    &_text {
+        @include flex-col(2px);
+
+        min-width: 0;
+    }
+
     &_name {
         @extend %truncate;
+    }
+
+    &_path {
+        @extend %truncate;
+
+        font-size: $font-size-xs;
+        color: var(--color-text-tertiary);
     }
 
     &_remove {
         @extend %flex-center;
 
-        width: 26px;
-        height: 26px;
+        width: 30px;
+        height: 30px;
         margin-right: $space-2;
         flex-shrink: 0;
         border: none;
@@ -117,8 +131,7 @@ const { openRecentFile } = usePdf();
         border-radius: $radius-sm;
         color: var(--color-text-tertiary);
         cursor: pointer;
-        opacity: 0;
-        transition: opacity $transition-fast, background $transition-fast, color $transition-fast;
+        transition: background $transition-fast, color $transition-fast;
 
         &:hover {
             background: var(--color-bg-tertiary);
@@ -130,8 +143,8 @@ const { openRecentFile } = usePdf();
         display: flex;
 
         :deep(svg) {
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
         }
     }
 }
