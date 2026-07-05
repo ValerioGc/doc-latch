@@ -1,49 +1,24 @@
 <script setup lang="ts">
 
-  import { computed, ref } from 'vue';
+   import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
-  import { startTabDrag, endTabDrag, getActiveDragTabId } from '@/composables/useTabDrag';
-  
+  import { startTabDrag, useDragState } from '@/composables/useTabDrag';
+ 
+  import SplitToggle from '@/components/layout/SplitToggle.vue';
   import documentIcon from '@/assets/icons/document.svg?raw';
   import closeIcon from '@/assets/icons/window-close.svg?raw';
   import addIcon from '@/assets/icons/zoom-in.svg?raw';
 
   const { t } = useI18n();
   const docStore = useDocumentStore();
+  const drag = useDragState();
 
   const visibleTabs = computed(() => docStore.tabs.filter((tab) => tab.id !== docStore.splitTabId));
 
-  const dragOverTabId = ref<string | null>(null);
-
-  function onDragStart(tabId: string, e: DragEvent): void {
-    startTabDrag(tabId, e);
-  }
-
-  function onDragEnd(): void {
-    endTabDrag();
-    dragOverTabId.value = null;
-  }
-
-  function onDragOver(tabId: string, e: DragEvent): void {
-    if (!getActiveDragTabId() || !docStore.splitEnabled)
-      return;
-    e.preventDefault();
-    e.dataTransfer && (e.dataTransfer.dropEffect = 'move');
-    dragOverTabId.value = tabId;
-  }
-
-  function onDragLeave(e: DragEvent): void {
-    if (!(e.currentTarget as HTMLElement).contains(e.relatedTarget as Node))
-      dragOverTabId.value = null;
-  }
-
-  function onDrop(): void {
-    const draggedId = getActiveDragTabId();
-    endTabDrag();
-    dragOverTabId.value = null;
-    if (draggedId === docStore.splitTabId)
-      docStore.swapSplitTabs();
+  function onPointerDown(tabId: string, filePath: string | null, e: PointerEvent): void {
+    if (e.button !== 0) return;
+    startTabDrag(tabId, tabName(filePath), e);
   }
 
   function tabName(filePath: string | null): string {
@@ -59,13 +34,11 @@
   <div class="tab" role="tablist">
     <div v-for="tab in visibleTabs" :key="tab.id"
       class="tab_row"
-      :class="{ active: tab.id === docStore.activeTabId, 'drop-over': dragOverTabId === tab.id }"
-      draggable="true"
-      @dragstart="onDragStart(tab.id, $event)"
-      @dragend="onDragEnd"
-      @dragover="onDragOver(tab.id, $event)"
-      @dragleave="onDragLeave($event)"
-      @drop="onDrop"
+      :data-tab-id="tab.id"
+      :class="{
+        active: tab.id === docStore.activeTabId,
+        'drop-over': drag.isDragging && drag.overTabId === tab.id,
+      }"
     >
       <button class="tab_select"
         role="tab"
@@ -73,17 +46,23 @@
         :title="tab.filePath ?? t('menu.newTab')"
         @click="docStore.setActiveTab(tab.id)"
       >
-        <span class="tab_select_icon" aria-hidden="true" v-html="documentIcon"></span>
-        <span class="tab_select_name">{{ tabName(tab.filePath) }}</span>
+        <span class="tab_select_drag"
+          data-drag-handle="true"
+          @pointerdown="onPointerDown(tab.id, tab.filePath, $event)"
+        >
+          <span class="tab_select_icon" aria-hidden="true" v-html="documentIcon"></span>
+          <span class="tab_select_name">{{ tabName(tab.filePath) }}</span>
+        </span>
       </button>
       <button class="tab_close"
-        :title="t('menu.close')"
-        :aria-label="t('menu.close')"
+        :title="t('menu.closeTab')"
+        :aria-label="t('menu.closeTab')"
         @click="docStore.closeTab(tab.id)"
       >
         <span class="tab_close_icon" aria-hidden="true" v-html="closeIcon"></span>
       </button>
     </div>
+    <SplitToggle />
     <button class="tab_add"
       :title="t('menu.newTab')"
       :aria-label="t('menu.newTab')"
@@ -91,6 +70,16 @@
     >
       <span class="tab_add_icon" aria-hidden="true" v-html="addIcon"></span>
     </button>
+
+    <!-- Drag ghost: teleported to body so it sits above all other elements -->
+    <Teleport to="body">
+      <div v-if="drag.isDragging" class="tab_drag_ghost" aria-hidden="true"
+        :style="{ left: `${drag.x + 14}px`, top: `${drag.y + 14}px` }"
+      >
+        <span class="tab_drag_ghost_icon" v-html="documentIcon" />
+        <span class="tab_drag_ghost_label">{{ drag.label }}</span>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -126,6 +115,7 @@
       &.drop-over {
         outline: 1.5px solid var(--color-accent);
         outline-offset: -1.5px;
+        background: color-mix(in srgb, var(--color-accent) 8%, var(--color-bg-primary));
       }
     }
 
@@ -140,7 +130,20 @@
       border: none;
       cursor: pointer;
       text-align: left;
-    
+
+      &_drag {
+        @include flex-row($space-2);
+
+        min-width: 0;
+        flex: 1;
+        cursor: grab;
+        user-select: none;
+
+        &:active {
+          cursor: grabbing;
+        }
+      }
+
       &_icon {
         display: flex;
         flex-shrink: 0;
@@ -160,8 +163,9 @@
     &_close {
       @extend %flex-center;
 
-      width: 26px;
-      height: 100%;
+      width: 22px;
+      height: 22px;
+      align-self: center;
       flex-shrink: 0;
       margin-right: $space-1;
       border: none;
@@ -174,13 +178,13 @@
         background: var(--color-bg-tertiary);
         color: var(--color-accent);
       }
-      
+
       &_icon {
         display: flex;
-        
+
         :deep(svg) {
-          width: 9px;
-          height: 9px;
+          width: 11px;
+          height: 11px;
         }
       }
     }
@@ -212,7 +216,41 @@
         }
       }
     }
-  }
 
+    &_drag_ghost {
+      position: fixed;
+      z-index: 9999;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: $space-2;
+      padding: $space-1 $space-3;
+      max-width: 180px;
+      font-size: $font-size-sm;
+      color: var(--color-text-primary);
+      background: var(--color-bg-primary);
+      border: 1px solid var(--color-accent);
+      border-radius: $radius-sm;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+      opacity: 0.9;
+
+      &_icon {
+        flex-shrink: 0;
+        display: flex;
+        color: var(--color-accent);
+
+        :deep(svg) {
+          width: 13px;
+          height: 13px;
+        }
+      }
+
+      &_label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
 
 </style>

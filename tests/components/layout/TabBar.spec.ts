@@ -1,8 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
-import { startTabDrag, endTabDrag } from '@/composables/useTabDrag';
+import { startTabDrag, endTabDrag, simulateDrop } from '@/composables/useTabDrag';
 import { useDocumentStore } from '@/stores/document';
 import { createTestI18n } from '../../helpers/testPlugins';
 import TabBar from '@/components/layout/TabBar.vue';
@@ -127,38 +126,42 @@ describe('TabBar', () => {
       return { docStore, firstTabId, secondTabId };
     }
 
-    it('swaps tabs when the split pane tab is dropped onto a tab row', async () => {
-      const { docStore, firstTabId, secondTabId } = openSplitSetup();
-      const wrapper = mountTabBar();
-
-      startTabDrag(secondTabId, { dataTransfer: null } as unknown as DragEvent);
-      await wrapper.find('.tab_row').trigger('drop');
-      await nextTick();
-
-      expect(docStore.activeTabId).toBe(secondTabId);
-      expect(docStore.splitTabId).toBe(firstTabId);
-    });
-
-    it('does not swap when an unrelated id is active drag', async () => {
-      const { docStore, firstTabId } = openSplitSetup();
-      const wrapper = mountTabBar();
-
-      startTabDrag('unknown-id', { dataTransfer: null } as unknown as DragEvent);
-      await wrapper.find('.tab_row').trigger('drop');
-      await nextTick();
-
-      expect(docStore.activeTabId).toBe(firstTabId);
-      endTabDrag();
-    });
-
-    it('all tab rows are draggable', () => {
+    it('each tab row has a pointer drag handle', () => {
       const docStore = useDocumentStore();
       docStore.setLoading('/path/to/first.pdf');
       docStore.setLoading('/path/to/second.pdf');
       const wrapper = mountTabBar();
 
-      const rows = wrapper.findAll('.tab_row');
-      rows.forEach((row) => expect(row.attributes('draggable')).toBe('true'));
+      const handles = wrapper.findAll('[data-drag-handle]');
+      expect(handles).toHaveLength(2);
+    });
+
+    it('each tab row carries its tab id as a data attribute', () => {
+      const docStore = useDocumentStore();
+      docStore.setLoading('/path/to/first.pdf');
+      const id = docStore.activeTabId!;
+      const wrapper = mountTabBar();
+
+      expect(wrapper.find('.tab_row').attributes('data-tab-id')).toBe(id);
+    });
+
+    it('swaps tabs when the split pane tab is dropped onto a tab row', () => {
+      const { docStore, firstTabId, secondTabId } = openSplitSetup();
+
+      startTabDrag(secondTabId, 'second.pdf', { clientX: 0, clientY: 0 } as PointerEvent);
+      simulateDrop('tab');
+
+      expect(docStore.activeTabId).toBe(secondTabId);
+      expect(docStore.splitTabId).toBe(firstTabId);
+    });
+
+    it('does not swap when an unrelated id is active drag', () => {
+      const { docStore, firstTabId } = openSplitSetup();
+
+      startTabDrag('unknown-id', '', { clientX: 0, clientY: 0 } as PointerEvent);
+      simulateDrop('tab');
+
+      expect(docStore.activeTabId).toBe(firstTabId);
     });
   });
 
