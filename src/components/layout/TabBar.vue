@@ -3,6 +3,7 @@
   import { computed, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
+  import { startTabDrag, endTabDrag, getActiveDragTabId } from '@/composables/useTabDrag';
   
   import documentIcon from '@/assets/icons/document.svg?raw';
   import closeIcon from '@/assets/icons/window-close.svg?raw';
@@ -16,13 +17,19 @@
   const dragOverTabId = ref<string | null>(null);
 
   function onDragStart(tabId: string, e: DragEvent): void {
-    e.dataTransfer?.setData('doclatch/tab-id', tabId);
+    startTabDrag(tabId, e);
+  }
+
+  function onDragEnd(): void {
+    endTabDrag();
+    dragOverTabId.value = null;
   }
 
   function onDragOver(tabId: string, e: DragEvent): void {
-    if (!e.dataTransfer?.types.includes('doclatch/tab-id') || !docStore.splitEnabled)
+    if (!getActiveDragTabId() || !docStore.splitEnabled)
       return;
     e.preventDefault();
+    e.dataTransfer && (e.dataTransfer.dropEffect = 'move');
     dragOverTabId.value = tabId;
   }
 
@@ -31,9 +38,10 @@
       dragOverTabId.value = null;
   }
 
-  function onDrop(e: DragEvent): void {
+  function onDrop(): void {
+    const draggedId = getActiveDragTabId();
+    endTabDrag();
     dragOverTabId.value = null;
-    const draggedId = e.dataTransfer?.getData('doclatch/tab-id');
     if (draggedId === docStore.splitTabId)
       docStore.swapSplitTabs();
   }
@@ -54,9 +62,10 @@
       :class="{ active: tab.id === docStore.activeTabId, 'drop-over': dragOverTabId === tab.id }"
       draggable="true"
       @dragstart="onDragStart(tab.id, $event)"
+      @dragend="onDragEnd"
       @dragover="onDragOver(tab.id, $event)"
       @dragleave="onDragLeave($event)"
-      @drop="onDrop($event)"
+      @drop="onDrop"
     >
       <button class="tab_select"
         role="tab"

@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
+import { startTabDrag, endTabDrag } from '@/composables/useTabDrag';
 import { useDocumentStore } from '@/stores/document';
 import { createTestI18n } from '../../helpers/testPlugins';
 import SplitTabHeader from '@/components/layout/SplitTabHeader.vue';
@@ -73,10 +74,6 @@ describe('SplitTabHeader', () => {
   });
 
   describe('drag-and-drop tab swapping', () => {
-    function mockDragTransfer(tabId: string) {
-      return { types: ['doclatch/tab-id'], getData: () => tabId, setData: () => {} };
-    }
-
     it('the split header tab is draggable', () => {
       openTwoReadyTabsAndSplit();
       const wrapper = mountHeader();
@@ -89,21 +86,24 @@ describe('SplitTabHeader', () => {
       const secondTabId = docStore.activeTabId!;
       const wrapper = mountHeader();
 
-      await wrapper.find('.split_header').trigger('drop', { dataTransfer: mockDragTransfer(secondTabId) });
+      startTabDrag(secondTabId, { dataTransfer: null } as unknown as DragEvent);
+      await wrapper.find('.split_header').trigger('drop');
       await nextTick();
 
       expect(docStore.activeTabId).toBe(firstTabId);
       expect(docStore.splitTabId).toBe(secondTabId);
     });
 
-    it('does not swap when the split tab itself is reported as the dragged item', async () => {
+    it('does not swap when the split tab itself is the active drag', async () => {
       const { docStore, firstTabId } = openTwoReadyTabsAndSplit();
       const wrapper = mountHeader();
 
-      await wrapper.find('.split_header').trigger('drop', { dataTransfer: mockDragTransfer(firstTabId) });
+      startTabDrag(firstTabId, { dataTransfer: null } as unknown as DragEvent);
+      await wrapper.find('.split_header').trigger('drop');
       await nextTick();
 
       expect(docStore.splitTabId).toBe(firstTabId);
+      endTabDrag();
     });
   });
 });

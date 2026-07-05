@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
+import { startTabDrag, endTabDrag } from '@/composables/useTabDrag';
 import { useDocumentStore } from '@/stores/document';
 import { createTestI18n } from '../../helpers/testPlugins';
 import TabBar from '@/components/layout/TabBar.vue';
@@ -126,29 +127,28 @@ describe('TabBar', () => {
       return { docStore, firstTabId, secondTabId };
     }
 
-    function mockDragTransfer(tabId: string) {
-      return { types: ['doclatch/tab-id'], getData: () => tabId, setData: () => {} };
-    }
-
     it('swaps tabs when the split pane tab is dropped onto a tab row', async () => {
       const { docStore, firstTabId, secondTabId } = openSplitSetup();
       const wrapper = mountTabBar();
 
-      await wrapper.find('.tab_row').trigger('drop', { dataTransfer: mockDragTransfer(secondTabId) });
+      startTabDrag(secondTabId, { dataTransfer: null } as unknown as DragEvent);
+      await wrapper.find('.tab_row').trigger('drop');
       await nextTick();
 
       expect(docStore.activeTabId).toBe(secondTabId);
       expect(docStore.splitTabId).toBe(firstTabId);
     });
 
-    it('does not swap when an unrelated id is dropped', async () => {
+    it('does not swap when an unrelated id is active drag', async () => {
       const { docStore, firstTabId } = openSplitSetup();
       const wrapper = mountTabBar();
 
-      await wrapper.find('.tab_row').trigger('drop', { dataTransfer: mockDragTransfer('unknown-id') });
+      startTabDrag('unknown-id', { dataTransfer: null } as unknown as DragEvent);
+      await wrapper.find('.tab_row').trigger('drop');
       await nextTick();
 
       expect(docStore.activeTabId).toBe(firstTabId);
+      endTabDrag();
     });
 
     it('all tab rows are draggable', () => {

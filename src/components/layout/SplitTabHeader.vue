@@ -3,6 +3,7 @@
   import { computed, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
+  import { startTabDrag, endTabDrag, getActiveDragTabId } from '@/composables/useTabDrag';
   import documentIcon from '@/assets/icons/document.svg?raw';
   import closeIcon from '@/assets/icons/window-close.svg?raw';
 
@@ -16,13 +17,19 @@
   function onDragStart(e: DragEvent): void {
     if (!tab.value)
       return;
-    e.dataTransfer?.setData('doclatch/tab-id', tab.value.id);
+    startTabDrag(tab.value.id, e);
+  }
+
+  function onDragEnd(): void {
+    endTabDrag();
+    dragOver.value = false;
   }
 
   function onDragOver(e: DragEvent): void {
-    if (!e.dataTransfer?.types.includes('doclatch/tab-id') || !docStore.splitEnabled)
+    if (!getActiveDragTabId() || !docStore.splitEnabled)
       return;
     e.preventDefault();
+    e.dataTransfer && (e.dataTransfer.dropEffect = 'move');
     dragOver.value = true;
   }
 
@@ -31,9 +38,10 @@
       dragOver.value = false;
   }
 
-  function onDrop(e: DragEvent): void {
+  function onDrop(): void {
+    const draggedId = getActiveDragTabId();
+    endTabDrag();
     dragOver.value = false;
-    const draggedId = e.dataTransfer?.getData('doclatch/tab-id');
     if (draggedId && draggedId !== docStore.splitTabId)
       docStore.swapSplitTabs();
   }
@@ -50,8 +58,8 @@
 <template>
   <div class="split_header"
     :class="{ 'drop-over': dragOver }"
-    @dragover="onDragOver"
-    @dragleave="onDragLeave"
+    @dragover="onDragOver($event)"
+    @dragleave="onDragLeave($event)"
     @drop="onDrop"
   >
     <div v-if="tab" class="split_header_tab"
@@ -59,6 +67,7 @@
       aria-selected="true"
       draggable="true"
       @dragstart="onDragStart"
+      @dragend="onDragEnd"
     >
       <span class="split_header_tab_icon" aria-hidden="true" v-html="documentIcon" />
       <span class="split_header_tab_name">{{ tabName(tab.filePath) }}</span>
