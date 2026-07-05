@@ -43,6 +43,8 @@
     @include flex-col(32px);
 
     flex: 1;
+    min-height: 0;
+    overflow: hidden;
     align-items: center;
     padding: 40px $space-6 $space-6;
 

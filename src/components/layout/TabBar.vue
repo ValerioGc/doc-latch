@@ -97,25 +97,41 @@
     overflow-x: auto;
     overflow-y: hidden;
     flex-shrink: 0;
+    padding: 5px $space-1 0;
+    align-items: flex-end;
+    gap: 2px;
+
+    // ── Context-dependent overrides ──────────────────────────────────────────
+    &_row.active &_select        { color: var(--color-text-primary); }
+    &_row.active &_select_icon   { color: var(--color-accent); }
+    &_row.active &_close,
+    &_row:hover  &_close         { opacity: 1; pointer-events: auto; }
 
     &_row {
       @include flex-row;
 
+      position: relative;
       flex-shrink: 0;
       max-width: 200px;
-      border-right: 0.5px solid var(--color-border);
+      height: 34px;
+      border-radius: $radius-md $radius-md 0 0;
+      border: 0.5px solid transparent;
+      border-bottom: none;
+      transition: background $transition-fast, border-color $transition-fast;
 
-      &:hover {
+      &:hover:not(.active) {
         background: var(--color-bg-tertiary);
+        border-color: var(--color-border);
       }
 
       &.active {
         background: var(--color-bg-primary);
+        border-color: var(--color-border);
+        z-index: 1;
       }
 
       &.drop-over {
-        outline: 1.5px solid var(--color-accent);
-        outline-offset: -1.5px;
+        box-shadow: inset 0 0 0 1.5px var(--color-accent);
         background: color-mix(in srgb, var(--color-accent) 8%, var(--color-bg-primary));
       }
     }
@@ -123,14 +139,17 @@
     &_select {
       @include flex-row($space-2);
 
+      flex: 1;
       min-width: 0;
-      padding: $space-2 $space-2 $space-2 $space-3;
-      font-size: $font-size-base;
-      color: var(--color-text-primary);
+      height: 100%;
+      padding: 0 $space-2 0 $space-3;
+      font-size: $font-size-sm;
+      color: var(--color-text-secondary);
       background: transparent;
       border: none;
       cursor: pointer;
       text-align: left;
+      transition: color $transition-fast;
 
       &_drag {
         @include flex-row($space-2);
@@ -148,7 +167,8 @@
       &_icon {
         display: flex;
         flex-shrink: 0;
-        color: var(--color-text-secondary);
+        color: var(--color-text-tertiary);
+        transition: color $transition-fast;
 
         :deep(svg) {
           width: 13px;
@@ -158,14 +178,16 @@
 
       &_name {
         @extend %truncate;
+
+        font-size: $font-size-xs;
       }
     }
 
     &_close {
       @extend %flex-center;
 
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       align-self: center;
       flex-shrink: 0;
       margin-right: $space-1;
@@ -174,9 +196,12 @@
       border-radius: $radius-sm;
       color: var(--color-text-tertiary);
       cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity $transition-fast, background $transition-fast, color $transition-fast;
 
       &:hover {
-        background: var(--color-bg-tertiary);
+        background: color-mix(in srgb, var(--color-accent) 12%, var(--color-bg-tertiary));
         color: var(--color-accent);
       }
 
@@ -193,8 +218,10 @@
     &_add {
       @extend %flex-center;
 
-      width: 28px;
-      height: 100%;
+      width: 26px;
+      height: 30px;
+      align-self: flex-end;
+      margin-bottom: 2px;
       flex-shrink: 0;
       margin-left: $space-1;
       border: none;
@@ -205,7 +232,7 @@
 
       &:hover {
         background: var(--color-bg-tertiary);
-        color: var(--color-accent);
+        color: var(--color-text-primary);
       }
 
       &_icon {

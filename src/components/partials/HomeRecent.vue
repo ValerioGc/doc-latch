@@ -51,6 +51,9 @@ function handleOpen(path: string): void {
 
 .recent {
     @include flex-col(6px);
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
     width: 100%;
     max-width: 70%;
 
@@ -77,8 +80,13 @@ function handleOpen(path: string): void {
 
     &_list {
         @include flex-col(2px);
+        @include scrollbar(6px);
 
         list-style: none;
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 0 $space-3 $space-2;
     }
 
     &_row {
