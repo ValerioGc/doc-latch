@@ -9,7 +9,8 @@
     "open": "Datei öffnen…",
     "recent": "Zuletzt geöffnet",
     "newTab": "Neuer Tab",
-    "splitView": "Ansicht teilen",
+    "closeTab": "Tab schließen",
+    "splitView": "Fenster teilen",
     "closeSplit": "Geteilte Ansicht schließen",
     "close": "Dokument schließen",
     "docInfo": "Dokumentinformationen…",
@@ -124,7 +125,7 @@
     }
   },
   "statusBar": {
-    "noFile": "Keine Datei",
+    "noFile": "Keine Datei geöffnet",
     "page": "Seite {current} / {total}",
     "goToPage": "Los",
     "goToPageLabel": "Zu Seite gehen"

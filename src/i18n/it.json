@@ -9,7 +9,8 @@
     "open": "Apri file…",
     "recent": "Recenti",
     "newTab": "Nuova scheda",
-    "splitView": "Dividi vista",
+    "closeTab": "Chiudi scheda",
+    "splitView": "Dividi finestra",
     "closeSplit": "Chiudi vista divisa",
     "close": "Chiudi documento",
     "docInfo": "Informazioni documento…",
@@ -124,7 +125,7 @@
     }
   },
   "statusBar": {
-    "noFile": "Nessun file",
+    "noFile": "Nessun file aperto",
     "page": "Pag. {current} / {total}",
     "goToPage": "Vai",
     "goToPageLabel": "Vai alla pagina"

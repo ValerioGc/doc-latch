@@ -9,7 +9,8 @@
     "open": "Ouvrir…",
     "recent": "Récents",
     "newTab": "Nouvel onglet",
-    "splitView": "Diviser la vue",
+    "closeTab": "Fermer l'onglet",
+    "splitView": "Diviser la fenêtre",
     "closeSplit": "Fermer la vue divisée",
     "close": "Fermer le document",
     "docInfo": "Informations du document…",
@@ -124,7 +125,7 @@
     }
   },
   "statusBar": {
-    "noFile": "Aucun fichier",
+    "noFile": "Aucun fichier ouvert",
     "page": "Page {current} / {total}",
     "goToPage": "Aller",
     "goToPageLabel": "Aller à la page"
