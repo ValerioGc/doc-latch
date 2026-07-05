@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
+import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
 import { useDocumentStore } from '@/stores/document';
@@ -108,6 +109,57 @@ describe('TabBar', () => {
     const wrapper = mountTabBar();
 
     expect(wrapper.find('.tab_select_name').text()).toBe('Nuova scheda');
+  });
+
+  describe('drag-and-drop tab swapping', () => {
+    function openSplitSetup() {
+      const docStore = useDocumentStore();
+      docStore.setLoading('/path/to/first.pdf');
+      docStore.setReady(mockInfo);
+      const firstTabId = docStore.activeTabId!;
+      docStore.setLoading('/path/to/second.pdf');
+      docStore.setReady({ ...mockInfo, path: '/path/to/second.pdf' });
+      const secondTabId = docStore.activeTabId!;
+      docStore.setActiveTab(firstTabId);
+      docStore.openSplit();
+      // activeTabId = firstTabId (left), splitTabId = secondTabId (right)
+      return { docStore, firstTabId, secondTabId };
+    }
+
+    function mockDragTransfer(tabId: string) {
+      return { types: ['doclatch/tab-id'], getData: () => tabId, setData: () => {} };
+    }
+
+    it('swaps tabs when the split pane tab is dropped onto a tab row', async () => {
+      const { docStore, firstTabId, secondTabId } = openSplitSetup();
+      const wrapper = mountTabBar();
+
+      await wrapper.find('.tab_row').trigger('drop', { dataTransfer: mockDragTransfer(secondTabId) });
+      await nextTick();
+
+      expect(docStore.activeTabId).toBe(secondTabId);
+      expect(docStore.splitTabId).toBe(firstTabId);
+    });
+
+    it('does not swap when an unrelated id is dropped', async () => {
+      const { docStore, firstTabId } = openSplitSetup();
+      const wrapper = mountTabBar();
+
+      await wrapper.find('.tab_row').trigger('drop', { dataTransfer: mockDragTransfer('unknown-id') });
+      await nextTick();
+
+      expect(docStore.activeTabId).toBe(firstTabId);
+    });
+
+    it('all tab rows are draggable', () => {
+      const docStore = useDocumentStore();
+      docStore.setLoading('/path/to/first.pdf');
+      docStore.setLoading('/path/to/second.pdf');
+      const wrapper = mountTabBar();
+
+      const rows = wrapper.findAll('.tab_row');
+      rows.forEach((row) => expect(row.attributes('draggable')).toBe('true'));
+    });
   });
 
   it('hides the tab shown in the split pane from the tab list', () => {

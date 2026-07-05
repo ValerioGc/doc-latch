@@ -1,8 +1,9 @@
 <script setup lang="ts">
 
-  import { computed, watch, onMounted, onUnmounted } from 'vue';
+  import { computed, watch, onMounted, onUnmounted, useTemplateRef } from 'vue';
   import { usePageCanvas } from '@/composables/usePageCanvas';
   import { useDocumentStore } from '@/stores/document';
+  import { enqueueRender } from '@/composables/useRenderQueue';
 
   const ZOOM_DEBOUNCE_MS = 200;
 
@@ -18,35 +19,52 @@
   const info = computed(() => (tab.value ? tab.value.info : docStore.info));
   const zoom = computed(() => (tab.value ? tab.value.zoom : docStore.zoom));
 
+  const rootRef = useTemplateRef<HTMLElement>('root');
   let debounceTimer: ReturnType<typeof setTimeout> | undefined;
+  let observer: IntersectionObserver | undefined;
+  let isNearViewport = false;
+  let mounted = false;
 
   const targetWidth = computed(() => (info.value?.pageWidthPt ?? 0) * zoom.value / 100);
   const targetHeight = computed(() => (info.value?.pageHeightPt ?? 0) * zoom.value / 100);
 
   async function render(): Promise<void> {
+    if (!mounted)
+      return;
     await renderToCanvas(props.page, zoom.value / 100);
   }
 
   watch(zoom, () => {
     isLoading.value = true;
-
-    if (debounceTimer)
-      clearTimeout(debounceTimer);
-
-    debounceTimer = setTimeout(render, ZOOM_DEBOUNCE_MS);
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      enqueueRender(render, isNearViewport ? 'high' : 'low');
+    }, ZOOM_DEBOUNCE_MS);
   });
 
-  onMounted(render);
+  onMounted(() => {
+    mounted = true;
+
+    if (typeof IntersectionObserver !== 'undefined') {
+      observer = new IntersectionObserver((entries) => {
+        isNearViewport = entries.some((e) => e.isIntersecting);
+      }, { rootMargin: '400px' });
+      observer.observe(rootRef.value!);
+    }
+
+    enqueueRender(render, 'low');
+  });
 
   onUnmounted(() => {
-    if (debounceTimer)
-      clearTimeout(debounceTimer);
+    mounted = false;
+    observer?.disconnect();
+    clearTimeout(debounceTimer);
   });
 
 </script>
 
 <template>
-  <div class="page_canvas" :style="{ width: `${targetWidth}px`, height: `${targetHeight}px` }">
+  <div ref="root" class="page_canvas" :style="{ width: `${targetWidth}px`, height: `${targetHeight}px` }">
     <canvas ref="canvas"
       class="page_canvas_el"
       :class="{ 'page_canvas_el--stale': isLoading }"
@@ -97,7 +115,7 @@
   }
 
   @keyframes page-canvas-spin {
-    to { transform: rotate(360deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
   }
 
 </style>

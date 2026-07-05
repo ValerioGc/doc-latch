@@ -18,6 +18,8 @@ describe('LanguageSettings', () => {
   });
 
   it('shows the current locale label in the trigger', () => {
+    const uiStore = useUiStore();
+    uiStore.setLocale('it');
     const wrapper = mountComponent();
 
     expect(wrapper.find('.lang_select_trigger').text()).toBe('Italiano');
@@ -60,6 +62,8 @@ describe('LanguageSettings', () => {
   });
 
   it('marks the active locale with aria-current', async () => {
+    const uiStore = useUiStore();
+    uiStore.setLocale('it');
     const wrapper = mountComponent();
 
     await wrapper.find('.lang_select_trigger').trigger('click');

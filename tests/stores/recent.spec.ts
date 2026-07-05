@@ -46,13 +46,13 @@ describe('useRecentStore', () => {
     expect(store.files).toEqual(['/a.pdf', '/b.pdf']);
   });
 
-  it('caps the list at 8 entries', () => {
+  it('caps the list at 10 entries', () => {
     const store = useRecentStore();
-    for (let i = 0; i < 10; i++)
+    for (let i = 0; i < 12; i++)
       store.add(`/file-${i}.pdf`);
 
-    expect(store.files).toHaveLength(8);
-    expect(store.files[0]).toBe('/file-9.pdf');
+    expect(store.files).toHaveLength(10);
+    expect(store.files[0]).toBe('/file-11.pdf');
   });
 
   it('extracts the file name from paths with either separator', () => {

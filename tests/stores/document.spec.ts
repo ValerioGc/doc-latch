@@ -441,6 +441,27 @@ describe('useDocumentStore', () => {
       expect(store.splitTabId).toBeNull()
     })
 
+    it('swapSplitTabs swaps the active and split pane tabs', () => {
+      const { store, firstTabId, secondTabId } = openTwoReadyTabs()
+      store.openSplit()
+      expect(store.activeTabId).toBe(secondTabId)
+      expect(store.splitTabId).toBe(firstTabId)
+
+      store.swapSplitTabs()
+
+      expect(store.activeTabId).toBe(firstTabId)
+      expect(store.splitTabId).toBe(secondTabId)
+    })
+
+    it('swapSplitTabs does nothing when split is not open', () => {
+      const { store, secondTabId } = openTwoReadyTabs()
+
+      store.swapSplitTabs()
+
+      expect(store.activeTabId).toBe(secondTabId)
+      expect(store.splitTabId).toBeNull()
+    })
+
     it('closeTab falls back to closing the split pane if the reassigned active tab cannot replace it', () => {
       // Closing the active tab can force-activate its neighbor, which may be
       // the tab currently shown in the split pane. The just-closed tab can't

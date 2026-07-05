@@ -14,11 +14,17 @@ export function usePageCanvas(tabId?: string) {
   const canvasRef = useTemplateRef<HTMLCanvasElement>('canvas');
   const isLoading = ref(true);
 
+  // Incremented on every render request; guards against stale results painting
+  // over a canvas that has already started a newer render.
+  let renderSeq = 0;
+
   /**
    * @param page - 1-based page number
    * @param zoom - zoom factor (1.0 = 100%)
    */
   async function renderToCanvas(page: number, zoom: number): Promise<void> {
+    const seq = ++renderSeq;
+
     const resolvedTabId = tabId ?? docStore.activeTabId;
     const cached = resolvedTabId ? getCachedPage(resolvedTabId, page, zoom) : null;
 
@@ -30,6 +36,10 @@ export function usePageCanvas(tabId?: string) {
       if (result && resolvedTabId)
         setCachedPage(resolvedTabId, page, zoom, result);
     }
+
+    // A newer render was requested while this one was in flight — discard result.
+    if (seq !== renderSeq)
+      return;
 
     const canvas = canvasRef.value;
     if (!result || !canvas) {
@@ -46,6 +56,7 @@ export function usePageCanvas(tabId?: string) {
     await new Promise<void>((resolve) => {
       const img = new Image();
       img.onload = () => {
+        if (seq !== renderSeq) { resolve(); return; }
         canvas.width = result.widthPx;
         canvas.height = result.heightPx;
         ctx.drawImage(img, 0, 0);

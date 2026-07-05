@@ -26,7 +26,7 @@
     dragOverTabId.value = tabId;
   }
 
-  function onDragLeave(tabId: string, e: DragEvent): void {
+  function onDragLeave(e: DragEvent): void {
     if (!(e.currentTarget as HTMLElement).contains(e.relatedTarget as Node))
       dragOverTabId.value = null;
   }
@@ -55,7 +55,7 @@
       draggable="true"
       @dragstart="onDragStart(tab.id, $event)"
       @dragover="onDragOver(tab.id, $event)"
-      @dragleave="onDragLeave(tab.id, $event)"
+      @dragleave="onDragLeave($event)"
       @drop="onDrop($event)"
     >
       <button class="tab_select"
