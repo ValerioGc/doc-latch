@@ -44,49 +44,53 @@
 
     <div class="sidebar_content">
 
-      <!-- Toggle row -->
-      <div class="sidebar_top">
-        <button :title="uiStore.sidebarCollapsed ? t('settings.expandSidebar') : t('settings.collapseSidebar')"
-          class="sidebar_toggle"
-          :class="{ collapsed: uiStore.sidebarCollapsed }"
-          :aria-label="uiStore.sidebarCollapsed ? t('settings.expandSidebar') : t('settings.collapseSidebar')"
-          @click="uiStore.toggleSidebar()"
-        >
-          <span class="sidebar_toggle_icon" aria-hidden="true" v-html="chevronIcon" />
-        </button>
-      </div>
+      <template v-if="docStore.isOpen">
 
-      <div v-show="!uiStore.sidebarCollapsed"
-        class="sidebar_inner"
-        :style="{ width: `${uiStore.sidebarWidth}px` }"
-      >
-
-        <!-- PDF pages thumbnails -->
-        <button v-for="page in docStore.totalPages" :key="`${docStore.filePath}-${page}`"
-          ref="thumbRefs"
-          type="button"
-          class="thumb"
-          :class="{ active: page === docStore.currentPage }"
-          :aria-label="`Pagina ${page}`"
-          :aria-current="page === docStore.currentPage ? 'page' : undefined"
-          @click="docStore.setPage(page)"
-        >
-          <div class="thumb_preview">
-            <ThumbCanvas :page="page" />
-          </div>
-          <span class="thumb_num">{{ page }}</span>
-        </button>
-
-        <!-- placeholder -->
-        <div v-if="docStore.totalPages === 0" class="empty_sidebar" aria-hidden="true">
-          <div class="thumb_placeholder_empty"> </div>
-          <div class="thumb_placeholder_empty" style="opacity: 0.5"></div>
+        <!-- Toggle row -->
+        <div class="sidebar_top">
+          <button :title="uiStore.sidebarCollapsed ? t('settings.expandSidebar') : t('settings.collapseSidebar')"
+            class="sidebar_toggle"
+            :class="{ collapsed: uiStore.sidebarCollapsed }"
+            :aria-label="uiStore.sidebarCollapsed ? t('settings.expandSidebar') : t('settings.collapseSidebar')"
+            @click="uiStore.toggleSidebar()"
+          >
+            <span class="sidebar_toggle_icon" aria-hidden="true" v-html="chevronIcon" />
+          </button>
         </div>
-      </div>
+
+        <div v-show="!uiStore.sidebarCollapsed"
+          class="sidebar_inner"
+          :style="{ width: `${uiStore.sidebarWidth}px` }"
+        >
+
+          <!-- PDF pages thumbnails -->
+          <button v-for="page in docStore.totalPages" :key="`${docStore.filePath}-${page}`"
+            ref="thumbRefs"
+            type="button"
+            class="thumb"
+            :class="{ active: page === docStore.currentPage }"
+            :aria-label="`Pagina ${page}`"
+            :aria-current="page === docStore.currentPage ? 'page' : undefined"
+            @click="docStore.setPage(page)"
+          >
+            <div class="thumb_preview">
+              <ThumbCanvas :page="page" />
+            </div>
+            <span class="thumb_num">{{ page }}</span>
+          </button>
+
+          <!-- placeholder -->
+          <div v-if="docStore.totalPages === 0" class="empty_sidebar" aria-hidden="true">
+            <div class="thumb_placeholder_empty"> </div>
+            <div class="thumb_placeholder_empty" style="opacity: 0.5"></div>
+          </div>
+        </div>
+
+      </template>
     </div>
 
     <!-- Resize handle -->
-    <hr v-if="!uiStore.sidebarCollapsed" class="sidebar_resize"
+    <hr v-if="docStore.isOpen && !uiStore.sidebarCollapsed" class="sidebar_resize"
       aria-orientation="vertical"
       :aria-label="t('settings.resizeSidebar')"
       @mousedown="onResizeStart"

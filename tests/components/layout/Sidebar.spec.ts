@@ -38,10 +38,11 @@ describe('Sidebar', () => {
     localStorage.clear();
   });
 
-  it('shows the empty placeholder when no document is open', () => {
+  it('shows no toggle button and no content when no document is open', () => {
     const wrapper = mountSidebar();
 
-    expect(wrapper.find('.empty_sidebar').exists()).toBe(true);
+    expect(wrapper.find('.sidebar_toggle').exists()).toBe(false);
+    expect(wrapper.find('.empty_sidebar').exists()).toBe(false);
     expect(wrapper.findAll('.thumb')).toHaveLength(0);
   });
 
@@ -90,6 +91,8 @@ describe('Sidebar', () => {
   });
 
   it('toggles sidebarCollapsed when the rail toggle is clicked', async () => {
+    const docStore = useDocumentStore();
+    docStore.setReady(mockInfo);
     const uiStore = useUiStore();
     const wrapper = mountSidebar();
 
@@ -99,6 +102,8 @@ describe('Sidebar', () => {
   });
 
   it('hides the resize handle when the sidebar is collapsed', async () => {
+    const docStore = useDocumentStore();
+    docStore.setReady(mockInfo);
     const uiStore = useUiStore();
     const wrapper = mountSidebar();
 
@@ -109,6 +114,8 @@ describe('Sidebar', () => {
   });
 
   it('resizes the sidebar by dragging the resize handle', async () => {
+    const docStore = useDocumentStore();
+    docStore.setReady(mockInfo);
     const uiStore = useUiStore();
     uiStore.setSidebarWidth(150);
     const wrapper = mountSidebar();
