@@ -57,6 +57,8 @@ function onUp(e: PointerEvent): void {
       docStore.swapSplitTabs();
     else if (overTabId && draggedId === docStore.splitTabId)
       docStore.swapSplitTabs();
+    else if (overTabId && overTabId !== draggedId)
+      docStore.reorderTab(draggedId, overTabId);
     // Eat the click that fires right after pointerup so the button doesn't trigger
     document.addEventListener('click', (ev) => ev.stopImmediatePropagation(), {
       capture: true,
@@ -118,7 +120,7 @@ export function endTabDrag(): void {
   reset();
 }
 
-export function simulateDrop(zone: 'split' | 'tab'): void {
+export function simulateDrop(zone: 'split' | 'tab', targetTabId?: string): void {
   if (!_state.tabId) return;
   const docStore = useDocumentStore();
   const draggedId = _state.tabId;
@@ -127,4 +129,6 @@ export function simulateDrop(zone: 'split' | 'tab'): void {
     docStore.swapSplitTabs();
   else if (zone === 'tab' && draggedId === docStore.splitTabId)
     docStore.swapSplitTabs();
+  else if (zone === 'tab' && targetTabId && targetTabId !== draggedId)
+    docStore.reorderTab(draggedId, targetTabId);
 }

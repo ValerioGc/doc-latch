@@ -3,7 +3,16 @@
   import { usePdf } from '@/composables/usePdf';
   import HomeRecent from '@/components/partials/HomeRecent.vue';
 
-  const { openFile } = usePdf();
+  const props = defineProps<{ tabId?: string }>();
+
+  const { openFile, openFileInTab } = usePdf();
+
+  function handleOpen(): void {
+    if (props.tabId)
+      openFileInTab(props.tabId);
+    else
+      openFile();
+  }
 
 </script>
 
@@ -17,13 +26,13 @@
 
       <p class="home_title">{{ $t('viewer.noDocument') }}</p>
       <p class="home_hint">{{ $t('viewer.openHint') }}</p>
-      
-      <button class="btn btn_primary home_open_btn" @click="openFile">
+
+      <button class="btn btn_primary home_open_btn" @click="handleOpen">
         {{ $t('menu.open') }}
       </button>
     </div>
 
-    <HomeRecent />
+    <HomeRecent :tab-id="props.tabId" />
 
   </div>
 </template>

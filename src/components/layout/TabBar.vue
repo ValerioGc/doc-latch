@@ -18,6 +18,7 @@
 
   function onPointerDown(tabId: string, filePath: string | null, e: PointerEvent): void {
     if (e.button !== 0) return;
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     startTabDrag(tabId, tabName(filePath), e);
   }
 

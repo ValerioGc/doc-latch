@@ -27,7 +27,7 @@
     <template v-if="tab">
 
       <!-- Empty state -->
-      <HomeScreen v-if="tab.state === 'idle'" />
+      <HomeScreen v-if="tab.state === 'idle'" :tab-id="tab.id" />
 
       <!-- Loading state -->
       <div v-else-if="tab.state === 'loading'" class="empty_state">

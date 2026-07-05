@@ -346,6 +346,89 @@ describe('useDocumentStore', () => {
     })
   })
 
+  describe('reorderTab', () => {
+    it('moves a tab to the position of the target tab', () => {
+      const store = useDocumentStore()
+      store.setLoading('/test/a.pdf')
+      const aId = store.activeTabId!
+      store.setLoading('/test/b.pdf')
+      const bId = store.activeTabId!
+      store.setLoading('/test/c.pdf')
+      const cId = store.activeTabId!
+
+      store.reorderTab(cId, aId) // move C before A → [C, A, B]
+
+      expect(store.tabs.map(t => t.filePath)).toEqual(['/test/c.pdf', '/test/a.pdf', '/test/b.pdf'])
+    })
+
+    it('does nothing when dragged and target are the same tab', () => {
+      const store = useDocumentStore()
+      store.setLoading('/test/a.pdf')
+      const aId = store.activeTabId!
+      store.setLoading('/test/b.pdf')
+
+      store.reorderTab(aId, aId)
+
+      expect(store.tabs.map(t => t.filePath)).toEqual(['/test/a.pdf', '/test/b.pdf'])
+    })
+
+    it('does nothing when either id is unknown', () => {
+      const store = useDocumentStore()
+      store.setLoading('/test/a.pdf')
+      const aId = store.activeTabId!
+
+      store.reorderTab(aId, 'unknown')
+      store.reorderTab('unknown', aId)
+
+      expect(store.tabs).toHaveLength(1)
+    })
+  })
+
+  describe('setTabLoading / setTabReady', () => {
+    it('setTabLoading marks a specific tab as loading without changing the active tab', () => {
+      const store = useDocumentStore()
+      store.setLoading('/test/doc.pdf')
+      store.setReady(mockInfo)
+      const firstTabId = store.activeTabId!
+      store.newTab()
+      const idleTabId = store.activeTabId!
+      store.setActiveTab(firstTabId)
+
+      store.setTabLoading(idleTabId, '/test/other.pdf')
+
+      expect(store.activeTabId).toBe(firstTabId)
+      expect(store.getTab(idleTabId)?.state).toBe('loading')
+      expect(store.getTab(idleTabId)?.filePath).toBe('/test/other.pdf')
+    })
+
+    it('setTabReady marks a specific tab as ready without changing the active tab', () => {
+      const store = useDocumentStore()
+      store.setLoading('/test/doc.pdf')
+      store.setReady(mockInfo)
+      const firstTabId = store.activeTabId!
+      store.newTab()
+      const idleTabId = store.activeTabId!
+      store.setActiveTab(firstTabId)
+      store.setTabLoading(idleTabId, '/test/other.pdf')
+
+      const otherInfo: DocumentInfo = { ...mockInfo, path: '/test/other.pdf', pageCount: 3 }
+      store.setTabReady(idleTabId, otherInfo)
+
+      expect(store.activeTabId).toBe(firstTabId)
+      expect(store.getTab(idleTabId)?.state).toBe('ready')
+      expect(store.getTab(idleTabId)?.info?.pageCount).toBe(3)
+    })
+
+    it('setTabLoading and setTabReady ignore unknown tab ids', () => {
+      const store = useDocumentStore()
+
+      store.setTabLoading('unknown', '/test/doc.pdf')
+      store.setTabReady('unknown', mockInfo)
+
+      expect(store.tabs).toHaveLength(0)
+    })
+  })
+
   describe('split view', () => {
     const secondInfo: DocumentInfo = { ...mockInfo, path: '/test/second.pdf', pageCount: 2 }
 

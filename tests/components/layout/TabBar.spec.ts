@@ -163,6 +163,23 @@ describe('TabBar', () => {
 
       expect(docStore.activeTabId).toBe(firstTabId);
     });
+
+    it('reorders tabs when a non-split tab is dropped on another tab', () => {
+      const docStore = useDocumentStore();
+      docStore.setLoading('/path/to/first.pdf');
+      const firstTabId = docStore.activeTabId!;
+      docStore.setLoading('/path/to/second.pdf');
+      const secondTabId = docStore.activeTabId!;
+      docStore.setLoading('/path/to/third.pdf');
+      const thirdTabId = docStore.activeTabId!;
+
+      startTabDrag(thirdTabId, 'third.pdf', { clientX: 0, clientY: 0 } as PointerEvent);
+      simulateDrop('tab', firstTabId); // move third before first
+
+      expect(docStore.tabs[0].id).toBe(thirdTabId);
+      expect(docStore.tabs[1].id).toBe(firstTabId);
+      expect(docStore.tabs[2].id).toBe(secondTabId);
+    });
   });
 
   it('hides the tab shown in the split pane from the tab list', () => {

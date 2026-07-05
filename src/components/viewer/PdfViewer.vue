@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-  import { computed, watch, nextTick, useTemplateRef } from 'vue';
+  import { computed, watch, nextTick, useTemplateRef, onUnmounted } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
 
@@ -14,13 +14,68 @@
 
   const viewerRef = useTemplateRef<HTMLElement>('viewer');
 
-  // Scroll to current page when it changes
+  // True while a programmatic scroll is in progress — suppresses scroll-to-page feedback loop.
+  let programmaticPage = false;
+  let programmaticTimer: ReturnType<typeof setTimeout> | null = null;
+  // Set before calling setPage from scroll so the watch skips scrollIntoView.
+  let suppressScrollWatch = false;
+  let rafId: number | null = null;
+
+  // Scroll to current page when changed from outside (sidebar, keyboard, selector).
   watch(() => docStore.currentPage, async (page) => {
+    if (suppressScrollWatch) {
+      suppressScrollWatch = false;
+      return;
+    }
     await nextTick();
+    programmaticPage = true;
+    if (programmaticTimer !== null)
+      clearTimeout(programmaticTimer);
     viewerRef.value
       ?.querySelector(`[data-page="${page}"]`)
       ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  })
+    programmaticTimer = setTimeout(() => { programmaticPage = false; }, 800);
+  });
+
+  // After zoom change, re-sync the page number from the new scroll/size layout.
+  watch(() => docStore.zoom, async () => {
+    if (programmaticPage) return;
+    await nextTick();
+    syncPageFromScroll();
+  });
+
+  // Find the page whose top is nearest to (and at or above) the viewport midpoint.
+  function syncPageFromScroll(): void {
+    if (programmaticPage || !viewerRef.value) return;
+
+    const viewerEl = viewerRef.value;
+    const midpoint = viewerEl.getBoundingClientRect().top + viewerEl.clientHeight / 2;
+    let page = docStore.currentPage;
+
+    viewerEl.querySelectorAll<HTMLElement>('[data-page]').forEach((slot) => {
+      if (slot.getBoundingClientRect().top <= midpoint)
+        page = Number(slot.dataset.page);
+    });
+
+    if (page !== docStore.currentPage) {
+      suppressScrollWatch = true;
+      docStore.setPage(page);
+    }
+  }
+
+  function onScroll(): void {
+    if (programmaticPage) return;
+    if (rafId !== null)
+      cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(syncPageFromScroll);
+  }
+
+  onUnmounted(() => {
+    if (rafId !== null)
+      cancelAnimationFrame(rafId);
+    if (programmaticTimer !== null)
+      clearTimeout(programmaticTimer);
+  });
 
   // Handle Ctrl + mouse wheel to zoom in/out
   function onWheel(e: WheelEvent): void {
@@ -41,7 +96,7 @@
 </script>
 
 <template>
-  <main ref="viewer" class="viewer" :class="{ 'viewer--split': docStore.splitEnabled }" role="main" @wheel="onWheel">
+  <main ref="viewer" class="viewer" :class="{ 'viewer--split': docStore.splitEnabled }" role="main" @wheel="onWheel" @scroll="onScroll">
 
     <!-- Empty state -->
     <HomeScreen v-if="docStore.state === 'idle'" />

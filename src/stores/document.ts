@@ -132,9 +132,40 @@ export const useDocumentStore = defineStore('document', () => {
     tab.currentPage = 1;
   }
 
-  function setPasswordRequired(): void {
-    if (activeTab.value)
-      activeTab.value.state = 'password-required';
+  /**
+   * Marks a specific tab as loading without changing the active tab.
+   * Used when loading a document into the split pane tab directly.
+   */
+  function setTabLoading(tabId: string, path: string): void {
+    const tab = getTab(tabId);
+    if (!tab)
+      return;
+
+    tab.filePath = path;
+    tab.state = 'loading';
+    tab.info = null;
+    tab.error = null;
+  }
+
+  /**
+   * Marks a specific tab as ready without changing the active tab.
+   * Used when loading a document into the split pane tab directly.
+   */
+  function setTabReady(tabId: string, docInfo: DocumentInfo, pwd: string | null = null): void {
+    const tab = getTab(tabId);
+    if (!tab)
+      return;
+
+    tab.state = 'ready';
+    tab.info = docInfo;
+    tab.password = pwd;
+    tab.currentPage = 1;
+  }
+
+  function setPasswordRequired(tabId?: string): void {
+    const tab = tabId ? getTab(tabId) : activeTab.value;
+    if (tab)
+      tab.state = 'password-required';
   }
 
   /** Sets the error on `tabId`, or on the active tab when omitted. */
@@ -217,6 +248,20 @@ export const useDocumentStore = defineStore('document', () => {
     splitTabId.value = null;
   }
 
+  /** Moves `draggedId` to the position of `targetId` in the tab list (insert-before semantics). */
+  function reorderTab(draggedId: string, targetId: string): void {
+    if (draggedId === targetId)
+      return;
+
+    const from = tabs.value.findIndex((t) => t.id === draggedId);
+    const to = tabs.value.findIndex((t) => t.id === targetId);
+    if (from === -1 || to === -1)
+      return;
+
+    const [moved] = tabs.value.splice(from, 1);
+    tabs.value.splice(to, 0, moved);
+  }
+
   /** Swaps the active (left) and split (right) pane tabs. */
   function swapSplitTabs(): void {
     if (!splitTabId.value || !activeTabId.value)
@@ -251,9 +296,11 @@ export const useDocumentStore = defineStore('document', () => {
     fileName,
     getTab,
     setLoading,
+    setTabLoading,
     newTab,
     focusTabByPath,
     setReady,
+    setTabReady,
     setPasswordRequired,
     setError,
     setPage,
@@ -266,6 +313,7 @@ export const useDocumentStore = defineStore('document', () => {
     openSplit,
     closeSplit,
     toggleSplit,
+    reorderTab,
     swapSplitTabs,
   };
 });

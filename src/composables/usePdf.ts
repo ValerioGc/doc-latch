@@ -28,6 +28,13 @@ export function usePdf() {
    * Switches to the existing tab instead of reloading if the file is already open.
    */
   async function loadDocument(path: string): Promise<void> {
+    // Already visible in the active pane — nothing to do
+    if (docStore.filePath === path)
+      return;
+    // Already visible in the split pane — do not trigger a pane swap
+    if (docStore.splitTabId && docStore.getTab(docStore.splitTabId)?.filePath === path)
+      return;
+    // Open in a background (non-visible) tab — bring it to the front
     if (docStore.focusTabByPath(path))
       return;
 
@@ -69,6 +76,55 @@ export function usePdf() {
    */
   async function openRecentFile(path: string): Promise<void> {
     await loadDocument(path);
+  }
+
+  /**
+   * Loads a PDF into a specific tab without making it the active tab.
+   * Used when loading from the HomeScreen shown inside the split pane.
+   */
+  async function loadDocumentInTab(path: string, tabId: string): Promise<void> {
+    // Already visible in the active pane — nothing to do
+    if (docStore.filePath === path)
+      return;
+    // Already visible in the split pane — do not trigger a pane swap
+    if (docStore.splitTabId && docStore.getTab(docStore.splitTabId)?.filePath === path)
+      return;
+    // Open in a background (non-visible) tab — bring it to the front
+    if (docStore.focusTabByPath(path))
+      return;
+
+    docStore.setTabLoading(tabId, path);
+
+    try {
+      const info = await invoke<DocumentInfo>('open_pdf', { path });
+      docStore.setTabReady(tabId, info);
+      recentStore.add(path);
+    } catch (err) {
+      const pdfErr = err as PdfError;
+      if (pdfErr.kind === 'PasswordRequired') {
+        docStore.setPasswordRequired(tabId);
+      } else {
+        if (pdfErr.kind === 'FileNotFound')
+          recentStore.remove(path);
+        docStore.setError(pdfErr, tabId);
+      }
+    }
+  }
+
+  /**
+   * Opens a native file picker and loads the selected PDF into a specific tab.
+   * Used when "Open" is clicked from the HomeScreen inside the split pane.
+   */
+  async function openFileInTab(tabId: string): Promise<void> {
+    const selected = await openDialog({
+      filters: [{ name: 'PDF', extensions: ['pdf'] }],
+      multiple: false,
+    });
+
+    if (!selected || typeof selected !== 'string')
+      return;
+
+    await loadDocumentInTab(selected, tabId);
   }
 
   /**
@@ -190,7 +246,9 @@ export function usePdf() {
 
   return {
     openFile,
+    openFileInTab,
     openRecentFile,
+    loadDocumentInTab,
     openWithPassword,
     renderPage,
     renderPageFor,

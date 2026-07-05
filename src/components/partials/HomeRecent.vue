@@ -4,23 +4,32 @@ import documentIcon from '@/assets/icons/document.svg?raw';
 import closeIcon from '@/assets/icons/window-close.svg?raw';
 import { usePdf } from '@/composables/usePdf';
 
+const props = defineProps<{ tabId?: string }>();
+
 const recentStore = useRecentStore();
-const { openRecentFile } = usePdf();
+const { openRecentFile, loadDocumentInTab } = usePdf();
+
+function handleOpen(path: string): void {
+  if (props.tabId)
+    loadDocumentInTab(path, props.tabId);
+  else
+    openRecentFile(path);
+}
 
 </script>
 
 <template>
     <div class="recent">
         <p class="recent_title">{{ $t('menu.recent') }}</p>
-        <hr />
-        
+        <hr class="recent_sep" />
+
         <p v-if="recentStore.entries.length === 0" class="recent_empty">
             {{ $t('home.noRecent') }}
         </p>
 
         <ul v-else class="recent_list">
             <li v-for="entry in recentStore.entries" :key="entry.path" class="recent_row">
-                <button class="recent_item" :title="entry.path" @click="openRecentFile(entry.path)">
+                <button class="recent_item" :title="entry.path" @click="handleOpen(entry.path)">
                     <span class="recent_item_icon" aria-hidden="true" v-html="documentIcon"></span>
                     <span class="recent_text">
                         <span class="recent_name">{{ entry.name }}</span>
@@ -44,6 +53,12 @@ const { openRecentFile } = usePdf();
     @include flex-col(6px);
     width: 100%;
     max-width: 70%;
+
+    &_sep {
+        @extend %divider-x;
+
+        margin: 0;
+    }
 
     &_title {
         font-size: $font-size-xs;

@@ -77,15 +77,21 @@
       <Sidebar v-if="!uiStore.sidebarHidden" />
 
       <div class="app_panes">
+
+        <!-- Split-pane header -->
         <div v-if="docStore.tabs.length > 0" class="app_panes_header">
           <TabBar :style="leftPaneStyle" />
           <template v-if="docStore.splitEnabled">
-            <div class="pane_header_sep" :style="{ width: `${SPLIT_DIVIDER_WIDTH}px` }" aria-hidden="true" />
+            <div class="pane_header_sep" :style="{ width: `${SPLIT_DIVIDER_WIDTH}px` }" aria-hidden="true"></div>
             <SplitTabHeader />
           </template>
         </div>
+
+        <!-- Split-pane content -->
         <div class="app_panes_content" ref="splitContent">
+
           <PdfViewer :style="leftPaneStyle" />
+          
           <template v-if="docStore.splitEnabled">
             <hr class="pane_divider"
               :style="{ width: `${SPLIT_DIVIDER_WIDTH}px` }"

@@ -68,6 +68,28 @@ describe('usePdf', () => {
       expect(invoke).not.toHaveBeenCalled();
     });
 
+    it('does not swap panes when the file is already visible in the split pane', async () => {
+      invoke.mockResolvedValue(mockInfo);
+      const docStore = useDocumentStore();
+      const { openRecentFile } = usePdf();
+
+      // Set up: active tab has doc.pdf, split tab has other.pdf
+      await openRecentFile('/test/doc.pdf');
+      const docTabId = docStore.activeTabId!;
+      await openRecentFile('/test/other.pdf');
+      docStore.openSplit(); // split shows docTabId
+      expect(docStore.splitTabId).toBe(docTabId);
+      const activeBeforeId = docStore.activeTabId!;
+      invoke.mockClear();
+
+      // Clicking the file already in the split pane must not swap
+      await openRecentFile('/test/doc.pdf');
+
+      expect(docStore.activeTabId).toBe(activeBeforeId);
+      expect(docStore.splitTabId).toBe(docTabId);
+      expect(invoke).not.toHaveBeenCalled();
+    });
+
     it('adds the path to recent files on success', async () => {
       invoke.mockResolvedValue(mockInfo);
       const recentStore = useRecentStore();
