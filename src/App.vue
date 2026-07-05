@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-  import { watch } from 'vue';
+  import { ref, computed, watch, useTemplateRef } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useUiStore } from '@/stores/ui';
   import { useDocumentStore } from '@/stores/document';
@@ -10,7 +10,6 @@
   import Toolbar from '@/components/layout/Toolbar.vue';
   import TabBar from '@/components/layout/TabBar.vue';
   import SplitTabHeader from '@/components/layout/SplitTabHeader.vue';
-  import SplitToggle from '@/components/layout/SplitToggle.vue';
   import Sidebar from '@/components/layout/Sidebar.vue';
   import StatusBar from '@/components/layout/StatusBar.vue';
   import PdfViewer from '@/components/viewer/PdfViewer.vue';
@@ -27,6 +26,45 @@
 
   useKeyboard();
 
+  // ── Split-pane resize ──────────────────────────────────────────────────────
+  const SPLIT_MIN = 280;
+  const SPLIT_DIVIDER_WIDTH = 6;
+
+  const splitContentRef = useTemplateRef<HTMLElement>('splitContent');
+  const splitLeftWidth = ref<number | null>(null);
+
+  watch(() => docStore.splitEnabled, (enabled) => {
+    if (!enabled)
+      splitLeftWidth.value = null;
+  });
+
+  const leftPaneStyle = computed(() => {
+    if (!docStore.splitEnabled || splitLeftWidth.value === null)
+      return {};
+    return { flex: `0 0 ${splitLeftWidth.value}px` };
+  });
+
+  function onSplitResizeStart(e: MouseEvent): void {
+    e.preventDefault();
+    const startX = e.clientX;
+    const divider = e.currentTarget as HTMLElement;
+    const startWidth = (divider.previousElementSibling as HTMLElement).getBoundingClientRect().width;
+
+    function onMove(ev: MouseEvent): void {
+      const containerWidth = splitContentRef.value?.getBoundingClientRect().width ?? 0;
+      const maxWidth = containerWidth - SPLIT_DIVIDER_WIDTH - SPLIT_MIN;
+      splitLeftWidth.value = Math.max(SPLIT_MIN, Math.min(maxWidth, startWidth + (ev.clientX - startX)));
+    }
+
+    function onUp(): void {
+      globalThis.removeEventListener('mousemove', onMove);
+      globalThis.removeEventListener('mouseup', onUp);
+    }
+
+    globalThis.addEventListener('mousemove', onMove);
+    globalThis.addEventListener('mouseup', onUp);
+  }
+
 </script>
 
 <template>
@@ -36,17 +74,26 @@
     <Toolbar />
 
     <div class="app_body">
-      <Sidebar v-if="docStore.isOpen && !uiStore.sidebarHidden" />
+      <Sidebar v-if="!uiStore.sidebarHidden" />
 
       <div class="app_panes">
         <div v-if="docStore.tabs.length > 0" class="app_panes_header">
-          <TabBar />
-          <SplitTabHeader v-if="docStore.splitEnabled" />
-          <SplitToggle />
+          <TabBar :style="leftPaneStyle" />
+          <template v-if="docStore.splitEnabled">
+            <div class="pane_header_sep" :style="{ width: `${SPLIT_DIVIDER_WIDTH}px` }" aria-hidden="true" />
+            <SplitTabHeader />
+          </template>
         </div>
-        <div class="app_panes_content">
-          <PdfViewer />
-          <SplitPane v-if="docStore.splitEnabled" />
+        <div class="app_panes_content" ref="splitContent">
+          <PdfViewer :style="leftPaneStyle" />
+          <template v-if="docStore.splitEnabled">
+            <hr class="pane_divider"
+              :style="{ width: `${SPLIT_DIVIDER_WIDTH}px` }"
+              aria-orientation="vertical"
+              @mousedown="onSplitResizeStart"
+            />
+            <SplitPane />
+          </template>
         </div>
       </div>
     </div>
@@ -88,6 +135,24 @@
         min-height: 0;
       }
     }
+  }
+
+  .pane_divider {
+    flex-shrink: 0;
+    border: none;
+    margin: 0;
+    cursor: col-resize;
+
+    &:hover {
+      background: var(--color-accent);
+      opacity: 0.3;
+    }
+  }
+
+  .pane_header_sep {
+    flex-shrink: 0;
+    background: var(--color-bg-secondary);
+    border-bottom: 0.5px solid var(--color-border);
   }
 
 </style>

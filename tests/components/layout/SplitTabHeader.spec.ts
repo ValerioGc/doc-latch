@@ -1,8 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
-import { startTabDrag, endTabDrag } from '@/composables/useTabDrag';
+import { startTabDrag, endTabDrag, simulateDrop } from '@/composables/useTabDrag';
 import { useDocumentStore } from '@/stores/document';
 import { createTestI18n } from '../../helpers/testPlugins';
 import SplitTabHeader from '@/components/layout/SplitTabHeader.vue';
@@ -74,33 +73,29 @@ describe('SplitTabHeader', () => {
   });
 
   describe('drag-and-drop tab swapping', () => {
-    it('the split header tab is draggable', () => {
+    it('has a pointer drag handle', () => {
       openTwoReadyTabsAndSplit();
       const wrapper = mountHeader();
 
-      expect(wrapper.find('.split_header_tab').attributes('draggable')).toBe('true');
+      expect(wrapper.find('[data-drag-handle]').exists()).toBe(true);
     });
 
-    it('swaps tabs when a main-pane tab is dropped onto the header', async () => {
+    it('swaps tabs when a main-pane tab is dropped onto the header', () => {
       const { docStore, firstTabId } = openTwoReadyTabsAndSplit();
       const secondTabId = docStore.activeTabId!;
-      const wrapper = mountHeader();
 
-      startTabDrag(secondTabId, { dataTransfer: null } as unknown as DragEvent);
-      await wrapper.find('.split_header').trigger('drop');
-      await nextTick();
+      startTabDrag(secondTabId, 'second.pdf', { clientX: 0, clientY: 0 } as PointerEvent);
+      simulateDrop('split');
 
       expect(docStore.activeTabId).toBe(firstTabId);
       expect(docStore.splitTabId).toBe(secondTabId);
     });
 
-    it('does not swap when the split tab itself is the active drag', async () => {
+    it('does not swap when the split tab itself is the active drag', () => {
       const { docStore, firstTabId } = openTwoReadyTabsAndSplit();
-      const wrapper = mountHeader();
 
-      startTabDrag(firstTabId, { dataTransfer: null } as unknown as DragEvent);
-      await wrapper.find('.split_header').trigger('drop');
-      await nextTick();
+      startTabDrag(firstTabId, 'first.pdf', { clientX: 0, clientY: 0 } as PointerEvent);
+      simulateDrop('split');
 
       expect(docStore.splitTabId).toBe(firstTabId);
       endTabDrag();

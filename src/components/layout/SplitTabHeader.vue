@@ -1,49 +1,21 @@
 <script setup lang="ts">
 
-  import { computed, ref } from 'vue';
+  import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
-  import { startTabDrag, endTabDrag, getActiveDragTabId } from '@/composables/useTabDrag';
+  import { startTabDrag, useDragState } from '@/composables/useTabDrag';
   import documentIcon from '@/assets/icons/document.svg?raw';
   import closeIcon from '@/assets/icons/window-close.svg?raw';
 
   const { t } = useI18n();
   const docStore = useDocumentStore();
+  const drag = useDragState();
 
   const tab = computed(() => (docStore.splitTabId ? docStore.getTab(docStore.splitTabId) : null));
 
-  const dragOver = ref(false);
-
-  function onDragStart(e: DragEvent): void {
-    if (!tab.value)
-      return;
-    startTabDrag(tab.value.id, e);
-  }
-
-  function onDragEnd(): void {
-    endTabDrag();
-    dragOver.value = false;
-  }
-
-  function onDragOver(e: DragEvent): void {
-    if (!getActiveDragTabId() || !docStore.splitEnabled)
-      return;
-    e.preventDefault();
-    e.dataTransfer && (e.dataTransfer.dropEffect = 'move');
-    dragOver.value = true;
-  }
-
-  function onDragLeave(e: DragEvent): void {
-    if (!(e.currentTarget as HTMLElement).contains(e.relatedTarget as Node))
-      dragOver.value = false;
-  }
-
-  function onDrop(): void {
-    const draggedId = getActiveDragTabId();
-    endTabDrag();
-    dragOver.value = false;
-    if (draggedId && draggedId !== docStore.splitTabId)
-      docStore.swapSplitTabs();
+  function onPointerDown(e: PointerEvent): void {
+    if (!tab.value || e.button !== 0) return;
+    startTabDrag(tab.value.id, tabName(tab.value.filePath), e);
   }
 
   function tabName(filePath: string | null): string {
@@ -57,20 +29,16 @@
 
 <template>
   <div class="split_header"
-    :class="{ 'drop-over': dragOver }"
-    @dragover="onDragOver($event)"
-    @dragleave="onDragLeave($event)"
-    @drop="onDrop"
+    :class="{ 'drop-over': drag.isDragging && drag.overSplit }"
   >
-    <div v-if="tab" class="split_header_tab"
-      role="tab"
-      aria-selected="true"
-      draggable="true"
-      @dragstart="onDragStart"
-      @dragend="onDragEnd"
-    >
-      <span class="split_header_tab_icon" aria-hidden="true" v-html="documentIcon" />
-      <span class="split_header_tab_name">{{ tabName(tab.filePath) }}</span>
+    <div v-if="tab" class="split_header_tab" role="tab" aria-selected="true">
+      <span class="split_header_tab_drag"
+        data-drag-handle="true"
+        @pointerdown="onPointerDown($event)"
+      >
+        <span class="split_header_tab_icon" aria-hidden="true" v-html="documentIcon" />
+        <span class="split_header_tab_name">{{ tabName(tab.filePath) }}</span>
+      </span>
       <button class="split_header_close"
         :title="t('menu.close')"
         :aria-label="t('menu.close')"
@@ -92,10 +60,12 @@
     border-left: 0.5px solid var(--color-border);
     border-bottom: 0.5px solid var(--color-border);
     background: var(--color-bg-secondary);
+    transition: background 0.1s;
 
     &.drop-over {
       outline: 1.5px solid var(--color-accent);
       outline-offset: -1.5px;
+      background: color-mix(in srgb, var(--color-accent) 8%, var(--color-bg-secondary));
     }
 
     &_tab {
@@ -106,6 +76,19 @@
       font-size: $font-size-base;
       color: var(--color-text-primary);
       background: var(--color-bg-primary);
+
+      &_drag {
+        @include flex-row($space-2);
+
+        min-width: 0;
+        flex: 1;
+        cursor: grab;
+        user-select: none;
+
+        &:active {
+          cursor: grabbing;
+        }
+      }
 
       &_icon {
         display: flex;

@@ -205,9 +205,9 @@ export const useDocumentStore = defineStore('document', () => {
       closeTab(activeTabId.value);
   }
 
-  /** Opens the split pane with the first ready tab other than the active one, if any. */
+  /** Opens the split pane with the first tab other than the active one, if any. */
   function openSplit(): void {
-    const candidate = tabs.value.find((tab) => tab.state === 'ready' && tab.id !== activeTabId.value);
+    const candidate = tabs.value.find((tab) => tab.id !== activeTabId.value);
     if (candidate)
       splitTabId.value = candidate.id;
   }

@@ -6,7 +6,7 @@
 
   const docStore = useDocumentStore();
 
-  const canSplit = computed(() => docStore.tabs.filter((tab) => tab.state === 'ready').length >= 2);
+  const canSplit = computed(() => docStore.tabs.length >= 2);
 
 </script>
 
@@ -31,10 +31,9 @@
     width: 28px;
     height: 100%;
     flex-shrink: 0;
-    margin-left: auto;
+    margin-left: $space-1;
     border: none;
-    border-bottom: 0.5px solid var(--color-border);
-    background: var(--color-bg-secondary);
+    background: transparent;
     border-radius: $radius-sm;
     color: var(--color-text-tertiary);
     cursor: pointer;
@@ -50,15 +49,15 @@
 
     &:disabled {
       opacity: 0.4;
-      cursor: default;
+      cursor: not-allowed;
     }
 
     &_icon {
       display: flex;
 
       :deep(svg) {
-        width: 12px;
-        height: 12px;
+        width: 15px;
+        height: 15px;
       }
     }
   }

@@ -4,6 +4,7 @@ import { mount } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
 import { useDocumentStore } from '@/stores/document';
 import SplitPane from '@/components/viewer/SplitPane.vue';
+import { createTestI18n } from '../../helpers/testPlugins';
 import type { DocumentInfo } from '@/types/pdf';
 
 vi.mock('@/composables/usePageCanvas', () => ({
@@ -37,6 +38,8 @@ function openTwoReadyTabsAndSplit() {
   return { docStore, firstTabId };
 }
 
+const mountOptions = { global: { plugins: [createTestI18n()] } };
+
 describe('SplitPane', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -44,14 +47,13 @@ describe('SplitPane', () => {
 
   it('renders a page canvas per page of the selected tab', () => {
     openTwoReadyTabsAndSplit();
-    const wrapper = mount(SplitPane);
+    const wrapper = mount(SplitPane, mountOptions);
 
     expect(wrapper.findAll('.page_slot')).toHaveLength(2);
   });
 
   it('renders nothing when no tab is shown in the split pane', () => {
-    setActivePinia(createPinia());
-    const wrapper = mount(SplitPane);
+    const wrapper = mount(SplitPane, mountOptions);
 
     expect(wrapper.findAll('.page_slot')).toHaveLength(0);
   });
