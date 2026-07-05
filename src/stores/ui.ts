@@ -11,11 +11,11 @@ const SIDEBAR_WIDTH_DEFAULT = 130;
 const SIDEBAR_WIDTH_MIN = 100;
 const SIDEBAR_WIDTH_MAX = 260;
 
-const SUPPORTED_LOCALES: SupportedLocale[] = ['it', 'en', 'fr', 'de'];
+const SUPPORTED_LOCALES = new Set<SupportedLocale>(['it', 'en', 'fr', 'de']);
 
 function resolveSystemLocale(): SupportedLocale {
   const lang = navigator.language.toLowerCase().split('-')[0] as SupportedLocale;
-  return SUPPORTED_LOCALES.includes(lang) ? lang : 'en';
+  return SUPPORTED_LOCALES.has(lang) ? lang : 'en';
 }
 
 export const useUiStore = defineStore('ui', () => {
