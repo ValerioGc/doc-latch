@@ -20,7 +20,6 @@ if (headingIndex === -1) {
 
 const afterHeading = changelog.slice(headingIndex);
 const nextHeadingIndex = afterHeading.slice(heading.length).search(/^## \[/m);
-const section =
-  nextHeadingIndex === -1 ? afterHeading : afterHeading.slice(0, heading.length + nextHeadingIndex);
+const section = nextHeadingIndex === -1 ? afterHeading : afterHeading.slice(0, heading.length + nextHeadingIndex);
 
 process.stdout.write(section.trim() + '\n');

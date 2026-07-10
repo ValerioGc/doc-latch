@@ -16,14 +16,11 @@ pub struct PageRenderResult {
     pub height_px: u32,
 }
 
-/// Loads the native PDFium library. `resource_dir` is the Tauri app's resource
-/// directory (when running inside a real app); it is a plain `Option<PathBuf>`
-/// rather than an `AppHandle` so this function has no Tauri runtime dependency
-/// and can be unit-tested directly.
+/// Loads the native PDFium library. `resource_dir` is the Tauri app's resource directory
 fn bind_pdfium(resource_dir: Option<PathBuf>) -> Result<Pdfium, PdfError> {
     let candidate_dirs: Vec<PathBuf> = [
         resource_dir,
-        std::env::current_exe()
+        std::env::current_exe() 
             .ok()
             .and_then(|p| p.parent().map(std::path::Path::to_path_buf)),
     ]
@@ -42,7 +39,7 @@ fn bind_pdfium(resource_dir: Option<PathBuf>) -> Result<Pdfium, PdfError> {
         .or_else(|| Pdfium::bind_to_system_library().ok())
         .ok_or_else(|| {
             PdfError::RenderError(
-                "PDFium non trovato: aggiungi pdfium.dll in src-tauri/".to_string(),
+                "PDFium not found: add pdfium.dll in src-tauri/".to_string(),
             )
         })?;
 
@@ -71,7 +68,7 @@ pub fn render_page(
     let page_count = doc.pages().len() as u32;
     if page >= page_count {
         return Err(PdfError::RenderError(format!(
-            "Pagina {page} fuori range (totale: {page_count})"
+            "Page {page} out of range (total: {page_count})"
         )));
     }
 

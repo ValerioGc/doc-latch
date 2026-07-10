@@ -3,28 +3,28 @@
 #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize, Clone)]
 #[serde(tag = "kind", content = "message")]
 pub enum PdfError {
-    #[error("File non trovato: {0}")]
+    #[error("File not found: {0}")]
     FileNotFound(String),
 
-    #[error("Password errata")]
+    #[error("Wrong password")]
     WrongPassword,
 
-    #[error("Password richiesta per aprire il documento")]
+    #[error("Password required to open the document")]
     PasswordRequired,
 
-    #[error("PDF non valido o corrotto")]
+    #[error("Invalid or corrupted PDF document")]
     InvalidPdf,
 
-    #[error("Il documento non è protetto da password")]
+    #[error("The document is not password protected")]
     NotEncrypted,
 
-    #[error("Il documento è già protetto da password")]
+    #[error("The document is already password protected")]
     AlreadyEncrypted,
 
-    #[error("Errore di rendering: {0}")]
+    #[error("Rendering error: {0}")]
     RenderError(String),
 
-    #[error("Errore sconosciuto: {0}")]
+    #[error("Unknown error: {0}")]
     Unknown(String),
 }
 

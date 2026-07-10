@@ -8,7 +8,6 @@ use commands::document::{
 };
 use commands::security::{add_password, get_security_info, remove_password};
 
-/// Tauri application entry point
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()

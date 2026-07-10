@@ -3,33 +3,33 @@ use doclatch_lib::pdf::error::PdfError;
 #[test]
 fn file_not_found_message_includes_the_path() {
     let err = PdfError::FileNotFound("/tmp/missing.pdf".to_string());
-    assert_eq!(err.to_string(), "File non trovato: /tmp/missing.pdf");
+    assert_eq!(err.to_string(), "File not found: /tmp/missing.pdf");
 }
 
 #[test]
 fn render_error_message_includes_the_detail() {
-    let err = PdfError::RenderError("pagina fuori range".to_string());
-    assert_eq!(err.to_string(), "Errore di rendering: pagina fuori range");
+    let err = PdfError::RenderError("page out of range".to_string());
+    assert_eq!(err.to_string(), "Render error: page out of range");
 }
 
 #[test]
 fn unit_variants_have_fixed_messages() {
-    assert_eq!(PdfError::WrongPassword.to_string(), "Password errata");
+    assert_eq!(PdfError::WrongPassword.to_string(), "Wrong password");
     assert_eq!(
         PdfError::PasswordRequired.to_string(),
-        "Password richiesta per aprire il documento"
+        "Password required to open the document"
     );
     assert_eq!(
         PdfError::InvalidPdf.to_string(),
-        "PDF non valido o corrotto"
+        "Invalid or corrupted PDF document"
     );
     assert_eq!(
         PdfError::NotEncrypted.to_string(),
-        "Il documento non è protetto da password"
+        "The document is not password protected"
     );
     assert_eq!(
         PdfError::AlreadyEncrypted.to_string(),
-        "Il documento è già protetto da password"
+        "The document is already password protected"
     );
 }
 

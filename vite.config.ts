@@ -54,7 +54,6 @@ export default defineConfig({
     },
   },
 
-  // Tauri settings 
   clearScreen: false,
   server: {
     port: 1420,

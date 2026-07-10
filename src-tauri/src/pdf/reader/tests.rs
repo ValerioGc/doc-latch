@@ -4,8 +4,7 @@ use tempfile::NamedTempFile;
 use super::*;
 
 /// Builds a minimal one-page PDF in memory, with the MediaBox set on the
-/// /Pages node (inherited by the page) to mirror real-world documents where
-/// the leaf page dict has no MediaBox of its own.
+/// /Pages node (inherited by the page) to mirror real-world documents
 fn build_test_pdf(title: Option<&str>, author_utf16be: Option<&str>) -> Document {
     let mut doc = Document::with_version("1.7");
 

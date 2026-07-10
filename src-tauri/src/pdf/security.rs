@@ -45,8 +45,6 @@ impl SecurityInfo {
 }
 
 /// Reads encryption status and permissions from a PDF's `/Encrypt` dictionary.
-/// This never needs the document's password: the dictionary itself isn't
-/// encrypted, only the page content is, so `Document::load` can always parse it.
 pub fn get_security_info(path: &str) -> Result<SecurityInfo, PdfError> {
     let file_path = Path::new(path);
     if !file_path.exists() {
@@ -92,11 +90,6 @@ pub fn remove_password(path: &str, password: &str, destination: &str) -> Result<
         return Err(PdfError::FileNotFound(path.to_string()));
     }
 
-    // A plain, password-less load is enough to check the trailer's /Encrypt
-    // entry, but NOT enough to decrypt and re-save: lopdf only resolves a
-    // document's objects against an encrypted PDF's cross-reference stream
-    // once it has the password (see `Document::load_with_password` below),
-    // so this first load exists purely for the "is this even encrypted?" guard.
     if !Document::load(file_path)?.is_encrypted() {
         return Err(PdfError::NotEncrypted);
     }
@@ -187,7 +180,7 @@ fn describe_encryption(
         2 => ("RC4".to_string(), Some(length)),
         4 => crypt_filter_method(encrypt_dict).unwrap_or(("RC4/AES".to_string(), Some(length))),
         5 => ("AES".to_string(), Some(256)),
-        _ => ("Sconosciuto".to_string(), Some(length)),
+        _ => ("Unknown".to_string(), Some(length)),
     }
 }
 

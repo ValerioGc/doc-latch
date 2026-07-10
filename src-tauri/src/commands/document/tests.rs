@@ -1,13 +1,6 @@
 use super::*;
 use crate::test_support::{build_test_pdf, pdfium_dir, save_to_temp};
 
-// The `#[command]` functions themselves take a `tauri::AppHandle`, which
-// can't be constructed in tests without `tauri::test::mock_app()` — that
-// crashes the test binary on this dev machine. Each one is just a single
-// line extracting `app.path().resource_dir()` before delegating to an
-// `_impl` function that takes `Option<PathBuf>` instead, so the actual
-// composition logic is covered here without needing an AppHandle at all.
-
 #[test]
 fn open_pdf_delegates_to_the_reader_module() {
     let result = open_pdf("/nonexistent/path/file.pdf".to_string());
@@ -22,8 +15,6 @@ fn open_pdf_with_password_impl_propagates_wrong_password() {
     };
 
     // `verify_password` (and the impl built on top of it) maps any PDFium
-    // load failure to `WrongPassword`. Pointing it at a nonexistent path
-    // makes that failure deterministic without needing real encryption.
     let result = open_pdf_with_password_impl(Some(dir), "/nonexistent/path/file.pdf", "wrong");
 
     assert!(matches!(result, Err(PdfError::WrongPassword)));

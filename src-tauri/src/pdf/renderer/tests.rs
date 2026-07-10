@@ -1,19 +1,6 @@
 use super::*;
 use crate::test_support::{build_test_pdf, pdfium_dir, save_to_temp};
 
-// `bind_pdfium`, `render_page` and `verify_password` no longer take an
-// `AppHandle` (see the refactor in renderer.rs): the resource directory is
-// now a plain `Option<PathBuf>`, so they can be exercised directly with the
-// real PDFium binary checked into `pdfium-bin/` for local development.
-// Tests that need that binary skip themselves (instead of failing) when it
-// isn't present, e.g. on a machine that hasn't run the PDFium download step.
-
-// A dedicated "PDFium not found" test isn't reliable here: `cargo test` runs
-// every test in this binary in one process, and once any other test in this
-// file successfully binds the library, Windows keeps it loaded for the
-// process — later `bind_to_library` calls with an unrelated path then
-// resolve against that already-loaded module instead of failing.
-
 #[test]
 fn bind_pdfium_finds_library_in_resource_dir() {
     let Some(dir) = pdfium_dir() else {
