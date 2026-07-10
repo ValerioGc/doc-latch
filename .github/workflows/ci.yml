@@ -461,7 +461,8 @@ jobs:
           mkdir -p release-assets
           apk=$(find src-tauri/gen/android/app/build/outputs/apk -name '*-release.apk' 2>/dev/null || true)
           if [[ -z "$apk" ]]; then echo "No signed release APK found."; exit 1; fi
-          cp $apk release-assets/
+          version="${GITHUB_REF_NAME#v}"
+          cp "$apk" "release-assets/DocLatch_${version}_android.apk"
 
       - name: Upload Android APK
         uses: actions/upload-artifact@v4
