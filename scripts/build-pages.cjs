@@ -176,6 +176,7 @@ ${indent(alternates, 4)}
         </a>
         <div class="nav_cluster">
           <div class="nav_links">
+            <a href="#download">${escapeHtml(page.downloadNav)}</a>
             <a href="#features">${escapeHtml(page.featuresNav)}</a>
             <a href="#guides">${escapeHtml(page.guidesNav)}</a>
             <a href="#formats">${escapeHtml(page.formatsNav)}</a>
@@ -207,6 +208,8 @@ ${indent(languageOptions, 12)}
     </header>
 
     <main>
+${indent(renderDownloadSection(locale), 6)}
+
       <section id="features" class="section">
         <div class="section_header">
           <p class="eyebrow">${escapeHtml(page.featuresKicker)}</p>
@@ -274,6 +277,101 @@ ${indent(editSteps, 14)}
   </body>
 </html>
 `;
+}
+
+function renderDownloadSection(locale) {
+  const page = content.locales[locale];
+  const repoPath = site.repositoryUrl.replace('https://github.com/', '');
+  const releasesUrl = `${site.repositoryUrl}/releases/latest`;
+  const apiUrl = `https://api.github.com/repos/${repoPath}/releases/latest`;
+
+  // Strings passed to inline JS via JSON.stringify to avoid any escaping issues
+  const strFor = JSON.stringify(page.downloadFor);
+  const strAll = JSON.stringify(page.downloadAll);
+  const strVersion = JSON.stringify(page.downloadVersion);
+
+  return `<section id="download" class="download_section">
+  <div class="section_header">
+    <p class="eyebrow">${escapeHtml(page.downloadKicker)}</p>
+    <h2>${escapeHtml(page.downloadTitle)}</h2>
+  </div>
+  <div class="download_btns">
+    <a id="dl_primary" class="button button_primary button_lg" href="${escapeHtml(releasesUrl)}">${escapeHtml(page.downloadLoading)}</a>
+    <div id="dl_others" class="download_btns" style="gap:10px"></div>
+  </div>
+  <p class="download_meta" id="dl_meta">
+    <a href="${escapeHtml(releasesUrl)}">${escapeHtml(page.downloadAll)}</a>
+  </p>
+  <script>
+    (function () {
+      var API = ${JSON.stringify(apiUrl)};
+      var RELEASES = ${JSON.stringify(releasesUrl)};
+      var STR_FOR = ${strFor};
+      var STR_ALL = ${strAll};
+      var STR_VER = ${strVersion};
+
+      function detectOS() {
+        var ua = navigator.userAgent || '';
+        var pl = (navigator.platform || '').toLowerCase();
+        if (/android/i.test(ua)) return 'android';
+        if (/win/.test(pl)) return 'windows';
+        if (/linux/.test(pl)) return 'linux';
+        return null;
+      }
+
+      var primary = document.getElementById('dl_primary');
+      var others = document.getElementById('dl_others');
+      var meta = document.getElementById('dl_meta');
+
+      fetch(API)
+        .then(function (r) { return r.json(); })
+        .then(function (release) {
+          var version = release.tag_name || '';
+          var assets = release.assets || [];
+
+          var platforms = [
+            { key: 'windows', label: 'Windows', asset: assets.find(function (a) { return /\\.exe$/i.test(a.name); }) },
+            { key: 'linux',   label: 'Linux',   asset: assets.find(function (a) { return /\\.AppImage$/i.test(a.name); }) },
+            { key: 'android', label: 'Android', asset: assets.find(function (a) { return /\\.apk$/i.test(a.name); }) },
+          ].filter(function (p) { return !!p.asset; });
+
+          if (!platforms.length) return;
+
+          var detected = detectOS();
+          var main = platforms.find(function (p) { return p.key === detected; }) || platforms[0];
+          var rest = platforms.filter(function (p) { return p !== main; });
+
+          if (primary) {
+            primary.href = main.asset.browser_download_url;
+            primary.textContent = STR_FOR + ' ' + main.label;
+          }
+
+          if (others) {
+            others.innerHTML = '';
+            rest.forEach(function (p) {
+              var a = document.createElement('a');
+              a.href = p.asset.browser_download_url;
+              a.className = 'button';
+              a.textContent = p.label;
+              others.appendChild(a);
+            });
+          }
+
+          if (meta && version) {
+            meta.innerHTML = '';
+            var span = document.createElement('span');
+            span.textContent = STR_VER + ' ' + version + ' · ';
+            var link = document.createElement('a');
+            link.href = RELEASES;
+            link.textContent = STR_ALL;
+            meta.appendChild(span);
+            meta.appendChild(link);
+          }
+        })
+        .catch(function () { /* keep static fallback */ });
+    }());
+  </script>
+</section>`;
 }
 
 function renderLanguageSelector(activeLocale) {

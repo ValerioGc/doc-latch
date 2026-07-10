@@ -385,6 +385,39 @@ a:hover {
   flex-wrap: wrap;
 }
 
+/* ── Download section ───────────────────────────────────────────── */
+
+.download_section {
+  text-align: center;
+  background: var(--color-tint);
+  max-width: none;
+  padding: 56px 24px;
+}
+
+.download_section .section_header {
+  margin: 0 auto 28px;
+}
+
+.download_btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+}
+
+.button_lg {
+  padding: 13px 28px;
+  font-size: 1.05rem;
+  gap: 8px;
+}
+
+.download_meta {
+  margin-top: 16px;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
 @media (max-width: 760px) {
   .hero,
   .section_split {
