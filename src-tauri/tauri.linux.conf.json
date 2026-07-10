@@ -1,5 +1,6 @@
 {
   "bundle": {
+    "targets": ["appimage"],
     "resources": {
       "pdfium-bin/linux/libpdfium.so": "libpdfium.so"
     }
