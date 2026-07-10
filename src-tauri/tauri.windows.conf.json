@@ -3,7 +3,7 @@
     "targets": ["nsis"],
     "windows": {
       "nsis": {
-        "languages": ["Italian", "English", "French", "German"]
+        "languages": ["English","Italian", "French", "German"]
       }
     },
     "resources": {
