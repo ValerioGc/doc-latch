@@ -49,4 +49,47 @@ describe('AppearanceSettings', () => {
 
     expect(uiStore.theme).toBe('light');
   });
+
+  describe('text size selector', () => {
+    it('renders three size buttons', () => {
+      const wrapper = mountComponent();
+      expect(wrapper.findAll('.size_btn')).toHaveLength(3);
+    });
+
+    it('marks the medium button as active by default', () => {
+      const wrapper = mountComponent();
+      const buttons = wrapper.findAll('.size_btn');
+      expect(buttons[1].classes()).toContain('active');
+    });
+
+    it('sets textSize to small when the first button is clicked', async () => {
+      const uiStore = useUiStore();
+      const wrapper = mountComponent();
+
+      await wrapper.findAll('.size_btn')[0].trigger('click');
+
+      expect(uiStore.textSize).toBe('small');
+    });
+
+    it('sets textSize to large when the third button is clicked', async () => {
+      const uiStore = useUiStore();
+      const wrapper = mountComponent();
+
+      await wrapper.findAll('.size_btn')[2].trigger('click');
+
+      expect(uiStore.textSize).toBe('large');
+    });
+
+    it('marks the active size button with the active class', async () => {
+      const uiStore = useUiStore();
+      const wrapper = mountComponent();
+
+      await wrapper.findAll('.size_btn')[2].trigger('click');
+
+      const buttons = wrapper.findAll('.size_btn');
+      expect(buttons[2].classes()).toContain('active');
+      expect(buttons[0].classes()).not.toContain('active');
+      expect(buttons[1].classes()).not.toContain('active');
+    });
+  });
 });

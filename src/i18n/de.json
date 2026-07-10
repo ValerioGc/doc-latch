@@ -29,7 +29,11 @@
     "expandSidebar": "Seitenleiste ausklappen",
     "resizeSidebar": "Seitenleiste anpassen",
     "language": "Sprache",
-    "languageLabel": "Sprache"
+    "languageLabel": "Sprache",
+    "textSize": "Textgröße",
+    "textSizeSmall": "Klein",
+    "textSizeMedium": "Mittel",
+    "textSizeLarge": "Groß"
   },
   "viewer": {
     "noDocument": "Kein Dokument geöffnet",

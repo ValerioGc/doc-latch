@@ -62,3 +62,4 @@ export interface PdfError {
 
 export type Theme = 'light' | 'dark' | 'system';
 export type SupportedLocale = 'it' | 'en' | 'fr' | 'de';
+export type TextSize = 'small' | 'medium' | 'large';

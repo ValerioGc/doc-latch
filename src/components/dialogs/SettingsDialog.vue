@@ -13,7 +13,7 @@
 </script>
 
 <template>
-  <BaseDialog :title="$t('menu.settings')" width="320px" @close="close">
+  <BaseDialog :title="$t('menu.settings')" width="min(90vw, 420px)" @close="close">
     
     <AppearanceSettings />
 

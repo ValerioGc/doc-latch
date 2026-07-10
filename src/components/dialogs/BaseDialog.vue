@@ -90,6 +90,7 @@
     border: 0.5px solid var(--color-border-strong);
     border-radius: $radius-xl;
     padding: $space-6;
+    max-width: 90vw;
     max-height: 80vh;
     overflow-y: auto;
 

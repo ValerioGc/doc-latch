@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
-import type { Theme, SupportedLocale } from '@/types/pdf';
+import type { Theme, SupportedLocale, TextSize } from '@/types/pdf';
 
 const STORAGE_KEY_THEME = 'doclatch:theme';
 const STORAGE_KEY_LOCALE = 'doclatch:locale';
 const STORAGE_KEY_SIDEBAR = 'doclatch:sidebar-hidden';
 const STORAGE_KEY_SIDEBAR_WIDTH = 'doclatch:sidebar-width';
+const STORAGE_KEY_TEXT_SIZE = 'doclatch:text-size';
 
 const SIDEBAR_WIDTH_DEFAULT = 130;
 const SIDEBAR_WIDTH_MIN = 100;
@@ -30,6 +31,10 @@ export const useUiStore = defineStore('ui', () => {
   // locale
   const locale = ref<SupportedLocale>(
     (localStorage.getItem(STORAGE_KEY_LOCALE) as SupportedLocale) ?? resolveSystemLocale(),
+  );
+  // text size
+  const textSize = ref<TextSize>(
+    (localStorage.getItem(STORAGE_KEY_TEXT_SIZE) as TextSize) ?? 'medium',
   );
 
 
@@ -65,6 +70,18 @@ export const useUiStore = defineStore('ui', () => {
     locale.value = l;
   }
 
+  // ************************** Text size ***************************
+  function applyTextSize(size: TextSize): void {
+    if (size === 'medium')
+      document.documentElement.removeAttribute('data-text-size');
+    else
+      document.documentElement.setAttribute('data-text-size', size);
+  }
+
+  function setTextSize(size: TextSize): void {
+    textSize.value = size;
+  }
+
   // ************************** Watchers ***************************
   // Persist and apply on change
   watch(theme, (t) => {
@@ -74,8 +91,13 @@ export const useUiStore = defineStore('ui', () => {
   watch(locale, (l) => localStorage.setItem(STORAGE_KEY_LOCALE, l));
   watch(sidebarHidden, (v) => localStorage.setItem(STORAGE_KEY_SIDEBAR, String(v)));
   watch(sidebarWidth, (w) => localStorage.setItem(STORAGE_KEY_SIDEBAR_WIDTH, String(w)));
+  watch(textSize, (s) => {
+    localStorage.setItem(STORAGE_KEY_TEXT_SIZE, s);
+    applyTextSize(s);
+  });
 
   applyTheme(theme.value);
+  applyTextSize(textSize.value);
 
   return {
     theme,
@@ -83,10 +105,12 @@ export const useUiStore = defineStore('ui', () => {
     sidebarHidden,
     sidebarWidth,
     locale,
+    textSize,
     setTheme,
     toggleSidebar,
     setSidebarHidden,
     setSidebarWidth,
     setLocale,
+    setTextSize,
   };
 });

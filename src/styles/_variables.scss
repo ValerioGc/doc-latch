@@ -4,12 +4,12 @@ $accent: #e24b4a;
 
 // ─── Typography ──────────────────────────────────────────────────────────────
 
-$font-size-xs:12px;
-$font-size-sm:13px;
-$font-size-base:14px;
-$font-size-md:15px;
-$font-size-lg:16px;
-$font-size-xl:17px;
+$font-size-xs:var(--font-xs);
+$font-size-sm:var(--font-sm);
+$font-size-base:var(--font-base);
+$font-size-md:var(--font-md);
+$font-size-lg:var(--font-lg);
+$font-size-xl:var(--font-xl);
 
 // ─── Spacing ─────────────────────────────────────────────────────────────────
 

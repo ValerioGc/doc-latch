@@ -29,7 +29,11 @@
     "expandSidebar": "Espandi sidebar",
     "resizeSidebar": "Ridimensiona sidebar",
     "language": "Lingua",
-    "languageLabel": "Lingua"
+    "languageLabel": "Lingua",
+    "textSize": "Dimensione testo",
+    "textSizeSmall": "Piccolo",
+    "textSizeMedium": "Medio",
+    "textSizeLarge": "Grande"
   },
   "viewer": {
     "noDocument": "Nessun documento aperto",

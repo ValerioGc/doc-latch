@@ -16,6 +16,36 @@
   --sidebar-width:130px;
   --toolbar-height:40px;
   --statusbar-height:34px;
+
+  // ── Font-size scale (medium / default) ──────────────────────────────────────
+  --font-xs:12px;
+  --font-sm:13px;
+  --font-base:14px;
+  --font-md:15px;
+  --font-lg:16px;
+  --font-xl:17px;
+}
+
+// ─── Font-size scale — small ─────────────────────────────────────────────────
+
+:root[data-text-size="small"] {
+  --font-xs:11px;
+  --font-sm:12px;
+  --font-base:13px;
+  --font-md:14px;
+  --font-lg:15px;
+  --font-xl:16px;
+}
+
+// ─── Font-size scale — large ─────────────────────────────────────────────────
+
+:root[data-text-size="large"] {
+  --font-xs:13px;
+  --font-sm:14px;
+  --font-base:15px;
+  --font-md:16px;
+  --font-lg:17px;
+  --font-xl:18px;
 }
 
 // ─── CSS custom properties — dark ────────────────────────────────────────────

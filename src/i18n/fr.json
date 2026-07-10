@@ -29,7 +29,11 @@
     "expandSidebar": "Déployer le panneau",
     "resizeSidebar": "Redimensionner le panneau",
     "language": "Langue",
-    "languageLabel": "Langue"
+    "languageLabel": "Langue",
+    "textSize": "Taille du texte",
+    "textSizeSmall": "Petite",
+    "textSizeMedium": "Moyenne",
+    "textSizeLarge": "Grande"
   },
   "viewer": {
     "noDocument": "Aucun document ouvert",
