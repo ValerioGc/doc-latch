@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { clearPageCache } from '@/composables/usePageRenderCache';
+import { useUiStore } from '@/stores/ui';
 import type { DocumentInfo, PdfError } from '@/types/pdf';
 
 export type DocumentState = 'idle' | 'loading' | 'ready' | 'password-required' | 'error';
@@ -94,8 +95,18 @@ export const useDocumentStore = defineStore('document', () => {
   /**
    * Opens `path` in the loading state and makes it active. Reuses the active tab
    * if it's an empty "new tab" placeholder, otherwise opens a new tab.
+   * On mobile: always replaces the current tab (single-document mode).
    */
   function setLoading(path: string): void {
+    if (useUiStore().isMobile && activeTab.value) {
+      activeTab.value.filePath = path;
+      activeTab.value.state = 'loading';
+      activeTab.value.info = null;
+      activeTab.value.error = null;
+      activeTab.value.password = null;
+      return;
+    }
+
     if (activeTab.value?.filePath === null) {
       activeTab.value.filePath = path;
       activeTab.value.state = 'loading';
@@ -107,8 +118,11 @@ export const useDocumentStore = defineStore('document', () => {
     activateTab(tab.id);
   }
 
-  /** Opens an empty "new tab" placeholder showing the home screen, and makes it active. */
+  /** Opens an empty "new tab" placeholder showing the home screen, and makes it active. No-op on mobile. */
   function newTab(): void {
+    if (useUiStore().isMobile)
+      return;
+
     const tab = createTab();
     tabs.value.push(tab);
     activateTab(tab.id);
@@ -238,6 +252,9 @@ export const useDocumentStore = defineStore('document', () => {
 
   /** Opens the split pane with the first tab other than the active one, if any. */
   function openSplit(): void {
+    if (useUiStore().isMobile)
+      return;
+
     const candidate = tabs.value.find((tab) => tab.id !== activeTabId.value);
     if (candidate)
       splitTabId.value = candidate.id;
@@ -273,6 +290,9 @@ export const useDocumentStore = defineStore('document', () => {
 
   /** Toggles the split pane open/closed. */
   function toggleSplit(): void {
+    if (useUiStore().isMobile)
+      return;
+
     if (splitEnabled.value)
       closeSplit();
     else

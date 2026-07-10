@@ -362,7 +362,6 @@ jobs:
   build-android:
     name: Build Android APK
     needs: verify-release
-    if: false  # DISABLED
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -473,7 +472,7 @@ jobs:
 
   create-release:
     name: Create release
-    needs: [build-windows, build-linux]
+    needs: [build-windows, build-linux, build-android]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -496,6 +495,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: linux-installers
+          path: release-assets
+
+      - name: Download Android APK
+        uses: actions/download-artifact@v4
+        with:
+          name: android-apk
           path: release-assets
 
       - name: Compute combined checksums

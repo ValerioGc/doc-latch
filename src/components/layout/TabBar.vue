@@ -3,6 +3,7 @@
    import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
+  import { useUiStore } from '@/stores/ui';
   import { startTabDrag, useDragState } from '@/composables/useTabDrag';
  
   import SplitToggle from '@/components/layout/SplitToggle.vue';
@@ -12,6 +13,7 @@
 
   const { t } = useI18n();
   const docStore = useDocumentStore();
+  const uiStore = useUiStore();
   const drag = useDragState();
 
   const visibleTabs = computed(() => docStore.tabs.filter((tab) => tab.id !== docStore.splitTabId));
@@ -63,8 +65,8 @@
         <span class="tab_close_icon" aria-hidden="true" v-html="closeIcon"></span>
       </button>
     </div>
-    <SplitToggle />
-    <button class="tab_add"
+    <SplitToggle v-if="!uiStore.isMobile" />
+    <button v-if="!uiStore.isMobile" class="tab_add"
       :title="t('menu.newTab')"
       :aria-label="t('menu.newTab')"
       @click="docStore.newTab()"

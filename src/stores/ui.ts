@@ -36,6 +36,8 @@ export const useUiStore = defineStore('ui', () => {
   const textSize = ref<TextSize>(
     (localStorage.getItem(STORAGE_KEY_TEXT_SIZE) as TextSize) ?? 'medium',
   );
+  // mobile detection — evaluated once at startup; on Android the viewport equals the display
+  const isMobile = ref(window.innerWidth < 768);
 
 
   // ************************** Theme ***************************
@@ -106,6 +108,7 @@ export const useUiStore = defineStore('ui', () => {
     sidebarWidth,
     locale,
     textSize,
+    isMobile,
     setTheme,
     toggleSidebar,
     setSidebarHidden,

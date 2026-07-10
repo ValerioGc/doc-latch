@@ -75,10 +75,11 @@ The `.github/workflows/ci.yml` workflow only runs when a `vMAJOR.MINOR.PATCH` ta
 
 1. **test** — Rust lint (`cargo fmt`/`clippy`), frontend and backend tests, build, `docs/` verification.
 2. **verify-release** — checks that the tag is a valid semver, points to a commit reachable from `main`, that the version matches `package.json`/`tauri.conf.json`, and that `CHANGELOG.txt` has a non-empty section for that version.
-3. **build-windows / build-linux** — native installer builds via `tauri build`.
-   - Windows: NSIS installer only (`.exe`). The NSIS installer includes a language selection dialog (Italian, English, French, German).
+3. **build-windows / build-linux / build-android** — native installer builds via `tauri build`.
+   - Windows: NSIS installer only (`.exe`). The installer language is picked automatically from the Windows system locale (Italian, English, French, German supported; falls back to English).
    - Linux: AppImage only — a portable single-file binary that runs on any distribution.
-   - macOS and Android builds are currently disabled in the workflow (`if: false`).
+   - Android: signed APK built via `tauri android build`. Minimum SDK: **26** (Android 8.0). Split view and multi-pane mode are disabled at runtime on mobile (`window.innerWidth < 768`).
+   - macOS build is currently disabled in the workflow (`if: false`).
 4. **create-release** — creates a GitHub Release with the installers, SHA-256 checksums and release notes extracted from the changelog.
 
 ### Installer naming convention
