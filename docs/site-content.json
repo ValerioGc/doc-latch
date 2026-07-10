@@ -29,6 +29,7 @@
       "downloadLoading": "Controllo ultima versione…",
       "downloadAll": "Tutte le piattaforme",
       "downloadVersion": "Versione",
+      "downloadHashCopied": "Copiato!",
       "summaryLabel": "In sintesi",
       "summary": [
         { "term": "Piattaforme", "detail": "Windows, Linux e macOS" },
@@ -96,6 +97,7 @@
       "downloadLoading": "Checking latest version…",
       "downloadAll": "All platforms",
       "downloadVersion": "Version",
+      "downloadHashCopied": "Copied!",
       "summaryLabel": "At a glance",
       "summary": [
         { "term": "Platforms", "detail": "Windows, Linux and macOS" },
@@ -163,6 +165,7 @@
       "downloadLoading": "Vérification de la dernière version…",
       "downloadAll": "Toutes les plateformes",
       "downloadVersion": "Version",
+      "downloadHashCopied": "Copié !",
       "summaryLabel": "En bref",
       "summary": [
         { "term": "Plateformes", "detail": "Windows, Linux et macOS" },
@@ -230,6 +233,7 @@
       "downloadLoading": "Letzte Version wird geprüft…",
       "downloadAll": "Alle Plattformen",
       "downloadVersion": "Version",
+      "downloadHashCopied": "Kopiert!",
       "summaryLabel": "Auf einen Blick",
       "summary": [
         { "term": "Plattformen", "detail": "Windows, Linux und macOS" },

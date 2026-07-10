@@ -285,10 +285,10 @@ function renderDownloadSection(locale) {
   const releasesUrl = `${site.repositoryUrl}/releases/latest`;
   const apiUrl = `https://api.github.com/repos/${repoPath}/releases/latest`;
 
-  // Strings passed to inline JS via JSON.stringify to avoid any escaping issues
-  const strFor = JSON.stringify(page.downloadFor);
-  const strAll = JSON.stringify(page.downloadAll);
+  const strFor     = JSON.stringify(page.downloadFor);
+  const strAll     = JSON.stringify(page.downloadAll);
   const strVersion = JSON.stringify(page.downloadVersion);
+  const strCopied  = JSON.stringify(page.downloadHashCopied);
 
   return `<section id="download" class="download_section">
   <div class="section_header">
@@ -296,8 +296,10 @@ function renderDownloadSection(locale) {
     <h2>${escapeHtml(page.downloadTitle)}</h2>
   </div>
   <div class="download_btns">
-    <a id="dl_primary" class="button button_primary button_lg" href="${escapeHtml(releasesUrl)}">${escapeHtml(page.downloadLoading)}</a>
-    <div id="dl_others" class="download_btns" style="gap:10px"></div>
+    <div id="dl_primary_card" class="dl_card">
+      <a id="dl_primary" class="button button_primary button_lg" href="${escapeHtml(releasesUrl)}">${escapeHtml(page.downloadLoading)}</a>
+    </div>
+    <div id="dl_others" class="download_btns"></div>
   </div>
   <p class="download_meta" id="dl_meta">
     <a href="${escapeHtml(releasesUrl)}">${escapeHtml(page.downloadAll)}</a>
@@ -306,9 +308,10 @@ function renderDownloadSection(locale) {
     (function () {
       var API = ${JSON.stringify(apiUrl)};
       var RELEASES = ${JSON.stringify(releasesUrl)};
-      var STR_FOR = ${strFor};
-      var STR_ALL = ${strAll};
-      var STR_VER = ${strVersion};
+      var STR_FOR    = ${strFor};
+      var STR_ALL    = ${strAll};
+      var STR_VER    = ${strVersion};
+      var STR_COPIED = ${strCopied};
 
       function detectOS() {
         var ua = navigator.userAgent || '';
@@ -319,15 +322,31 @@ function renderDownloadSection(locale) {
         return null;
       }
 
-      var primary = document.getElementById('dl_primary');
-      var others = document.getElementById('dl_others');
-      var meta = document.getElementById('dl_meta');
+      function makeHashEl(full) {
+        var el = document.createElement('code');
+        el.className = 'dl_hash';
+        el.title = 'SHA-256: ' + full;
+        el.textContent = 'SHA-256 ' + full.slice(0, 12) + '…';
+        el.addEventListener('click', function () {
+          navigator.clipboard.writeText(full).then(function () {
+            var prev = el.textContent;
+            el.textContent = STR_COPIED;
+            setTimeout(function () { el.textContent = prev; }, 1500);
+          }).catch(function () {});
+        });
+        return el;
+      }
+
+      var primaryCard = document.getElementById('dl_primary_card');
+      var primary     = document.getElementById('dl_primary');
+      var others      = document.getElementById('dl_others');
+      var meta        = document.getElementById('dl_meta');
 
       fetch(API)
         .then(function (r) { return r.json(); })
         .then(function (release) {
           var version = release.tag_name || '';
-          var assets = release.assets || [];
+          var assets  = release.assets || [];
 
           var platforms = [
             { key: 'windows', label: 'Windows', asset: assets.find(function (a) { return /\\.exe$/i.test(a.name); }) },
@@ -341,22 +360,32 @@ function renderDownloadSection(locale) {
           var main = platforms.find(function (p) { return p.key === detected; }) || platforms[0];
           var rest = platforms.filter(function (p) { return p !== main; });
 
+          // Primary button
           if (primary) {
             primary.href = main.asset.browser_download_url;
             primary.textContent = STR_FOR + ' ' + main.label;
           }
 
+          // Secondary buttons
+          var cardMap = {};
+          cardMap[main.key] = primaryCard;
+
           if (others) {
             others.innerHTML = '';
             rest.forEach(function (p) {
+              var card = document.createElement('div');
+              card.className = 'dl_card';
               var a = document.createElement('a');
               a.href = p.asset.browser_download_url;
               a.className = 'button';
               a.textContent = p.label;
-              others.appendChild(a);
+              card.appendChild(a);
+              others.appendChild(card);
+              cardMap[p.key] = card;
             });
           }
 
+          // Version + releases link
           if (meta && version) {
             meta.innerHTML = '';
             var span = document.createElement('span');
@@ -367,8 +396,28 @@ function renderDownloadSection(locale) {
             meta.appendChild(span);
             meta.appendChild(link);
           }
+
+          // Fetch SHA256SUMS.txt and attach hashes to each card
+          var sumsAsset = assets.find(function (a) { return a.name === 'SHA256SUMS.txt'; });
+          if (!sumsAsset) return;
+
+          fetch(sumsAsset.browser_download_url)
+            .then(function (r) { return r.text(); })
+            .then(function (text) {
+              var hashMap = {};
+              text.split('\\n').forEach(function (line) {
+                var parts = line.trim().split(/\\s+/);
+                if (parts.length >= 2) hashMap[parts[1]] = parts[0];
+              });
+              platforms.forEach(function (p) {
+                var hash = hashMap[p.asset.name];
+                var card = cardMap[p.key];
+                if (hash && card) card.appendChild(makeHashEl(hash));
+              });
+            })
+            .catch(function () { /* checksums unavailable, silently skip */ });
         })
-        .catch(function () { /* keep static fallback */ });
+        .catch(function () { /* keep static fallback link */ });
     }());
   </script>
 </section>`;

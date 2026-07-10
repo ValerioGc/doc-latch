@@ -6,8 +6,6 @@ on:
     paths:
       - '.github/workflows/pages.yml'
       - 'docs/**'
-      - 'package.json'
-      - 'package-lock.json'
       - 'scripts/build-pages.cjs'
       - 'src/assets/logo.svg'
       - 'src/i18n/index.ts'

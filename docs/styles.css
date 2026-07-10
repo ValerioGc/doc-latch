@@ -401,9 +401,30 @@ a:hover {
 .download_btns {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
   justify-content: center;
+  align-items: flex-start;
+}
+
+.dl_card {
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  gap: 6px;
+}
+
+.dl_hash {
+  font-family: 'Courier New', monospace;
+  font-size: 0.72rem;
+  color: var(--color-muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.dl_hash:hover {
+  background: var(--color-border);
 }
 
 .button_lg {
