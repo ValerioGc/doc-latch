@@ -407,4 +407,140 @@ describe('usePdf', () => {
       expect(result).toEqual(err);
     });
   });
+
+  describe('loadDocumentInTab', () => {
+    function setupTwoTabs() {
+      const docStore = useDocumentStore();
+      docStore.setLoading('/active.pdf');
+      const activeTabId = docStore.activeTabId!;
+      docStore.newTab();
+      const targetTabId = docStore.activeTabId!;
+      docStore.setActiveTab(activeTabId);
+      return { docStore, activeTabId, targetTabId };
+    }
+
+    it('loads a document into the specified tab without changing the active tab', async () => {
+      invoke.mockResolvedValue(mockInfo);
+      const { docStore, activeTabId, targetTabId } = setupTwoTabs();
+      const { loadDocumentInTab } = usePdf();
+
+      await loadDocumentInTab('/test/doc.pdf', targetTabId);
+
+      expect(docStore.activeTabId).toBe(activeTabId);
+      const targetTab = docStore.getTab(targetTabId);
+      expect(targetTab?.state).toBe('ready');
+      expect(targetTab?.filePath).toBe('/test/doc.pdf');
+    });
+
+    it('adds the path to recent files on success', async () => {
+      invoke.mockResolvedValue(mockInfo);
+      const { targetTabId } = setupTwoTabs();
+      const recentStore = useRecentStore();
+      const { loadDocumentInTab } = usePdf();
+
+      await loadDocumentInTab('/test/doc.pdf', targetTabId);
+
+      expect(recentStore.entries.map((e) => e.path)).toContain('/test/doc.pdf');
+    });
+
+    it('does nothing when the file is already visible in the active pane', async () => {
+      invoke.mockResolvedValue(mockInfo);
+      const docStore = useDocumentStore();
+      const { loadDocumentInTab, openRecentFile } = usePdf();
+      await openRecentFile('/test/doc.pdf');
+      const activeTabId = docStore.activeTabId!;
+      docStore.newTab();
+      const targetTabId = docStore.activeTabId!;
+      docStore.setActiveTab(activeTabId);
+      invoke.mockClear();
+
+      await loadDocumentInTab('/test/doc.pdf', targetTabId);
+
+      expect(invoke).not.toHaveBeenCalled();
+    });
+
+    it('sets password-required state on the target tab without affecting the active tab', async () => {
+      const err: PdfError = { kind: 'PasswordRequired', message: 'needs pw' };
+      invoke.mockRejectedValue(err);
+      const { docStore, activeTabId, targetTabId } = setupTwoTabs();
+      const { loadDocumentInTab } = usePdf();
+
+      await loadDocumentInTab('/test/doc.pdf', targetTabId);
+
+      expect(docStore.getTab(targetTabId)?.state).toBe('password-required');
+      expect(docStore.getTab(activeTabId)?.state).not.toBe('password-required');
+    });
+
+    it('sets error state on the target tab for non-password failures', async () => {
+      const err: PdfError = { kind: 'InvalidPdf', message: 'bad pdf' };
+      invoke.mockRejectedValue(err);
+      const { targetTabId } = setupTwoTabs();
+      const { loadDocumentInTab } = usePdf();
+
+      await loadDocumentInTab('/test/doc.pdf', targetTabId);
+
+      const tab = useDocumentStore().getTab(targetTabId);
+      expect(tab?.state).toBe('error');
+      expect(tab?.error?.kind).toBe('InvalidPdf');
+    });
+
+    it('removes the path from recent files when the file is not found', async () => {
+      const err: PdfError = { kind: 'FileNotFound', message: 'missing' };
+      invoke.mockRejectedValue(err);
+      const recentStore = useRecentStore();
+      recentStore.add('/test/doc.pdf');
+      const { targetTabId } = setupTwoTabs();
+      const { loadDocumentInTab } = usePdf();
+
+      await loadDocumentInTab('/test/doc.pdf', targetTabId);
+
+      expect(recentStore.entries.map((e) => e.path)).not.toContain('/test/doc.pdf');
+    });
+  });
+
+  describe('openFileInTab', () => {
+    function setupTwoTabs() {
+      const docStore = useDocumentStore();
+      docStore.setLoading('/active.pdf');
+      const activeTabId = docStore.activeTabId!;
+      docStore.newTab();
+      const targetTabId = docStore.activeTabId!;
+      docStore.setActiveTab(activeTabId);
+      return { docStore, activeTabId, targetTabId };
+    }
+
+    it('does nothing when the dialog is cancelled', async () => {
+      openDialog.mockResolvedValue(null);
+      const { targetTabId } = setupTwoTabs();
+      const { openFileInTab } = usePdf();
+
+      await openFileInTab(targetTabId);
+
+      expect(invoke).not.toHaveBeenCalled();
+    });
+
+    it('does nothing when the dialog returns a non-string result', async () => {
+      openDialog.mockResolvedValue(['a', 'b']);
+      const { targetTabId } = setupTwoTabs();
+      const { openFileInTab } = usePdf();
+
+      await openFileInTab(targetTabId);
+
+      expect(invoke).not.toHaveBeenCalled();
+    });
+
+    it('loads the selected file into the specified tab without switching the active tab', async () => {
+      openDialog.mockResolvedValue('/picked/doc.pdf');
+      invoke.mockResolvedValue({ ...mockInfo, path: '/picked/doc.pdf' });
+      const { docStore, activeTabId, targetTabId } = setupTwoTabs();
+      const { openFileInTab } = usePdf();
+
+      await openFileInTab(targetTabId);
+
+      expect(docStore.activeTabId).toBe(activeTabId);
+      const tab = docStore.getTab(targetTabId);
+      expect(tab?.state).toBe('ready');
+      expect(tab?.filePath).toBe('/picked/doc.pdf');
+    });
+  });
 });
