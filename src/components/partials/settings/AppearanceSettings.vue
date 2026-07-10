@@ -36,7 +36,8 @@ const TEXT_SIZES: { value: TextSize; labelKey: string }[] = [
 
     <SettingsSection :img="fontSizeIcon" :lang="$t('settings.textSize')">
         <template #settings>
-            <div class="size_group" role="group" :aria-label="$t('settings.textSize')">
+            <fieldset class="size_group">
+                <legend class="size_legend">{{ $t('settings.textSize') }}</legend>
                 <button
                     v-for="size in TEXT_SIZES"
                     :key="size.value"
@@ -48,7 +49,7 @@ const TEXT_SIZES: { value: TextSize; labelKey: string }[] = [
                 >
                     {{ $t(size.labelKey) }}
                 </button>
-            </div>
+            </fieldset>
         </template>
     </SettingsSection>
 </template>
@@ -61,9 +62,20 @@ const TEXT_SIZES: { value: TextSize; labelKey: string }[] = [
     .size_group {
         @include flex-row;
 
+        margin: 0;
+        padding: 0;
         border: 0.5px solid var(--color-border-strong);
         border-radius: $radius-md;
         overflow: hidden;
+    }
+
+    .size_legend {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
     }
 
     .size_btn {

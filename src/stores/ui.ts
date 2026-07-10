@@ -75,9 +75,9 @@ export const useUiStore = defineStore('ui', () => {
   // ************************** Text size ***************************
   function applyTextSize(size: TextSize): void {
     if (size === 'medium')
-      document.documentElement.removeAttribute('data-text-size');
+      delete document.documentElement.dataset.textSize;
     else
-      document.documentElement.setAttribute('data-text-size', size);
+      document.documentElement.dataset.textSize = size;
   }
 
   function setTextSize(size: TextSize): void {
