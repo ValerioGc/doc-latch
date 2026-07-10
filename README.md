@@ -1,6 +1,6 @@
 # DocLatch
 
-DocLatch is a lightweight desktop PDF viewer for Windows, Linux and macOS. Open several documents in tabs, navigate with smooth zoom, and protect your files with a password — everything runs on your own computer, never in the cloud.
+DocLatch is a lightweight desktop PDF viewer for Windows and Linux. Open several documents in tabs, navigate with smooth zoom, and protect your files with a password — everything runs on your own computer, never in the cloud.
 
 ## Key features
 
@@ -10,13 +10,28 @@ DocLatch is a lightweight desktop PDF viewer for Windows, Linux and macOS. Open 
 - **Smooth zoom and scrolling** — navigate pages with smooth zooming: a loading indicator appears while the view is recalculated, never a blurry or clipped page.
 - **Recent documents** — quickly find recently opened files from the home screen.
 - **Light and dark theme** — switch between themes at any time from the settings.
+- **Text size** — choose between three interface text sizes (small, medium, large) from the settings.
 - **Multilingual** — interface available in Italian, English, French and German.
 
 ## Installation
 
-Installers for Windows (`.exe`/`.msi`), Linux (`.deb`/`.rpm`/`.AppImage`) and macOS (`.dmg`) are available from the [Releases](https://github.com/ValerioGc/doc-latch/releases) section of the repository.
+Download the installer for your platform from the [Releases](https://github.com/ValerioGc/doc-latch/releases) section:
 
-> **Note:** the Windows and macOS installers aren't signed with a paid certificate yet, so it's normal for Windows SmartScreen (or Gatekeeper on macOS) to show a warning on first launch. You can proceed by choosing "More info" → "Run anyway" (Windows) or the equivalent on macOS.
+| Platform | File |
+|----------|------|
+| Windows | `DocLatch_x.x.x_windows_x64.exe` |
+| Linux | `DocLatch_x.x.x_linux_x64_portable.AppImage` |
+
+> **Note:** the Windows installer is not signed with a paid certificate yet, so Windows SmartScreen may show a warning on first launch. You can proceed by choosing "More info" → "Run anyway".
+
+### Linux — AppImage
+
+The Linux release is a self-contained portable binary that runs on any distribution without installation:
+
+```bash
+chmod +x DocLatch_x.x.x_linux_x64_portable.AppImage
+./DocLatch_x.x.x_linux_x64_portable.AppImage
+```
 
 ## Privacy
 
@@ -26,7 +41,8 @@ DocLatch never uploads your files to any server: opening, browsing and password-
 
 - Handles **PDF** files only (no exporting to other formats yet).
 - It's a viewer: it doesn't yet support editing page content (text/images) or reordering pages.
-- The Windows and macOS installers aren't signed (see note above).
+- The Windows installer isn't signed (see note above).
+- macOS is not yet supported.
 
 ## Coming up
 

@@ -31,7 +31,7 @@ npm run tauri dev   # launches the desktop app in development mode
 | `npm run dev` | Starts only the Vite dev server (without the Tauri shell) |
 | `npm run tauri dev` | Launches the full desktop app in development mode |
 | `npm run build` | Type-check (`vue-tsc`) + production build of the frontend |
-| `npm run tauri build` | Builds the native installers (Windows/Linux/macOS) |
+| `npm run tauri build` | Builds the native installers (Windows/Linux) |
 | `npm run test:unit` | Runs the frontend test suite (Vitest) |
 | `npm run test:unit:watch` | Frontend test suite in watch mode |
 | `npm run test:rust` | Runs the Rust backend tests (`cargo test`) |
@@ -75,10 +75,20 @@ The `.github/workflows/ci.yml` workflow only runs when a `vMAJOR.MINOR.PATCH` ta
 
 1. **test** — Rust lint (`cargo fmt`/`clippy`), frontend and backend tests, build, `docs/` verification.
 2. **verify-release** — checks that the tag is a valid semver, points to a commit reachable from `main`, that the version matches `package.json`/`tauri.conf.json`, and that `CHANGELOG.txt` has a non-empty section for that version.
-3. **build-windows / build-linux / build-macos** — real build of the native installers with `tauri build`.
+3. **build-windows / build-linux** — native installer builds via `tauri build`.
+   - Windows: NSIS installer only (`.exe`). The NSIS installer includes a language selection dialog (Italian, English, French, German).
+   - Linux: AppImage only — a portable single-file binary that runs on any distribution.
+   - macOS and Android builds are currently disabled in the workflow (`if: false`).
 4. **create-release** — creates a GitHub Release with the installers, SHA-256 checksums and release notes extracted from the changelog.
 
-To publish a release:
+### Installer naming convention
+
+| Platform | Filename |
+|----------|----------|
+| Windows | `DocLatch_{version}_windows_x64.exe` |
+| Linux | `DocLatch_{version}_linux_x64_portable.AppImage` |
+
+### Publishing a release
 
 1. Bump the version in `package.json` and `src-tauri/tauri.conf.json` (they must match).
 2. Add a `## [X.Y.Z] - YYYY-MM-DD` section to `CHANGELOG.txt` ([Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format) with the release notes.
