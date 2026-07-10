@@ -88,6 +88,7 @@ The `.github/workflows/ci.yml` workflow only runs when a `vMAJOR.MINOR.PATCH` ta
 |----------|----------|
 | Windows | `DocLatch_{version}_windows_x64.exe` |
 | Linux | `DocLatch_{version}_linux_x64_portable.AppImage` |
+| Android | `DocLatch_{version}_android.apk` |
 
 ### Publishing a release
 
