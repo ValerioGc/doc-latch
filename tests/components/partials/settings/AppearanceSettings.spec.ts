@@ -81,7 +81,6 @@ describe('AppearanceSettings', () => {
     });
 
     it('marks the active size button with the active class', async () => {
-      const uiStore = useUiStore();
       const wrapper = mountComponent();
 
       await wrapper.findAll('.size_btn')[2].trigger('click');

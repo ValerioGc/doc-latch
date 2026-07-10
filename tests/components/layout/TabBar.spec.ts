@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
-import { startTabDrag, endTabDrag, simulateDrop } from '@/composables/useTabDrag';
+import { startTabDrag, simulateDrop } from '@/composables/useTabDrag';
 import { useDocumentStore } from '@/stores/document';
 import { createTestI18n } from '../../helpers/testPlugins';
 import TabBar from '@/components/layout/TabBar.vue';

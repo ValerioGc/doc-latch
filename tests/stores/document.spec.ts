@@ -352,7 +352,6 @@ describe('useDocumentStore', () => {
       store.setLoading('/test/a.pdf')
       const aId = store.activeTabId!
       store.setLoading('/test/b.pdf')
-      const bId = store.activeTabId!
       store.setLoading('/test/c.pdf')
       const cId = store.activeTabId!
 
