@@ -1,4 +1,4 @@
-# DocLatch — Development guide
+# DocLatch - Development guide
 
 Technical documentation for anyone developing, testing or releasing DocLatch. For the end-user product description, see [README.md](README.md).
 
@@ -60,7 +60,7 @@ npm run docker:sonar:down     # stop SonarQube
 
 ## GitHub Pages site
 
-The site's text content (for the 4 locales it/en/fr/de) lives in `docs/site-content.json`. The HTML pages under `docs/{index,it,en,fr,de}/` are **generated** by `scripts/build-pages.cjs` — don't edit them by hand. After changing `docs/site-content.json`:
+The site's text content (for the 4 locales it/en/fr/de) lives in `docs/site-content.json`. The HTML pages under `docs/{index,it,en,fr,de}/` are **generated** by `scripts/build-pages.cjs`; do not edit them by hand. After changing `docs/site-content.json`:
 
 ```bash
 npm run build:pages
@@ -73,14 +73,14 @@ Deployment happens through the `.github/workflows/pages.yml` workflow, triggered
 
 The `.github/workflows/ci.yml` workflow only runs when a `vMAJOR.MINOR.PATCH` tag is pushed (e.g. `v1.0.0`), and:
 
-1. **test** — Rust lint (`cargo fmt`/`clippy`), frontend and backend tests, build, `docs/` verification.
-2. **verify-release** — checks that the tag is a valid semver, points to a commit reachable from `main`, that the version matches `package.json`/`tauri.conf.json`, and that `CHANGELOG.txt` has a non-empty section for that version.
-3. **build-windows / build-linux / build-android** — native installer builds via `tauri build`.
+1. **test**: Rust lint (`cargo fmt`/`clippy`), frontend and backend tests, build, `docs/` verification.
+2. **verify-release**: checks that the tag is a valid semver, points to a commit reachable from `main`, that the version matches `package.json`/`tauri.conf.json`, and that `CHANGELOG.txt` has a non-empty section for that version.
+3. **build-windows / build-linux / build-android**: native installer builds via `tauri build`.
    - Windows: NSIS installer only (`.exe`). The installer language is picked automatically from the Windows system locale (Italian, English, French, German supported; falls back to English).
-   - Linux: AppImage only — a portable single-file binary that runs on any distribution.
+   - Linux: AppImage only, a portable single-file binary that runs on any distribution.
    - Android: signed APK built via `tauri android build`. Minimum SDK: **26** (Android 8.0). Split view and multi-pane mode are disabled at runtime on mobile (`window.innerWidth < 768`).
    - macOS build is currently disabled in the workflow (`if: false`).
-4. **create-release** — creates a GitHub Release with the installers, SHA-256 checksums and release notes extracted from the changelog.
+4. **create-release**: creates a GitHub Release with the installers, SHA-256 checksums and release notes extracted from the changelog.
 
 ### Installer naming convention
 
