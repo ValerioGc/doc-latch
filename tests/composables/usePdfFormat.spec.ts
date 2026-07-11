@@ -38,6 +38,13 @@ describe('formatPdfDate', () => {
   it('falls back to the original string for an empty value', () => {
     expect(formatPdfDate('', 'en')).toBe('');
   });
+
+  it('treats a Z timezone as UTC (same result as no timezone)', () => {
+    const withZ = formatPdfDate('D:20240101120000Z', 'en');
+    const withoutTz = formatPdfDate('D:20240101120000', 'en');
+    expect(withZ).toBe(withoutTz);
+    expect(withZ).toContain('2024');
+  });
 });
 
 describe('formatPageSize', () => {

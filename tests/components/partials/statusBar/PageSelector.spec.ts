@@ -134,4 +134,53 @@ describe('PageSelector', () => {
 
     expect(docStore.currentPage).toBe(3);
   });
+
+  describe('with tabId prop', () => {
+    let tabId: string;
+
+    beforeEach(() => {
+      const docStore = useDocumentStore();
+      docStore.setReady(mockInfo);
+      tabId = docStore.activeTabId!;
+    });
+
+    function mountWithTabId() {
+      return mount(PageSelector, {
+        global: { plugins: [createTestI18n()] },
+        props: { tabId },
+      });
+    }
+
+    it('shows the tab current page and total in the trigger', () => {
+      const docStore = useDocumentStore();
+      docStore.setTabPage(tabId, 3);
+      const wrapper = mountWithTabId();
+
+      expect(wrapper.find('.page_selector_trigger').text()).toContain('3');
+      expect(wrapper.find('.page_selector_trigger').text()).toContain('5');
+    });
+
+    it('shows 0 total pages when the tab has no document info yet', () => {
+      const docStore = useDocumentStore();
+      docStore.newTab();
+      const emptyTabId = docStore.activeTabId!;
+      const wrapper = mount(PageSelector, {
+        global: { plugins: [createTestI18n()] },
+        props: { tabId: emptyTabId },
+      });
+
+      expect(wrapper.find('.page_selector_trigger').text()).toContain('0');
+    });
+
+    it('navigates to the typed page in the specified tab when the go button is clicked', async () => {
+      const docStore = useDocumentStore();
+      const wrapper = mountWithTabId();
+
+      await wrapper.find('.page_selector_trigger').trigger('click');
+      await wrapper.find('.page_selector_input').setValue('4');
+      await wrapper.find('.page_selector_go').trigger('click');
+
+      expect(docStore.getTab(tabId)!.currentPage).toBe(4);
+    });
+  });
 });

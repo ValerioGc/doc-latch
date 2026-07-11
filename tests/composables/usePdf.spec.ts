@@ -498,6 +498,67 @@ describe('usePdf', () => {
     });
   });
 
+  describe('renderPageFor', () => {
+    it('returns null when the specified tab has no file path', async () => {
+      const docStore = useDocumentStore();
+      docStore.newTab();
+      const tabId = docStore.activeTabId!;
+      const { renderPageFor } = usePdf();
+
+      const result = await renderPageFor(tabId, 0, 1);
+
+      expect(result).toBeNull();
+      expect(invoke).not.toHaveBeenCalled();
+    });
+
+    it('calls render_page when the tab has no password', async () => {
+      invoke.mockResolvedValue({ imageBase64: 'abc', widthPx: 10, heightPx: 20 });
+      const docStore = useDocumentStore();
+      docStore.setLoading(mockInfo.path);
+      docStore.setReady(mockInfo);
+      const tabId = docStore.activeTabId!;
+      const { renderPageFor } = usePdf();
+
+      const result = await renderPageFor(tabId, 0, 1);
+
+      expect(invoke).toHaveBeenCalledWith('render_page', { path: mockInfo.path, page: 0, zoom: 1 });
+      expect(result?.widthPx).toBe(10);
+    });
+
+    it('calls render_page_with_password when the tab has a password', async () => {
+      invoke.mockResolvedValue({ imageBase64: 'abc', widthPx: 10, heightPx: 20 });
+      const docStore = useDocumentStore();
+      docStore.setLoading(mockInfo.path);
+      docStore.setReady(mockInfo, 'secret');
+      const tabId = docStore.activeTabId!;
+      const { renderPageFor } = usePdf();
+
+      await renderPageFor(tabId, 1, 1.5);
+
+      expect(invoke).toHaveBeenCalledWith('render_page_with_password', {
+        path: mockInfo.path,
+        page: 1,
+        zoom: 1.5,
+        password: 'secret',
+      });
+    });
+
+    it('sets an error on the tab and returns null when rendering fails', async () => {
+      const err: PdfError = { kind: 'RenderError', message: 'oops' };
+      invoke.mockRejectedValue(err);
+      const docStore = useDocumentStore();
+      docStore.setLoading(mockInfo.path);
+      docStore.setReady(mockInfo);
+      const tabId = docStore.activeTabId!;
+      const { renderPageFor } = usePdf();
+
+      const result = await renderPageFor(tabId, 0, 1);
+
+      expect(result).toBeNull();
+      expect(docStore.getTab(tabId)?.error?.kind).toBe('RenderError');
+    });
+  });
+
   describe('openFileInTab', () => {
     function setupTwoTabs() {
       const docStore = useDocumentStore();

@@ -346,6 +346,57 @@ describe('useDocumentStore', () => {
     })
   })
 
+  describe('mobile mode (isMobile = true)', () => {
+    beforeEach(() => {
+      Object.defineProperty(window, 'innerWidth', { value: 600, configurable: true, writable: true });
+      setActivePinia(createPinia());
+    });
+
+    afterEach(() => {
+      Object.defineProperty(window, 'innerWidth', { value: 1024, configurable: true, writable: true });
+    });
+
+    it('setLoading replaces the current tab in place instead of opening a new one', () => {
+      const store = useDocumentStore();
+      store.setLoading('/test/doc.pdf');
+      store.setLoading('/test/second.pdf');
+
+      expect(store.tabs).toHaveLength(1);
+      expect(store.filePath).toBe('/test/second.pdf');
+    });
+
+    it('newTab does nothing on mobile', () => {
+      const store = useDocumentStore();
+      store.setLoading('/test/doc.pdf');
+
+      store.newTab();
+
+      expect(store.tabs).toHaveLength(1);
+    });
+
+    it('openSplit does nothing on mobile', () => {
+      const store = useDocumentStore();
+      store.setLoading('/test/doc.pdf');
+      store.setReady(mockInfo);
+      store.setLoading('/test/second.pdf');
+
+      store.openSplit();
+
+      expect(store.splitEnabled).toBe(false);
+    });
+
+    it('toggleSplit does nothing on mobile', () => {
+      const store = useDocumentStore();
+      store.setLoading('/test/doc.pdf');
+      store.setReady(mockInfo);
+      store.setLoading('/test/second.pdf');
+
+      store.toggleSplit();
+
+      expect(store.splitEnabled).toBe(false);
+    });
+  });
+
   describe('reorderTab', () => {
     it('moves a tab to the position of the target tab', () => {
       const store = useDocumentStore()

@@ -149,6 +149,112 @@ describe('useTabDrag', () => {
     });
   });
 
+  describe('real pointer events (detectZone + onUp)', () => {
+    function openSplitSetup() {
+      const docStore = useDocumentStore();
+      docStore.setLoading('/a.pdf');
+      docStore.setReady({ ...baseInfo, path: '/a.pdf' });
+      const aId = docStore.activeTabId!;
+      docStore.setLoading('/b.pdf');
+      docStore.setReady({ ...baseInfo, path: '/b.pdf' });
+      const bId = docStore.activeTabId!;
+      docStore.setActiveTab(aId);
+      docStore.openSplit(); // active=aId (left), split=bId (right)
+      return { docStore, aId, bId };
+    }
+
+    function dragAndDrop(tabId: string, target: Element | null): void {
+      document.elementFromPoint = vi.fn().mockReturnValue(target);
+      startTabDrag(tabId, 'file.pdf', makePointer(0, 0));
+      document.dispatchEvent(new PointerEvent('pointermove', { clientX: 10, clientY: 0 }));
+      document.dispatchEvent(new PointerEvent('pointerup', { clientX: 10, clientY: 0 }));
+    }
+
+    it('does not swap when pointerup fires without prior move (not dragging)', () => {
+      const { docStore, aId } = openSplitSetup();
+      document.elementFromPoint = vi.fn().mockReturnValue(null);
+      startTabDrag(aId, 'a.pdf', makePointer(0, 0));
+
+      // Release without moving → _moved stays false → onUp skips the drop logic
+      document.dispatchEvent(new PointerEvent('pointerup', { clientX: 0, clientY: 0 }));
+
+      expect(docStore.activeTabId).toBe(aId);
+    });
+
+    it('does nothing when elementFromPoint returns null', () => {
+      const { docStore, aId } = openSplitSetup();
+      dragAndDrop(aId, null);
+      // null element → overSplit false, overTabId null → no store mutation
+      expect(docStore.activeTabId).toBe(aId);
+    });
+
+    it('swaps split tabs when dragged tab is released over .split_header', () => {
+      const { docStore, aId, bId } = openSplitSetup();
+
+      const splitHeaderEl = document.createElement('div');
+      splitHeaderEl.className = 'split_header';
+      document.body.appendChild(splitHeaderEl);
+
+      dragAndDrop(aId, splitHeaderEl);
+
+      expect(docStore.activeTabId).toBe(bId);
+      expect(docStore.splitTabId).toBe(aId);
+
+      document.body.removeChild(splitHeaderEl);
+    });
+
+    it('swaps split tabs when split tab is released over a .tab_row', () => {
+      const { docStore, aId, bId } = openSplitSetup();
+
+      const tabRowEl = document.createElement('div');
+      tabRowEl.className = 'tab_row';
+      tabRowEl.dataset.tabId = aId;
+      document.body.appendChild(tabRowEl);
+
+      dragAndDrop(bId, tabRowEl); // drag split tab → released on tab row
+
+      expect(docStore.activeTabId).toBe(bId);
+      expect(docStore.splitTabId).toBe(aId);
+
+      document.body.removeChild(tabRowEl);
+    });
+
+    it('reorders tabs when a non-split tab is released over a different tab row', () => {
+      const docStore = useDocumentStore();
+      docStore.setLoading('/a.pdf');
+      const aId = docStore.activeTabId!;
+      docStore.setLoading('/b.pdf');
+      const bId = docStore.activeTabId!;
+      docStore.setLoading('/c.pdf');
+      const cId = docStore.activeTabId!;
+
+      const tabRowEl = document.createElement('div');
+      tabRowEl.className = 'tab_row';
+      tabRowEl.dataset.tabId = aId;
+      document.body.appendChild(tabRowEl);
+
+      dragAndDrop(cId, tabRowEl); // drag c → drop on a's row → [c, a, b]
+
+      expect(docStore.tabs[0].id).toBe(cId);
+      expect(docStore.tabs[1].id).toBe(aId);
+
+      document.body.removeChild(tabRowEl);
+    });
+
+    it('cancels drag on pointercancel', () => {
+      const state = useDragState();
+      const docStore = useDocumentStore();
+      docStore.setLoading('/a.pdf');
+      startTabDrag(docStore.activeTabId!, 'a.pdf', makePointer(0, 0));
+      movePointer(10, 0);
+
+      document.dispatchEvent(new PointerEvent('pointercancel'));
+
+      expect(state.isDragging).toBe(false);
+      expect(state.tabId).toBeNull();
+    });
+  });
+
   describe('simulateDrop', () => {
     it('does nothing when no drag is active', () => {
       const docStore = useDocumentStore();

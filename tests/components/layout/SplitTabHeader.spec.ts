@@ -1,7 +1,8 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
-import { startTabDrag, endTabDrag, simulateDrop } from '@/composables/useTabDrag';
+import { startTabDrag, endTabDrag, simulateDrop, useDragState } from '@/composables/useTabDrag';
 import { useDocumentStore } from '@/stores/document';
 import { createTestI18n } from '../../helpers/testPlugins';
 import SplitTabHeader from '@/components/layout/SplitTabHeader.vue';
@@ -70,6 +71,47 @@ describe('SplitTabHeader', () => {
 
     expect(docStore.getTab(firstTabId)).toBeNull();
     expect(docStore.splitEnabled).toBe(false);
+  });
+
+  it('shows the placeholder name when the split tab has no file loaded', () => {
+    const docStore = useDocumentStore();
+    docStore.setLoading('/test/first.pdf');
+    docStore.setReady(mockInfo);
+    const firstTabId = docStore.activeTabId!;
+    docStore.newTab(); // idle tab B (filePath === null), now active
+    docStore.setActiveTab(firstTabId); // make first.pdf active again
+    docStore.openSplit(); // idle tab B becomes split tab
+
+    const wrapper = mountHeader();
+
+    expect(wrapper.find('.split_header_tab_name').text()).toBe('Nuova scheda');
+  });
+
+  describe('onPointerDown drag handle', () => {
+    it('does not start a drag when a non-primary button is pressed', async () => {
+      openTwoReadyTabsAndSplit();
+      const wrapper = mountHeader();
+      const state = useDragState();
+
+      const handle = wrapper.find('[data-drag-handle]');
+      handle.element.dispatchEvent(new PointerEvent('pointerdown', { button: 2, bubbles: true }));
+      await nextTick();
+
+      expect(state.tabId).toBeNull();
+    });
+
+    it('starts a drag on primary button press', async () => {
+      const { firstTabId } = openTwoReadyTabsAndSplit();
+      const wrapper = mountHeader();
+      const state = useDragState();
+
+      const handle = wrapper.find('[data-drag-handle]');
+      handle.element.dispatchEvent(new PointerEvent('pointerdown', { button: 0, pointerId: 1, bubbles: true }));
+      await nextTick();
+
+      expect(state.tabId).toBe(firstTabId);
+      endTabDrag();
+    });
   });
 
   describe('drag-and-drop tab swapping', () => {

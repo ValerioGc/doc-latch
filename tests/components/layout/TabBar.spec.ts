@@ -1,7 +1,8 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
-import { startTabDrag, simulateDrop } from '@/composables/useTabDrag';
+import { startTabDrag, simulateDrop, useDragState, endTabDrag } from '@/composables/useTabDrag';
 import { useDocumentStore } from '@/stores/document';
 import { createTestI18n } from '../../helpers/testPlugins';
 import TabBar from '@/components/layout/TabBar.vue';
@@ -179,6 +180,41 @@ describe('TabBar', () => {
       expect(docStore.tabs[0].id).toBe(thirdTabId);
       expect(docStore.tabs[1].id).toBe(firstTabId);
       expect(docStore.tabs[2].id).toBe(secondTabId);
+    });
+  });
+
+  describe('onPointerDown drag handle', () => {
+    beforeEach(() => {
+      endTabDrag();
+    });
+
+    it('does not start a drag when a non-primary button is pressed', async () => {
+      const docStore = useDocumentStore();
+      docStore.setLoading('/path/to/first.pdf');
+      const wrapper = mountTabBar();
+      const state = useDragState();
+
+      const handle = wrapper.find('[data-drag-handle]');
+      handle.element.dispatchEvent(new PointerEvent('pointerdown', { button: 2, bubbles: true }));
+      await nextTick();
+
+      expect(state.tabId).toBeNull();
+    });
+
+    it('starts a drag on primary button press', async () => {
+      const docStore = useDocumentStore();
+      docStore.setLoading('/path/to/first.pdf');
+      const tabId = docStore.activeTabId!;
+      const wrapper = mountTabBar();
+      const state = useDragState();
+
+      const handle = wrapper.find('[data-drag-handle]');
+      (handle.element as HTMLElement).setPointerCapture = vi.fn();
+      handle.element.dispatchEvent(new PointerEvent('pointerdown', { button: 0, pointerId: 1, bubbles: true }));
+      await nextTick();
+
+      expect(state.tabId).toBe(tabId);
+      endTabDrag();
     });
   });
 
