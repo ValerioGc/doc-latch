@@ -17,11 +17,11 @@
     "test:coverage:all": "npm run test:coverage && npm run test:coverage:rust",
     "build:pages": "node scripts/build-pages.cjs",
     "check:pages": "node scripts/build-pages.cjs --check",
-    "sonar": "docker compose -f .docker/docker-compose.sonar.yml --profile scan run --rm scanner",
+    "sonar": "docker compose -f ./docker-compose.sonar.yml --profile scan run --rm scanner",
     "sonar:coverage": "npm run test:coverage:all && npm run sonar",
-    "docker:sonar:up": "docker compose -f .docker/docker-compose.sonar.yml up -d",
-    "docker:sonar:down": "docker compose -f .docker/docker-compose.sonar.yml down",
-    "docker:sonar:logs": "docker compose -f .docker/docker-compose.sonar.yml logs -f sonarqube"
+    "docker:sonar:up": "docker compose -f ./docker-compose.sonar.yml up -d",
+    "docker:sonar:down": "docker compose -f ./docker-compose.sonar.yml down",
+    "docker:sonar:logs": "docker compose -f ./docker-compose.sonar.yml logs -f sonarqube"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.0.0",
