@@ -115,8 +115,9 @@
     }
 
     &_top {
-      @extend %flex-center;
+      @extend %flex-row;
 
+      justify-content: flex-end;
       height: 32px;
       border-bottom: 0.5px solid var(--color-border);
       flex-shrink: 0;
@@ -164,8 +165,8 @@
     }
 
     :deep(svg) {
-      width: 15px;
-      height: 15px;
+      width: 18px;
+      height: 18px;
       transition: transform $transition-base;
     }
 
