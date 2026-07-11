@@ -178,9 +178,9 @@ ${indent(alternates, 4)}
             <a href="#formats">${escapeHtml(page.formatsNav)}</a>
             <a href="${escapeHtml(site.repositoryUrl)}">${escapeHtml(page.githubNav)}</a>
           </div>
-          <nav class="language_switcher" aria-label="${escapeHtml(page.languageLabel)}">
+          <div class="language_switcher">
 ${indent(languageOptions, 12)}
-          </nav>
+          </div>
         </div>
       </nav>
 
@@ -426,13 +426,16 @@ function renderDownloadSection(locale) {
 }
 
 function renderLanguageSelector(activeLocale) {
-  return siteLocales.map((locale) => {
-    const page = content.locales[locale];
-    const className = locale === activeLocale ? ' class="active"' : '';
-    const ariaCurrent = locale === activeLocale ? ' aria-current="page"' : '';
+  const label = escapeHtml(content.locales[activeLocale].languageLabel);
+  const options = siteLocales.map((locale) => {
+    const lp = content.locales[locale];
+    const selected = locale === activeLocale ? ' selected' : '';
+    return `<option value="../${locale}/"${selected}>${escapeHtml(lp.flagEmoji)} ${escapeHtml(lp.languageName)}</option>`;
+  }).join('\n            ');
 
-    return `<a${className}${ariaCurrent} href="../${locale}/" lang="${locale}" hreflang="${locale}" title="${escapeHtml(page.languageName)}">${escapeHtml(page.flagEmoji)}</a>`;
-  }).join('\n');
+  return `<select class="language_select" aria-label="${label}" onchange="window.location.href=this.value">
+            ${options}
+          </select>`;
 }
 
 function renderAlternateLinks(prefix) {

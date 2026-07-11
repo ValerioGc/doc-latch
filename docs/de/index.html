@@ -12,7 +12,7 @@
     <link rel="alternate" hreflang="en" href="../en/">
     <link rel="alternate" hreflang="fr" href="../fr/">
     <link rel="alternate" hreflang="de" href="../de/">
-    <link rel="alternate" hreflang="x-default" href="../it/">
+    <link rel="alternate" hreflang="x-default" href="../en/">
   </head>
   <body>
     <header class="site_header">
@@ -29,12 +29,14 @@
             <a href="#formats">Formate</a>
             <a href="https://github.com/ValerioGc/doc-latch">GitHub</a>
           </div>
-          <nav class="language_switcher" aria-label="Sprache">
-            <a href="../it/" lang="it" hreflang="it" title="Italiano">🇮🇹</a>
-            <a href="../en/" lang="en" hreflang="en" title="English">🇬🇧</a>
-            <a href="../fr/" lang="fr" hreflang="fr" title="Français">🇫🇷</a>
-            <a class="active" aria-current="page" href="../de/" lang="de" hreflang="de" title="Deutsch">🇩🇪</a>
-          </nav>
+          <div class="language_switcher">
+            <select class="language_select" aria-label="Sprache" onchange="window.location.href=this.value">
+                        <option value="../it/">🇮🇹 Italiano</option>
+                        <option value="../en/">🇬🇧 English</option>
+                        <option value="../fr/">🇫🇷 Français</option>
+                        <option value="../de/" selected>🇩🇪 Deutsch</option>
+                      </select>
+          </div>
         </div>
       </nav>
 

@@ -1,35 +1,35 @@
 <!doctype html>
-<html lang="it">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>DocLatch</title>
-    <meta name="description" content="DocLatch è un visualizzatore PDF desktop open source per Windows e Linux: schede multiple, vista divisa, protezione AES-256, nessuna connessione internet, nessuna telemetria.">
+    <meta name="description" content="DocLatch is an open-source desktop PDF viewer for Windows and Linux: multiple tabs, split view, AES-256 password protection, no internet connection required, no telemetry.">
     <link rel="icon" href="./logo.svg" type="image/svg+xml">
     <link rel="stylesheet" href="./styles.css">
     <link rel="alternate" hreflang="it" href="./it/">
     <link rel="alternate" hreflang="en" href="./en/">
     <link rel="alternate" hreflang="fr" href="./fr/">
     <link rel="alternate" hreflang="de" href="./de/">
-    <link rel="alternate" hreflang="x-default" href="./it/">
+    <link rel="alternate" hreflang="x-default" href="./en/">
     <script>
       (function () {
         var supported = ["it","en","fr","de"];
-        var preferred = (navigator.languages || [navigator.language || 'it'])
+        var preferred = (navigator.languages || [navigator.language || 'en'])
           .map(function (language) { return String(language).slice(0, 2).toLowerCase(); })
-          .find(function (language) { return supported.indexOf(language) !== -1; }) || 'it';
+          .find(function (language) { return supported.indexOf(language) !== -1; }) || 'en';
         window.location.replace('./' + preferred + '/');
       }());
     </script>
   </head>
   <body>
     <main class="locale_gate" aria-labelledby="language-title">
-      <a class="brand" href="./it/" aria-label="DocLatch">
+      <a class="brand" href="./en/" aria-label="DocLatch">
         <span class="brand_mark" aria-hidden="true"><img src="./logo.svg" alt=""></span>
         <span>DocLatch</span>
       </a>
       <section>
-        <p class="eyebrow">Lingua</p>
+        <p class="eyebrow">Language</p>
         <h1 id="language-title">DocLatch</h1>
         <div class="language_grid">
         <a href="./it/" lang="it" hreflang="it">Italiano</a>

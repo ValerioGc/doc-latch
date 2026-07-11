@@ -2,7 +2,7 @@
   "site": {
     "name": "DocLatch",
     "basePath": "https://valeriogc.github.io/doc-latch/",
-    "defaultLocale": "it",
+    "defaultLocale": "en",
     "repositoryUrl": "https://github.com/ValerioGc/doc-latch"
   },
   "locales": {
