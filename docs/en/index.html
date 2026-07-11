@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>DocLatch</title>
-    <meta name="description" content="DocLatch is an open-source desktop app for Windows, Linux and macOS: view PDFs, work with multiple documents in tabs, and password-protect files, all processed locally with no cloud.">
+    <meta name="description" content="DocLatch is an open-source desktop PDF viewer for Windows and Linux: multiple tabs, split view, AES-256 password protection, no internet connection required, no telemetry.">
     <link rel="canonical" href="https://valeriogc.github.io/doc-latch/en/">
     <link rel="icon" href="../logo.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../styles.css">
@@ -30,20 +30,20 @@
             <a href="https://github.com/ValerioGc/doc-latch">GitHub</a>
           </div>
           <nav class="language_switcher" aria-label="Language">
-            <a href="../it/" lang="it" hreflang="it" title="Italiano">IT</a>
-            <a class="active" aria-current="page" href="../en/" lang="en" hreflang="en" title="English">EN</a>
-            <a href="../fr/" lang="fr" hreflang="fr" title="Français">FR</a>
-            <a href="../de/" lang="de" hreflang="de" title="Deutsch">DE</a>
+            <a href="../it/" lang="it" hreflang="it" title="Italiano">🇮🇹</a>
+            <a class="active" aria-current="page" href="../en/" lang="en" hreflang="en" title="English">🇬🇧</a>
+            <a href="../fr/" lang="fr" hreflang="fr" title="Français">🇫🇷</a>
+            <a href="../de/" lang="de" hreflang="de" title="Deutsch">🇩🇪</a>
           </nav>
         </div>
       </nav>
 
       <section id="top" class="hero">
         <div class="hero_copy">
-          <p class="eyebrow">Open-source desktop app</p>
-          <h1>Read and protect your PDFs, without the cloud</h1>
+          <p class="eyebrow">Open-source desktop app · No cloud · No telemetry</p>
+          <h1>Read and protect your PDFs, entirely on your computer</h1>
           <p class="lead">
-            DocLatch is a lightweight PDF viewer for Windows, Linux and macOS. Open several documents in tabs, navigate with smooth zoom, and add or remove password protection — everything runs on your own computer, never online.
+            DocLatch is a lightweight PDF viewer for Windows and Linux. Open several documents in tabs, compare them side by side in split view, and add or remove AES-256 password protection — everything runs locally, with no internet connection and no data collection.
           </p>
           <div class="hero_actions">
             <a class="button button_primary" href="https://github.com/ValerioGc/doc-latch">Go to repository</a>
@@ -54,11 +54,11 @@
           <dl>
             <div>
               <dt>Platforms</dt>
-              <dd>Windows, Linux and macOS</dd>
+              <dd>Windows · Linux</dd>
             </div>
             <div>
-              <dt>Data</dt>
-              <dd>100% local processing</dd>
+              <dt>Internet &amp; telemetry</dt>
+              <dd>Not required — ever</dd>
             </div>
             <div>
               <dt>License</dt>
@@ -68,6 +68,12 @@
         </aside>
       </section>
     </header>
+
+    <section class="screenshot_section" aria-hidden="true">
+      <div class="screenshot_wrap">
+        <img src="../screenshot/preview.png" alt="DocLatch — app screenshot showing two PDFs open in split view" class="screenshot_img" width="1400" height="880" loading="eager">
+      </div>
+    </section>
 
     <main>
       <section id="download" class="download_section">
@@ -213,24 +219,32 @@
             <p>Open several PDFs at once in separate tabs, each keeping its own current page, zoom level and password.</p>
           </article>
           <article class="card">
-            <h3>Password protection</h3>
-            <p>Add or remove AES-256 encryption from your documents in a couple of clicks, right from the Protection menu.</p>
+            <h3>Split view</h3>
+            <p>Show two open documents side by side in the same window to compare them directly, without switching tabs.</p>
+          </article>
+          <article class="card">
+            <h3>AES-256 password protection</h3>
+            <p>Add or remove AES-256 encryption from your documents in a couple of clicks, right from the Protection menu. The original file is never modified.</p>
           </article>
           <article class="card">
             <h3>Smooth zoom and scrolling</h3>
-            <p>Navigate pages with smooth zooming: a loading indicator appears while the view is recalculated, never a blurry or clipped page.</p>
+            <p>Navigate pages with per-tab zoom, controllable from the header bar, the status bar, or with Ctrl +/-/0 on the keyboard and the mouse wheel.</p>
           </article>
           <article class="card">
             <h3>Recent documents</h3>
             <p>Quickly find recently opened files from the home screen, and remove them from the list whenever you no longer need them.</p>
           </article>
           <article class="card">
+            <h3>Fully offline</h3>
+            <p>DocLatch requires no internet connection for any feature: opening, zooming, navigating and password-protecting documents all happen locally, with no data sent anywhere.</p>
+          </article>
+          <article class="card">
             <h3>Light and dark theme</h3>
-            <p>Switch between light and dark themes at any time from the settings, to match your preference.</p>
+            <p>Switch between light and dark themes at any time from the settings. Three interface text sizes are also available.</p>
           </article>
           <article class="card">
             <h3>Multilingual interface</h3>
-            <p>Available in Italian, English, French and German, with the language switchable from settings.</p>
+            <p>Available in Italian, English, French and German, with the language switchable from the settings.</p>
           </article>
         </div>
       </section>
@@ -246,15 +260,15 @@
             <ol>
               <li>Launch DocLatch and choose &quot;Open file…&quot; from the File menu, or pick a document from the recent list on the home screen.</li>
               <li>Use the arrow keys, Page Up/Down, or the mouse wheel to scroll through pages.</li>
-              <li>Adjust the zoom from the status bar, or with Ctrl/Cmd and +/-/0 on the keyboard.</li>
-              <li>Open a second document to see it in a new tab, without losing the first one.</li>
+              <li>Adjust the zoom from the top bar or the status bar, or with Ctrl/Cmd and +/-/0 on the keyboard.</li>
+              <li>Open a second document to see it in a new tab, or use split view to compare them side by side.</li>
             </ol>
           </article>
           <article class="guide">
             <h3>Protect a document with a password</h3>
             <ol>
               <li>With the document open, go to Protection &gt; Add password… in the top menu.</li>
-              <li>Enter the chosen password: the file is encrypted with AES-256 and saved as a new copy.</li>
+              <li>Enter the chosen password: the file is encrypted with AES-256 and saved as a new copy. The original file is left untouched.</li>
               <li>To remove protection later, use Protection &gt; Remove password… and enter the current password.</li>
               <li>Protection &gt; Security info… lets you check the encryption status of the open document at any time.</li>
             </ol>
@@ -277,16 +291,16 @@
 
       <section class="section section_split">
         <div>
-          <p class="eyebrow">Privacy</p>
-          <h2>Your documents stay on your computer</h2>
+          <p class="eyebrow">Privacy &amp; security</p>
+          <h2>No internet. No telemetry. Ever.</h2>
           <p>
-            DocLatch never uploads your files to any server: opening, browsing and password-protecting documents all happen entirely locally, with no internet connection and no usage data collection.
+            DocLatch never uploads your files to any server, never sends usage data, never collects statistics, and requires no internet connection for any feature. Opening, browsing, zooming and password-protecting documents all happen entirely on your own machine.
           </p>
         </div>
         <div class="callout">
           <h3>Windows SmartScreen notice</h3>
           <p>
-            The Windows and macOS installers aren&#39;t signed with a paid certificate yet, so it&#39;s normal for SmartScreen (or Gatekeeper on macOS) to show a warning on first launch. You can proceed by choosing &quot;More info&quot; and then &quot;Run anyway&quot;.
+            The Windows installer isn&#39;t signed with a paid certificate yet, so it&#39;s normal for SmartScreen to show a warning on first launch. You can proceed by choosing &quot;More info&quot; and then &quot;Run anyway&quot;.
           </p>
         </div>
       </section>

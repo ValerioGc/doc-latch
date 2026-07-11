@@ -203,6 +203,12 @@ ${indent(languageOptions, 12)}
       </section>
     </header>
 
+    <section class="screenshot_section" aria-hidden="true">
+      <div class="screenshot_wrap">
+        <img src="../screenshot/preview.png" alt="${escapeHtml(page.screenshotAlt)}" class="screenshot_img" width="1400" height="880" loading="eager">
+      </div>
+    </section>
+
     <main>
 ${indent(renderDownloadSection(locale), 6)}
 
@@ -425,7 +431,7 @@ function renderLanguageSelector(activeLocale) {
     const className = locale === activeLocale ? ' class="active"' : '';
     const ariaCurrent = locale === activeLocale ? ' aria-current="page"' : '';
 
-    return `<a${className}${ariaCurrent} href="../${locale}/" lang="${locale}" hreflang="${locale}" title="${escapeHtml(page.languageName)}">${escapeHtml(page.shortName)}</a>`;
+    return `<a${className}${ariaCurrent} href="../${locale}/" lang="${locale}" hreflang="${locale}" title="${escapeHtml(page.languageName)}">${escapeHtml(page.flagEmoji)}</a>`;
   }).join('\n');
 }
 

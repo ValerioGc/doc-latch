@@ -1,17 +1,26 @@
 # DocLatch
 
-DocLatch is a lightweight desktop PDF viewer for Windows and Linux. Open several documents in tabs, navigate with smooth zoom, and protect your files with a password — everything runs on your own computer, never in the cloud.
+DocLatch is a lightweight open-source desktop PDF viewer for Windows and Linux. Open several documents in tabs, compare them side by side in split view, and protect your files with AES-256 password encryption — everything runs entirely on your own computer, with **no internet connection required** and **no telemetry of any kind**.
+
+![DocLatch app screenshot](docs/screenshot/preview.png)
 
 ## Key features
 
 - **Multi-document tabs** — open several PDFs at once in separate tabs, each keeping its own current page, zoom level and password.
 - **Split view** — show two open documents side by side in the same window to compare them without switching tabs.
-- **Password protection** — add or remove AES-256 encryption from your documents in a couple of clicks, from the Protection menu.
+- **AES-256 password protection** — add or remove encryption from your documents in a couple of clicks, from the Protection menu. The original file is never modified.
 - **Smooth zoom and scrolling** — navigate pages with smooth zooming: a loading indicator appears while the view is recalculated, never a blurry or clipped page.
 - **Recent documents** — quickly find recently opened files from the home screen.
+- **Fully offline** — no internet connection is needed for any feature. Nothing is ever uploaded to a server.
 - **Light and dark theme** — switch between themes at any time from the settings.
 - **Text size** — choose between three interface text sizes (small, medium, large) from the settings.
 - **Multilingual** — interface available in Italian, English, French and German.
+
+## Privacy
+
+**DocLatch collects no data, sends no telemetry and requires no internet connection — ever.**
+
+Opening, browsing, zooming and password-protecting documents all happen entirely on your own machine. There is no analytics, no crash reporting, no usage tracking and no cloud sync.
 
 ## Installation
 
@@ -22,7 +31,7 @@ Download the installer for your platform from the [Releases](https://github.com/
 | Windows | `DocLatch_x.x.x_windows_x64.exe` |
 | Linux | `DocLatch_x.x.x_linux_x64_portable.AppImage` |
 
-> **Note:** the Windows installer is not signed with a paid certificate yet, so Windows SmartScreen may show a warning on first launch. You can proceed by choosing "More info" → "Run anyway".
+> **Windows SmartScreen notice:** the installer is not yet signed with a paid certificate, so SmartScreen may show a warning on first launch. Choose "More info" → "Run anyway" to proceed.
 
 ### Linux — AppImage
 
@@ -33,15 +42,10 @@ chmod +x DocLatch_x.x.x_linux_x64_portable.AppImage
 ./DocLatch_x.x.x_linux_x64_portable.AppImage
 ```
 
-## Privacy
-
-DocLatch never uploads your files to any server: opening, browsing and password-protecting documents all happen entirely locally, with no internet connection and no usage data collection.
-
 ## Current limitations
 
 - Handles **PDF** files only (no exporting to other formats yet).
 - It's a viewer: it doesn't yet support editing page content (text/images) or reordering pages.
-- The Windows installer isn't signed (see note above).
 - macOS is not yet supported.
 
 ## Coming up

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>DocLatch</title>
-    <meta name="description" content="DocLatch est une application de bureau open source pour Windows, Linux et macOS : visualisez des PDF, gérez plusieurs documents en onglets et protégez vos fichiers par mot de passe, entièrement en local, sans cloud.">
+    <meta name="description" content="DocLatch est un lecteur PDF de bureau open source pour Windows et Linux : onglets multiples, vue divisée, protection AES-256, aucune connexion Internet requise, aucune télémétrie.">
     <link rel="canonical" href="https://valeriogc.github.io/doc-latch/fr/">
     <link rel="icon" href="../logo.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../styles.css">
@@ -30,20 +30,20 @@
             <a href="https://github.com/ValerioGc/doc-latch">GitHub</a>
           </div>
           <nav class="language_switcher" aria-label="Langue">
-            <a href="../it/" lang="it" hreflang="it" title="Italiano">IT</a>
-            <a href="../en/" lang="en" hreflang="en" title="English">EN</a>
-            <a class="active" aria-current="page" href="../fr/" lang="fr" hreflang="fr" title="Français">FR</a>
-            <a href="../de/" lang="de" hreflang="de" title="Deutsch">DE</a>
+            <a href="../it/" lang="it" hreflang="it" title="Italiano">🇮🇹</a>
+            <a href="../en/" lang="en" hreflang="en" title="English">🇬🇧</a>
+            <a class="active" aria-current="page" href="../fr/" lang="fr" hreflang="fr" title="Français">🇫🇷</a>
+            <a href="../de/" lang="de" hreflang="de" title="Deutsch">🇩🇪</a>
           </nav>
         </div>
       </nav>
 
       <section id="top" class="hero">
         <div class="hero_copy">
-          <p class="eyebrow">Application de bureau open source</p>
-          <h1>Lisez et protégez vos PDF, sans passer par le cloud</h1>
+          <p class="eyebrow">Application de bureau open source · Sans cloud · Sans télémétrie</p>
+          <h1>Lisez et protégez vos PDF, entièrement sur votre ordinateur</h1>
           <p class="lead">
-            DocLatch est un lecteur de PDF léger pour Windows, Linux et macOS. Ouvrez plusieurs documents en onglets, naviguez avec un zoom fluide, et ajoutez ou retirez la protection par mot de passe : tout est traité sur votre ordinateur, jamais en ligne.
+            DocLatch est un lecteur de PDF léger pour Windows et Linux. Ouvrez plusieurs documents en onglets, comparez-les côte à côte en vue divisée, et ajoutez ou retirez la protection par mot de passe AES-256 : tout se fait en local, sans connexion Internet et sans collecte de données.
           </p>
           <div class="hero_actions">
             <a class="button button_primary" href="https://github.com/ValerioGc/doc-latch">Voir le dépôt</a>
@@ -54,11 +54,11 @@
           <dl>
             <div>
               <dt>Plateformes</dt>
-              <dd>Windows, Linux et macOS</dd>
+              <dd>Windows · Linux</dd>
             </div>
             <div>
-              <dt>Données</dt>
-              <dd>Traitement 100 % local</dd>
+              <dt>Internet &amp; télémétrie</dt>
+              <dd>Non requis — jamais</dd>
             </div>
             <div>
               <dt>Licence</dt>
@@ -68,6 +68,12 @@
         </aside>
       </section>
     </header>
+
+    <section class="screenshot_section" aria-hidden="true">
+      <div class="screenshot_wrap">
+        <img src="../screenshot/preview.png" alt="DocLatch — capture d&#39;écran de l&#39;application avec deux PDF ouverts en vue divisée" class="screenshot_img" width="1400" height="880" loading="eager">
+      </div>
+    </section>
 
     <main>
       <section id="download" class="download_section">
@@ -213,20 +219,28 @@
             <p>Ouvrez plusieurs PDF à la fois dans des onglets séparés, chacun avec sa propre page courante, son zoom et son mot de passe.</p>
           </article>
           <article class="card">
-            <h3>Protection par mot de passe</h3>
-            <p>Ajoutez ou retirez le chiffrement AES-256 de vos documents en quelques clics, directement depuis le menu Protection.</p>
+            <h3>Vue divisée</h3>
+            <p>Affichez deux documents ouverts côte à côte dans la même fenêtre pour les comparer directement, sans changer d&#39;onglet.</p>
+          </article>
+          <article class="card">
+            <h3>Protection par mot de passe AES-256</h3>
+            <p>Ajoutez ou retirez le chiffrement AES-256 de vos documents en quelques clics depuis le menu Protection. Le fichier original n&#39;est jamais modifié.</p>
           </article>
           <article class="card">
             <h3>Zoom et défilement fluides</h3>
-            <p>Naviguez dans les pages avec un zoom fluide : un indicateur de chargement apparaît pendant le recalcul de la vue, jamais une page floue ou tronquée.</p>
+            <p>Naviguez dans les pages avec un zoom par onglet, contrôlable depuis la barre supérieure, la barre d&#39;état, ou avec Ctrl +/-/0 au clavier et la molette.</p>
           </article>
           <article class="card">
             <h3>Documents récents</h3>
             <p>Retrouvez rapidement les fichiers ouverts récemment depuis l&#39;accueil, avec la possibilité de les retirer de la liste quand vous n&#39;en avez plus besoin.</p>
           </article>
           <article class="card">
+            <h3>Entièrement hors ligne</h3>
+            <p>DocLatch ne nécessite aucune connexion Internet pour aucune fonctionnalité : ouverture, navigation, zoom et protection par mot de passe se font entièrement en local, sans aucune donnée envoyée.</p>
+          </article>
+          <article class="card">
             <h3>Thème clair et sombre</h3>
-            <p>Passez du thème clair au thème sombre à tout moment depuis les paramètres, selon vos préférences.</p>
+            <p>Passez du thème clair au thème sombre à tout moment depuis les paramètres. Trois tailles de texte d&#39;interface sont également disponibles.</p>
           </article>
           <article class="card">
             <h3>Interface multilingue</h3>
@@ -246,15 +260,15 @@
             <ol>
               <li>Lancez DocLatch et choisissez « Ouvrir un fichier… » dans le menu Fichier, ou sélectionnez un document dans la liste des récents sur l&#39;accueil.</li>
               <li>Utilisez les flèches, Page précédente/suivante ou la molette de la souris pour faire défiler les pages.</li>
-              <li>Ajustez le zoom depuis la barre d&#39;état, ou avec Ctrl/Cmd et +/-/0 au clavier.</li>
-              <li>Ouvrez un second document pour le voir dans un nouvel onglet, sans perdre le premier.</li>
+              <li>Ajustez le zoom depuis la barre supérieure ou la barre d&#39;état, ou avec Ctrl/Cmd et +/-/0 au clavier.</li>
+              <li>Ouvrez un second document dans un nouvel onglet, ou utilisez la vue divisée pour les comparer côte à côte.</li>
             </ol>
           </article>
           <article class="guide">
             <h3>Protéger un document par mot de passe</h3>
             <ol>
               <li>Le document ouvert, allez dans Protection &gt; Ajouter un mot de passe… dans le menu du haut.</li>
-              <li>Saisissez le mot de passe choisi : le fichier est chiffré en AES-256 et enregistré dans une nouvelle copie.</li>
+              <li>Saisissez le mot de passe choisi : le fichier est chiffré en AES-256 et enregistré dans une nouvelle copie. Le fichier original reste inchangé.</li>
               <li>Pour retirer la protection plus tard, utilisez Protection &gt; Retirer le mot de passe… et saisissez le mot de passe actuel.</li>
               <li>Protection &gt; Informations de sécurité… permet de vérifier à tout moment l&#39;état de chiffrement du document ouvert.</li>
             </ol>
@@ -277,16 +291,16 @@
 
       <section class="section section_split">
         <div>
-          <p class="eyebrow">Confidentialité</p>
-          <h2>Vos documents restent sur votre ordinateur</h2>
+          <p class="eyebrow">Confidentialité &amp; sécurité</p>
+          <h2>Aucun Internet. Aucune télémétrie. Jamais.</h2>
           <p>
-            DocLatch ne transmet jamais vos fichiers à un serveur : ouverture, navigation et protection par mot de passe se font entièrement en local, sans connexion Internet ni collecte de données d&#39;utilisation.
+            DocLatch ne transmet jamais vos fichiers à un serveur, n&#39;envoie jamais de données d&#39;utilisation, ne collecte aucune statistique et ne nécessite aucune connexion Internet pour aucune fonctionnalité. Ouverture, navigation, zoom et protection par mot de passe se font entièrement sur votre propre machine.
           </p>
         </div>
         <div class="callout">
           <h3>Avertissement Windows SmartScreen</h3>
           <p>
-            Les installeurs Windows et macOS ne sont pas encore signés avec un certificat payant : il est donc normal que SmartScreen (ou Gatekeeper sur macOS) affiche un avertissement au premier lancement. Vous pouvez continuer en choisissant « Plus d&#39;informations » puis « Exécuter quand même ».
+            L&#39;installeur Windows n&#39;est pas encore signé avec un certificat payant : il est donc normal que SmartScreen affiche un avertissement au premier lancement. Vous pouvez continuer en choisissant « Plus d&#39;informations » puis « Exécuter quand même ».
           </p>
         </div>
       </section>
