@@ -22,16 +22,16 @@
     <!-- Page info — left pane (active tab) -->
     <PageSelector v-if="docStore.isOpen" />
 
-    <!-- Page info — right pane (split tab, only when doc is ready) -->
-    <PageSelector
-      v-if="docStore.splitEnabled && docStore.splitTabId && docStore.getTab(docStore.splitTabId)?.state === 'ready'"
-      :tab-id="docStore.splitTabId"
-    />
-
     <div class="s_spacer"></div>
 
     <!-- Zoom controls — hidden in split view (each pane header carries its own) -->
     <ZoomControls v-if="docStore.isOpen && !docStore.splitEnabled" />
+
+    <!-- Page info — right pane, right-aligned to mirror the split tab header position -->
+    <PageSelector
+      v-if="docStore.splitEnabled && docStore.splitTabId && docStore.getTab(docStore.splitTabId)?.state === 'ready'"
+      :tab-id="docStore.splitTabId"
+    />
 
   </footer>
 </template>
