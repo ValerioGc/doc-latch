@@ -134,33 +134,7 @@
 
 <style lang="scss" scoped>
 
-  .menu_item {
-    @extend %menu_item;
-  }
-
-  .menu_btn {
-    @extend %menu_btn;
-  }
-
-  .menu_btn_icon {
-    @extend %menu_btn_icon;
-  }
-
-  .chev {
-    @extend %chev;
-  }
-
-  .dropdown {
-    @extend %dropdown;
-  }
-
-  .drop_item {
-    @extend %drop_item;
-  }
-
-  .drop_item_icon {
-    @extend %drop_item_icon;
-  }
+  @include toolbar-menu-classes;
 
   .drop_item_label {
     @extend %drop_item_label;
@@ -168,10 +142,6 @@
 
   .drop_item_wrap {
     position: relative;
-  }
-
-  .drop_sep {
-    @extend %drop_sep;
   }
 
   .chev_right {

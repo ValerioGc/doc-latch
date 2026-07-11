@@ -84,36 +84,6 @@
 
 <style lang="scss" scoped>
 
-  .menu_item {
-    @extend %menu_item;
-  }
-
-  .menu_btn {
-    @extend %menu_btn;
-  }
-
-  .menu_btn_icon {
-    @extend %menu_btn_icon;
-  }
-
-  .chev {
-    @extend %chev;
-  }
-
-  .dropdown {
-    @extend %dropdown;
-  }
-
-  .drop_item {
-    @extend %drop_item;
-  }
-
-  .drop_item_icon {
-    @extend %drop_item_icon;
-  }
-
-  .drop_sep {
-    @extend %drop_sep;
-  }
+  @include toolbar-menu-classes;
 
 </style>
