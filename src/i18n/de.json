@@ -122,7 +122,21 @@
       "version": "Version {version}",
       "description": "Open-Source-PDF-Leser, erstellt mit Tauri 2, Rust und Vue 3.",
       "github": "Auf GitHub ansehen",
-      "close": "Schließen"
+      "close": "Schließen",
+      "guide": "Kurzanleitung",
+      "guide1": "Gehen Sie zu Datei → Datei öffnen…, um eine PDF-Datei zu laden.",
+      "guide2": "Zuletzt geöffnete Dateien finden Sie unter Datei → Zuletzt verwendet.",
+      "guide3": "Öffnen Sie mehrere Dokumente, um parallel in verschiedenen Tabs zu arbeiten.",
+      "guide4": "Gehen Sie zu Schutz, um die AES-256-Verschlüsselung hinzuzufügen oder zu entfernen.",
+      "shortcuts": "Tastenkürzel",
+      "kbNextPage": "Nächste Seite",
+      "kbPrevPage": "Vorherige Seite",
+      "kbFirstPage": "Erste Seite",
+      "kbLastPage": "Letzte Seite",
+      "kbZoom": "Vergrößern / Verkleinern",
+      "kbZoomReset": "Zoom zurücksetzen (100 %)",
+      "kbNextTab": "Nächster / vorheriger Tab",
+      "kbCloseTab": "Tab schließen"
     },
     "settings": {
       "close": "Schließen"
