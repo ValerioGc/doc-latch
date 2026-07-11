@@ -37,6 +37,8 @@ export default defineConfig({
         '**/*.config.*',
         '**/types/**',
         'src/styles/**',
+        'src/assets/**',
+        'src/i18n/**',
       ],
       thresholds: {
         lines: 80,
