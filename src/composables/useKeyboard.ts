@@ -37,19 +37,28 @@ export function useKeyboard(): void {
       case '=':
         if (e.ctrlKey || e.metaKey) {
           e.preventDefault();
-          docStore.adjustZoom(10);
+          if (docStore.focusedPane === 'right' && docStore.splitTabId)
+            docStore.adjustTabZoom(docStore.splitTabId, 10);
+          else
+            docStore.adjustZoom(10);
         }
         break;
       case '-':
         if (e.ctrlKey || e.metaKey) {
           e.preventDefault();
-          docStore.adjustZoom(-10);
+          if (docStore.focusedPane === 'right' && docStore.splitTabId)
+            docStore.adjustTabZoom(docStore.splitTabId, -10);
+          else
+            docStore.adjustZoom(-10);
         }
         break;
       case '0':
         if (e.ctrlKey || e.metaKey) {
           e.preventDefault();
-          docStore.setZoom(100);
+          if (docStore.focusedPane === 'right' && docStore.splitTabId)
+            docStore.setTabZoom(docStore.splitTabId, 100);
+          else
+            docStore.setZoom(100);
         }
         break;
       case 'Tab':

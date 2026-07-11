@@ -11,7 +11,6 @@
     "newTab": "Nuova scheda",
     "closeTab": "Chiudi scheda",
     "splitView": "Dividi finestra",
-    "closeSplit": "Chiudi vista divisa",
     "close": "Chiudi documento",
     "docInfo": "Informazioni documento…",
     "protection": "Protezione",
@@ -38,7 +37,6 @@
   "viewer": {
     "noDocument": "Nessun documento aperto",
     "openHint": "Usa File > Apri file per aprire un PDF",
-    "page": "Pag. {current} / {total}",
     "zoom": "Zoom",
     "resetZoom": "Reimposta zoom al 100%"
   },
@@ -53,8 +51,7 @@
       "placeholder": "Password",
       "confirm": "Apri",
       "cancel": "Annulla",
-      "wrongPassword": "Password errata. Riprova.",
-      "attemptsLeft": "{n} tentativo rimanente | {n} tentativi rimanenti"
+      "wrongPassword": "Password errata. Riprova."
     },
     "docInfo": {
       "title": "Informazioni documento",

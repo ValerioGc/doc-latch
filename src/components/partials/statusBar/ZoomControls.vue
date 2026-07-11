@@ -8,21 +8,46 @@ import zoomOutIcon from '@/assets/icons/zoom-out.svg?raw';
 import zoomInIcon from '@/assets/icons/zoom-in.svg?raw';
 import zoomResetIcon from '@/assets/icons/zoom-reset.svg?raw';
 
+const props = defineProps<{ tabId?: string }>();
+
 const docStore = useDocumentStore();
 const { t } = useI18n();
 
 const PRESET_ZOOMS = [50, 75, 100, 125, 150, 200, 300, 400];
 
+const zoomValue = computed(() => {
+    if (props.tabId)
+        return docStore.getTab(props.tabId)?.zoom ?? 100;
+    return docStore.zoom;
+});
+
 const zoomOptions = computed(() => {
-    if (PRESET_ZOOMS.includes(docStore.zoom))
+    if (PRESET_ZOOMS.includes(zoomValue.value))
         return PRESET_ZOOMS;
 
-    return [...PRESET_ZOOMS, docStore.zoom].sort((a, b) => a - b);
+    return [...PRESET_ZOOMS, zoomValue.value].sort((a, b) => a - b);
 });
 
 function onZoomSelect(e: Event): void {
-    const select = e.target as HTMLSelectElement;
-    docStore.setZoom(Number(select.value));
+    const value = Number((e.target as HTMLSelectElement).value);
+    if (props.tabId)
+        docStore.setTabZoom(props.tabId, value);
+    else
+        docStore.setZoom(value);
+}
+
+function adjustZoom(delta: number): void {
+    if (props.tabId)
+        docStore.adjustTabZoom(props.tabId, delta);
+    else
+        docStore.adjustZoom(delta);
+}
+
+function resetZoom(): void {
+    if (props.tabId)
+        docStore.setTabZoom(props.tabId, 100);
+    else
+        docStore.setZoom(100);
 }
 
 </script>
@@ -34,14 +59,14 @@ function onZoomSelect(e: Event): void {
         <!-- Zoom out button -->
         <button class="zoom_btn"
             :aria-label="`${t('viewer.zoom')} -`"
-            @click="docStore.adjustZoom(-10)"
+            @click="adjustZoom(-10)"
             v-html="zoomOutIcon"
         ></button>
 
         <!-- Zoom select dropdown -->
         <select class="zoom_select"
             :aria-label="t('viewer.zoom')"
-            :value="String(docStore.zoom)"
+            :value="String(zoomValue)"
             @change="onZoomSelect"
         >
             <option v-for="z in zoomOptions" :key="z" :value="String(z)">{{ z }}%</option>
@@ -50,16 +75,16 @@ function onZoomSelect(e: Event): void {
         <!-- Zoom in button -->
         <button class="zoom_btn"
             :aria-label="`${t('viewer.zoom')} +`"
-            @click="docStore.adjustZoom(10)"
+            @click="adjustZoom(10)"
             v-html="zoomInIcon"
         ></button>
-        
+
         <!-- Reset zoom button -->
         <button class="zoom_btn"
-            :disabled="docStore.zoom === 100"
+            :disabled="zoomValue === 100"
             :title="t('viewer.resetZoom')"
             :aria-label="t('viewer.resetZoom')"
-            @click="docStore.setZoom(100)"
+            @click="resetZoom()"
             v-html="zoomResetIcon"
         ></button>
     </fieldset>

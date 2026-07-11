@@ -204,7 +204,7 @@ describe('App', () => {
   });
 
   describe('split pane resize constraints', () => {
-    it('clamps the left pane width to SPLIT_MIN (280px) when dragged too far left', async () => {
+    it('clamps the left pane width to SPLIT_MIN (420px) when dragged too far left', async () => {
       openTwoReadyTabsAndSplit();
       const wrapper = mountApp();
 
@@ -237,13 +237,13 @@ describe('App', () => {
         toJSON: () => ({}),
       });
 
-      // Drag far left: 400 + (0 - 500) = -100 → clamped to 280
+      // Drag far left: 400 + (0 - 500) = -100 → clamped to 420
       await divider.trigger('mousedown', { clientX: 500, clientY: 0 });
       globalThis.dispatchEvent(new MouseEvent('mousemove', { clientX: 0, clientY: 0 }));
       await wrapper.vm.$nextTick();
 
       const viewer = wrapper.findComponent({ name: 'PdfViewer' });
-      expect(viewer.attributes('style')).toContain('280px');
+      expect(viewer.attributes('style')).toContain('420px');
     });
 
     it('clamps the left pane width to maxWidth when dragged too far right', async () => {
@@ -279,14 +279,14 @@ describe('App', () => {
         toJSON: () => ({}),
       });
 
-      // containerWidth=900, SPLIT_DIVIDER_WIDTH=6, SPLIT_MIN=280 → maxWidth = 614
-      // startWidth=400, startX=100, mousemove to x=900 → 400 + 800 = 1200 → clamped to 614
+      // containerWidth=900, SPLIT_DIVIDER_WIDTH=6, SPLIT_MIN=420 → maxWidth = 474
+      // startWidth=400, startX=100, mousemove to x=900 → 400 + 800 = 1200 → clamped to 474
       await divider.trigger('mousedown', { clientX: 100, clientY: 0 });
       globalThis.dispatchEvent(new MouseEvent('mousemove', { clientX: 900, clientY: 0 }));
       await wrapper.vm.$nextTick();
 
       const viewer = wrapper.findComponent({ name: 'PdfViewer' });
-      expect(viewer.attributes('style')).toContain('614px');
+      expect(viewer.attributes('style')).toContain('474px');
     });
 
     it('stops updating width after mouseup', async () => {

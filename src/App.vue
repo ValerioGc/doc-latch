@@ -27,7 +27,7 @@
   useKeyboard();
 
   // ************** Split-pane resize ***************
-  const SPLIT_MIN = 280;
+  const SPLIT_MIN = 420;
   const SPLIT_DIVIDER_WIDTH = 6;
 
   const splitContentRef = useTemplateRef<HTMLElement>('splitContent');

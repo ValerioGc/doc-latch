@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-  import { computed } from 'vue';
+  import { computed, nextTick, onUnmounted, useTemplateRef, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
   import HomeScreen from '@/components/viewer/HomeScreen.vue';
@@ -13,6 +13,74 @@
 
   const tab = computed(() => (docStore.splitTabId ? docStore.getTab(docStore.splitTabId) : null));
 
+  const paneRef = useTemplateRef<HTMLElement>('pane');
+
+  let suppressScrollWatch = false;
+  let programmaticPage = false;
+  let programmaticTimer: ReturnType<typeof setTimeout> | null = null;
+  let rafId: number | null = null;
+
+  watch(() => tab.value?.currentPage, async (page) => {
+    if (suppressScrollWatch || page == null) {
+      suppressScrollWatch = false;
+      return;
+    }
+    await nextTick();
+    programmaticPage = true;
+    if (programmaticTimer !== null)
+      clearTimeout(programmaticTimer);
+    paneRef.value
+      ?.querySelector(`[data-page="${page}"]`)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    programmaticTimer = setTimeout(() => { programmaticPage = false; }, 800);
+  });
+
+  function syncPageFromScroll(): void {
+    if (programmaticPage || !paneRef.value || !tab.value)
+      return;
+
+    const el = paneRef.value;
+    const midpoint = el.getBoundingClientRect().top + el.clientHeight / 2;
+    let page = tab.value.currentPage;
+
+    el.querySelectorAll<HTMLElement>('[data-page]').forEach((slot) => {
+      if (slot.getBoundingClientRect().top <= midpoint)
+        page = Number(slot.dataset.page);
+    });
+
+    if (page !== tab.value.currentPage) {
+      suppressScrollWatch = true;
+      docStore.setTabPage(tab.value.id, page);
+    }
+  }
+
+  function onPaneScroll(): void {
+    if (programmaticPage)
+      return;
+    if (rafId !== null)
+      cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(syncPageFromScroll);
+  }
+
+  onUnmounted(() => {
+    if (rafId !== null)
+      cancelAnimationFrame(rafId);
+    if (programmaticTimer !== null)
+      clearTimeout(programmaticTimer);
+  });
+
+  function onMouseEnter(): void {
+    docStore.setFocusedPane('right');
+  }
+
+  function onWheel(e: WheelEvent): void {
+    if (!e.ctrlKey || !tab.value)
+      return;
+
+    e.preventDefault();
+    docStore.adjustTabZoom(tab.value.id, e.deltaY < 0 ? 10 : -10);
+  }
+
   const errorMessage = computed(() => {
     const kind = tab.value?.error?.kind ?? 'Unknown';
     const key = kind.charAt(0).toLowerCase() + kind.slice(1);
@@ -22,7 +90,7 @@
 </script>
 
 <template>
-  <div class="split_pane">
+  <div ref="pane" class="split_pane" @mouseenter="onMouseEnter" @wheel="onWheel" @scroll="onPaneScroll">
 
     <template v-if="tab">
 
@@ -48,7 +116,10 @@
 
       <!-- Document pages -->
       <div v-else-if="tab.state === 'ready'" class="page_list">
-        <div v-for="page in tab.info?.pageCount ?? 0" :key="`${tab.id}-${page}`" class="page_slot">
+        <div v-for="page in tab.info?.pageCount ?? 0" :key="`${tab.id}-${page}`"
+          class="page_slot"
+          :data-page="page"
+        >
           <PageCanvas :page="page" :tab-id="tab.id" />
         </div>
       </div>

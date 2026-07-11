@@ -40,6 +40,13 @@ export const useDocumentStore = defineStore('document', () => {
   const activeTab = computed(() => tabs.value.find((tab) => tab.id === activeTabId.value) ?? null);
   const splitEnabled = computed(() => splitTabId.value !== null);
 
+  // Tracks which pane (left = active tab, right = split tab) receives keyboard zoom.
+  const focusedPane = ref<'left' | 'right'>('left');
+
+  function setFocusedPane(pane: 'left' | 'right'): void {
+    focusedPane.value = pane;
+  }
+
   function getTab(id: string): DocumentTab | null {
     return tabs.value.find((tab) => tab.id === id) ?? null;
   }
@@ -195,13 +202,33 @@ export const useDocumentStore = defineStore('document', () => {
       activeTab.value.currentPage = page;
   }
 
+  function setTabPage(tabId: string, page: number): void {
+    const tab = getTab(tabId);
+    const max = tab?.info?.pageCount ?? 0;
+    if (tab && page >= 1 && page <= max)
+      tab.currentPage = page;
+  }
+
   function setZoom(value: number): void {
     if (activeTab.value)
       activeTab.value.zoom = Math.min(400, Math.max(25, value));
   }
 
   function adjustZoom(delta: number): void {
-    setZoom(zoom.value + delta);
+    if (activeTab.value)
+      setZoom(activeTab.value.zoom + delta);
+  }
+
+  function setTabZoom(tabId: string, value: number): void {
+    const tab = getTab(tabId);
+    if (tab)
+      tab.zoom = Math.min(400, Math.max(25, value));
+  }
+
+  function adjustTabZoom(tabId: string, delta: number): void {
+    const tab = getTab(tabId);
+    if (tab)
+      setTabZoom(tabId, tab.zoom + delta);
   }
 
   /** Switches the active tab. */
@@ -261,6 +288,7 @@ export const useDocumentStore = defineStore('document', () => {
   /** Closes the split pane. */
   function closeSplit(): void {
     splitTabId.value = null;
+    focusedPane.value = 'left';
   }
 
   /** Moves `draggedId` to the position of `targetId` in the tab list (insert-before semantics). */
@@ -302,6 +330,8 @@ export const useDocumentStore = defineStore('document', () => {
     activeTabId,
     splitTabId,
     splitEnabled,
+    focusedPane,
+    setFocusedPane,
     state,
     info,
     currentPage,
@@ -322,8 +352,11 @@ export const useDocumentStore = defineStore('document', () => {
     setPasswordRequired,
     setError,
     setPage,
+    setTabPage,
     setZoom,
     adjustZoom,
+    setTabZoom,
+    adjustTabZoom,
     setActiveTab,
     cycleTab,
     closeTab,

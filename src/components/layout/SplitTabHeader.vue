@@ -4,6 +4,7 @@
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
   import { startTabDrag, useDragState } from '@/composables/useTabDrag';
+  import ZoomControls from '@/components/partials/statusBar/ZoomControls.vue';
   import documentIcon from '@/assets/icons/document.svg?raw';
   import closeIcon from '@/assets/icons/window-close.svg?raw';
 
@@ -51,6 +52,9 @@
         <span class="split_header_close_icon" aria-hidden="true" v-html="closeIcon" />
       </button>
     </div>
+
+    <!-- Zoom controls — right-aligned, only when a document is loaded in this pane -->
+    <ZoomControls v-if="tab && tab.state === 'ready'" :tab-id="tab.id" class="split_header_zoom" />
   </div>
 </template>
 
@@ -109,6 +113,13 @@
         @extend %truncate;
         flex: 1;
       }
+    }
+
+    &_zoom {
+      flex-shrink: 0;
+      align-self: center;
+      margin-left: auto;
+      padding: 0 $space-2;
     }
 
     &_close {

@@ -11,7 +11,6 @@
     "newTab": "New tab",
     "closeTab": "Close tab",
     "splitView": "Split window",
-    "closeSplit": "Close split view",
     "close": "Close document",
     "docInfo": "Document info…",
     "protection": "Protection",
@@ -38,7 +37,6 @@
   "viewer": {
     "noDocument": "No document open",
     "openHint": "Use File > Open file to open a PDF",
-    "page": "Page {current} / {total}",
     "zoom": "Zoom",
     "resetZoom": "Reset zoom to 100%"
   },
@@ -53,8 +51,7 @@
       "placeholder": "Password",
       "confirm": "Open",
       "cancel": "Cancel",
-      "wrongPassword": "Wrong password. Please try again.",
-      "attemptsLeft": "{n} attempt remaining | {n} attempts remaining"
+      "wrongPassword": "Wrong password. Please try again."
     },
     "docInfo": {
       "title": "Document info",

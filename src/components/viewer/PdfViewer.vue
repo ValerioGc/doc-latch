@@ -84,6 +84,10 @@
     docStore.adjustZoom(e.deltaY < 0 ? 10 : -10);
   }
 
+  function onMouseEnter(): void {
+    docStore.setFocusedPane('left');
+  }
+
   // Map PDF loading error kinds to i18n keys for user-friendly messages
   const errorMessage = computed(() => {
     const kind = docStore.error?.kind ?? 'Unknown';
@@ -94,7 +98,7 @@
 </script>
 
 <template>
-  <main ref="viewer" class="viewer" :class="{ 'viewer--split': docStore.splitEnabled }" role="main" @wheel="onWheel" @scroll="onScroll">
+  <main ref="viewer" class="viewer" :class="{ 'viewer--split': docStore.splitEnabled }" role="main" @mouseenter="onMouseEnter" @wheel="onWheel" @scroll="onScroll">
 
     <!-- Empty state -->
     <HomeScreen v-if="docStore.state === 'idle'" />

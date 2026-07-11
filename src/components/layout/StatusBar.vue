@@ -19,13 +19,19 @@
       {{ docStore.fileName ?? $t('statusBar.noFile') }}
     </div>
 
-    <!-- Page info -->
+    <!-- Page info — left pane (active tab) -->
     <PageSelector v-if="docStore.isOpen" />
+
+    <!-- Page info — right pane (split tab, only when doc is ready) -->
+    <PageSelector
+      v-if="docStore.splitEnabled && docStore.splitTabId && docStore.getTab(docStore.splitTabId)?.state === 'ready'"
+      :tab-id="docStore.splitTabId"
+    />
 
     <div class="s_spacer"></div>
 
-    <!-- Zoom controls -->
-    <ZoomControls v-if="docStore.isOpen" />
+    <!-- Zoom controls — hidden in split view (each pane header carries its own) -->
+    <ZoomControls v-if="docStore.isOpen && !docStore.splitEnabled" />
 
   </footer>
 </template>

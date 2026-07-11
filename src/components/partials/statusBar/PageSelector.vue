@@ -1,15 +1,30 @@
 <script setup lang="ts">
 
-  import { nextTick, ref } from 'vue';
+  import { computed, nextTick, ref } from 'vue';
 
   import { useDocumentStore } from '@/stores/document';
   import pageIcon from '@/assets/icons/page.svg?raw';
   import chevronDownIcon from '@/assets/icons/chevron-down.svg?raw';
 
+  const props = defineProps<{ tabId?: string }>();
+
   const docStore = useDocumentStore();
 
   const open = ref(false);
-  const pageInput = ref(String(docStore.currentPage));
+
+  const currentPage = computed(() => {
+    if (props.tabId)
+      return docStore.getTab(props.tabId)?.currentPage ?? 1;
+    return docStore.currentPage;
+  });
+
+  const totalPages = computed(() => {
+    if (props.tabId)
+      return docStore.getTab(props.tabId)?.info?.pageCount ?? 0;
+    return docStore.totalPages;
+  });
+
+  const pageInput = ref(String(currentPage.value));
   const inputRef = ref<HTMLInputElement | null>(null);
 
   function toggle(): void {
@@ -17,7 +32,7 @@
     if (!open.value)
       return;
 
-    pageInput.value = String(docStore.currentPage);
+    pageInput.value = String(currentPage.value);
     nextTick(() => {
       inputRef.value?.focus();
       inputRef.value?.select();
@@ -30,8 +45,12 @@
 
   function goToPage(): void {
     const page = Number(pageInput.value);
-    if (!Number.isNaN(page))
-      docStore.setPage(page);
+    if (!Number.isNaN(page)) {
+      if (props.tabId)
+        docStore.setTabPage(props.tabId, page);
+      else
+        docStore.setPage(page);
+    }
 
     close();
   }
@@ -48,7 +67,7 @@
       @click="toggle"
     >
       <span class="page_selector_icon" aria-hidden="true" v-html="pageIcon"></span>
-      {{ $t('statusBar.page', { current: docStore.currentPage, total: docStore.totalPages }) }}
+      {{ $t('statusBar.page', { current: currentPage, total: totalPages }) }}
       <span class="page_selector_chev" aria-hidden="true" v-html="chevronDownIcon"></span>
     </button>
 
@@ -59,11 +78,11 @@
       <input ref="inputRef" type="number" class="page_selector_input"
         v-model="pageInput"
         min="1"
-        :max="docStore.totalPages"
+        :max="totalPages"
         @keydown.enter="goToPage"
         @keydown.escape="close"
       />
-      
+
       <button class="btn btn_primary page_selector_go" @click="goToPage">
         {{ $t('statusBar.goToPage') }}
       </button>

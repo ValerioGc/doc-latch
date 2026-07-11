@@ -7,6 +7,7 @@
   import { startTabDrag, useDragState } from '@/composables/useTabDrag';
 
   import SplitToggle from '@/components/layout/SplitToggle.vue';
+  import ZoomControls from '@/components/partials/statusBar/ZoomControls.vue';
   import documentIcon from '@/assets/icons/document.svg?raw';
   import closeIcon from '@/assets/icons/window-close.svg?raw';
   import addIcon from '@/assets/icons/zoom-in.svg?raw';
@@ -35,52 +36,60 @@
 
 <template>
   <div class="tab" role="tablist">
-    <div v-for="tab in visibleTabs" :key="tab.id"
-      class="tab_row"
-      :data-tab-id="tab.id"
-      :class="{
-        'active': tab.id === docStore.activeTabId,
-        'drop-over': drag.isDragging && drag.overTabId === tab.id,
-      }"
-    >
 
-      <!-- Tab select button -->
-      <button class="tab_select"
-        role="tab"
-        :aria-selected="tab.id === docStore.activeTabId"
-        :title="tab.filePath ?? t('menu.newTab')"
-        @click="docStore.setActiveTab(tab.id)"
+    <!-- Scrollable tab list -->
+    <div class="tab_list">
+      <div v-for="tab in visibleTabs" :key="tab.id"
+        class="tab_row"
+        :data-tab-id="tab.id"
+        :class="{
+          'active': tab.id === docStore.activeTabId,
+          'drop-over': drag.isDragging && drag.overTabId === tab.id,
+        }"
       >
-        <span class="tab_select_drag"
-          data-drag-handle="true"
-          @pointerdown="onPointerDown(tab.id, tab.filePath, $event)"
+
+        <!-- Tab select button -->
+        <button class="tab_select"
+          role="tab"
+          :aria-selected="tab.id === docStore.activeTabId"
+          :title="tab.filePath ?? t('menu.newTab')"
+          @click="docStore.setActiveTab(tab.id)"
         >
-          <span class="tab_select_icon" aria-hidden="true" v-html="documentIcon"></span>
-          <span class="tab_select_name">{{ tabName(tab.filePath) }}</span>
-        </span>
-      </button>
+          <span class="tab_select_drag"
+            data-drag-handle="true"
+            @pointerdown="onPointerDown(tab.id, tab.filePath, $event)"
+          >
+            <span class="tab_select_icon" aria-hidden="true" v-html="documentIcon"></span>
+            <span class="tab_select_name">{{ tabName(tab.filePath) }}</span>
+          </span>
+        </button>
 
-      <!-- Close button -->
-      <button class="tab_close"
-        :title="t('menu.closeTab')"
-        :aria-label="t('menu.closeTab')"
-        @click="docStore.closeTab(tab.id)"
+        <!-- Close button -->
+        <button class="tab_close"
+          :title="t('menu.closeTab')"
+          :aria-label="t('menu.closeTab')"
+          @click="docStore.closeTab(tab.id)"
+        >
+          <span class="tab_close_icon" aria-hidden="true" v-html="closeIcon"></span>
+        </button>
+      </div>
+
+      <!-- New tab button -->
+      <button v-if="!uiStore.isMobile" class="tab_add"
+        :title="t('menu.newTab')"
+        :aria-label="t('menu.newTab')"
+        @click="docStore.newTab()"
       >
-        <span class="tab_close_icon" aria-hidden="true" v-html="closeIcon"></span>
+        <span class="tab_add_icon" aria-hidden="true" v-html="addIcon"></span>
       </button>
     </div>
-    
-    <!-- Split toggle button -->
-    <SplitToggle v-if="!uiStore.isMobile" />
 
-    <!-- New tab button -->
-    <button v-if="!uiStore.isMobile" class="tab_add"
-      :title="t('menu.newTab')"
-      :aria-label="t('menu.newTab')"
-      @click="docStore.newTab()"
-    >
-      <span class="tab_add_icon" aria-hidden="true" v-html="addIcon"></span>
-    </button>
+    <!-- Non-scrolling right section: split toggle + zoom in split view -->
+    <SplitToggle v-if="!uiStore.isMobile" />
+    <ZoomControls
+      v-if="docStore.splitEnabled && docStore.isOpen"
+      class="tab_zoom"
+    />
 
     <!-- Drag ghost teleported to body -->
     <Teleport to="body">
@@ -98,32 +107,40 @@
 
   .tab {
     @include flex-row;
-    @include scrollbar(6px);
 
     flex: 1;
     min-width: 0;
     background: var(--color-bg-secondary);
     border-bottom: 0.5px solid var(--color-border);
-    overflow-x: auto;
-    overflow-y: hidden;
     flex-shrink: 0;
-    padding: 5px $space-1 0;
-    align-items: flex-end;
-    gap: 2px;
+    align-items: stretch;
+
+    &_list {
+      @include flex-row;
+      @include scrollbar(6px);
+
+      flex: 1;
+      min-width: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 5px $space-1 0;
+      align-items: flex-end;
+      gap: 2px;
+    }
 
     // ****** Context-dependent overrides *******
     &_row.active &_select{
-      color: var(--color-text-primary); 
+      color: var(--color-text-primary);
     }
 
-    &_row.active &_select_icon { 
-      color: var(--color-accent); 
+    &_row.active &_select_icon {
+      color: var(--color-accent);
     }
 
     &_row.active &_close,
     &_row:hover &_close{
-      opacity: 1; 
-      pointer-events: auto; 
+      opacity: 1;
+      pointer-events: auto;
     }
 
     &_row {
@@ -262,6 +279,12 @@
           height: 11px;
         }
       }
+    }
+
+    &_zoom {
+      flex-shrink: 0;
+      align-self: center;
+      padding: 0 $space-2;
     }
 
     &_drag_ghost {
