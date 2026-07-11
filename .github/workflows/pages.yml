@@ -5,9 +5,12 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/pages.yml'
-      - 'docs/**'
+      - 'docs/site-content.json'
+      - 'docs/styles.css'
+      - 'docs/screenshot/**'
       - 'scripts/build-pages.cjs'
       - 'src/assets/logo.svg'
+      - 'src/assets/icons/flag-*.svg'
       - 'src/i18n/index.ts'
   workflow_dispatch:
 
