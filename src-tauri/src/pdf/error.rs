@@ -21,7 +21,7 @@ pub enum PdfError {
     #[error("The document is already password protected")]
     AlreadyEncrypted,
 
-    #[error("Rendering error: {0}")]
+    #[error("Render error: {0}")]
     RenderError(String),
 
     #[error("Unknown error: {0}")]
