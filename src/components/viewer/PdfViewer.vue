@@ -14,10 +14,8 @@
 
   const viewerRef = useTemplateRef<HTMLElement>('viewer');
 
-  // True while a programmatic scroll is in progress — suppresses scroll-to-page feedback loop.
   let programmaticPage = false;
   let programmaticTimer: ReturnType<typeof setTimeout> | null = null;
-  // Set before calling setPage from scroll so the watch skips scrollIntoView.
   let suppressScrollWatch = false;
   let rafId: number | null = null;
 

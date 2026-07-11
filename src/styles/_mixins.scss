@@ -1,7 +1,7 @@
 
 @use 'variables' as *;
 
-// ─── Flexbox helpers ─────────────────────────────────────────────────────────
+// Flexbox helpers
 
 @mixin flex-center {
   display: flex;
@@ -27,7 +27,7 @@
   }
 }
 
-// ─── Truncate text ───────────────────────────────────────────────────────────
+// Truncate text 
 
 @mixin truncate {
   overflow: hidden;
@@ -35,14 +35,13 @@
   text-overflow: ellipsis;
 }
 
-// ─── Themed surface ──────────────────────────────────────────────────────────
-
+// Themed surface 
 @mixin surface($level: primary) {
   background: var(--color-bg-#{$level});
   border: 0.5px solid var(--color-border);
 }
 
-// ─── Scrollbar ───────────────────────────────────────────────────────────────
+// Scrollbar 
 
 @mixin scrollbar($width: 10px) {
   &::-webkit-scrollbar {

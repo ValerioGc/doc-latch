@@ -9,11 +9,8 @@ const DATE_LOCALES: Record<SupportedLocale, string> = {
 
 // PDF date format: "D:YYYYMMDDHHmmSSOHH'mm'" (e.g. "D:20220820125845+01'00'").
 // The date-time digits are captured as a single run and the timezone
-// separately; slicing the digit run below handles the "every part after the
-// year is optional" rule without a pile of individually optional groups.
 const PDF_DATE_PATTERN = /^D:(\d{4,14})(Z|[+-]\d{2}'?\d{2}'?)?/i;
 
-/** Converts a PDF timezone suffix (e.g. "+01'00'", "-05'00'", "Z") to a UTC offset in minutes. */
 function parseTzOffsetMinutes(tz: string | undefined): number {
   if (!tz || tz.toUpperCase() === 'Z')
     return 0;

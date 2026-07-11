@@ -14,8 +14,6 @@ export function usePageCanvas(tabId?: string) {
   const canvasRef = useTemplateRef<HTMLCanvasElement>('canvas');
   const isLoading = ref(true);
 
-  // Incremented on every render request; guards against stale results painting
-  // over a canvas that has already started a newer render.
   let renderSeq = 0;
 
   /**
@@ -37,7 +35,6 @@ export function usePageCanvas(tabId?: string) {
         setCachedPage(resolvedTabId, page, zoom, result);
     }
 
-    // A newer render was requested while this one was in flight — discard result.
     if (seq !== renderSeq)
       return;
 

@@ -2,7 +2,7 @@ import { onMounted, onUnmounted } from 'vue';
 import { useDocumentStore } from '@/stores/document';
 
 /**
- * Registers global keyboard shortcuts for navigation and zoom.
+ * Registers global keyboard shortcuts for navigation and zoom
  */
 export function useKeyboard(): void {
   const docStore = useDocumentStore();

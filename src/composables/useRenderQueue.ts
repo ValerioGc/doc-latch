@@ -16,7 +16,9 @@ function drain(): void {
 export function enqueueRender(task: () => Promise<void>, priority: 'high' | 'low' = 'low'): void {
   if (priority === 'high')
     queue.unshift(task);
+
   else
     queue.push(task);
+  
   drain();
 }

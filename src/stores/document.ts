@@ -35,7 +35,6 @@ function createTab(path: string | null = null): DocumentTab {
 export const useDocumentStore = defineStore('document', () => {
   const tabs = ref<DocumentTab[]>([]);
   const activeTabId = ref<string | null>(null);
-  // The tab shown in the secondary split pane, alongside the active tab.
   const splitTabId = ref<string | null>(null);
 
   const activeTab = computed(() => tabs.value.find((tab) => tab.id === activeTabId.value) ?? null);
@@ -47,8 +46,7 @@ export const useDocumentStore = defineStore('document', () => {
 
   /**
    * Makes `id` the active tab. If `id` was shown in the split pane, the panes
-   * swap instead — the previously active tab takes its place there — so
-   * switching tabs never collapses the split view on its own.
+   * swap instead of closing the split pane.
    */
   function activateTab(id: string): void {
     if (splitTabId.value === id) {

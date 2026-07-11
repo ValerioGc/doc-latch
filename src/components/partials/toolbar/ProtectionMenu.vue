@@ -1,5 +1,6 @@
 <script setup lang="ts">
 
+  import { computed } from 'vue';
   import { useDocumentStore } from '@/stores/document';
 
   import shieldIcon from '@/assets/icons/shield.svg?raw';
@@ -44,33 +45,39 @@
     emit('removePassword');
   }
 
+  type DropItem = { type: 'sep' } | { type: 'btn'; icon: string; labelKey: string; action: () => void; disabled: boolean };
+
+  const items = computed<DropItem[]>(() => [
+    { type: 'btn', icon: shieldIcon, labelKey: 'menu.securityInfo',   action: handleSecurityInfo,  disabled: false },
+    { type: 'sep' },
+    { type: 'btn', icon: lockIcon,   labelKey: 'menu.addPassword',    action: handleAddPassword,   disabled: !!docStore.info?.isEncrypted },
+    { type: 'btn', icon: unlockIcon, labelKey: 'menu.removePassword', action: handleRemovePassword, disabled: !docStore.info?.isEncrypted },
+  ]);
+
 </script>
 
 <template>
-  <!-- Protection menu -->
   <div class="menu_item" @mouseenter="handleHover" @mouseleave="emit('close')">
-    <button class="menu_btn" :class="{ open: props.openMenu === 'protection', disabled: !docStore.isOpen }"
-      :disabled="!docStore.isOpen" @click="handleToggle">
+    <button class="menu_btn"
+      :class="{ open: props.openMenu === 'protection', disabled: !docStore.isOpen }"
+      :disabled="!docStore.isOpen"
+      @click="handleToggle">
       <span class="menu_btn_icon" aria-hidden="true" v-html="shieldIcon"></span>
       {{ $t('menu.protection') }}
       <span class="menu_btn_icon chev" aria-hidden="true" v-html="chevronDownIcon"></span>
     </button>
+
     <div v-if="props.openMenu === 'protection'" class="dropdown" role="menu">
-      <button class="drop_item" role="menuitem" @click="handleSecurityInfo">
-        <span class="drop_item_icon" aria-hidden="true" v-html="shieldIcon"></span>
-        {{ $t('menu.securityInfo') }}
-      </button>
-      <div class="drop_sep"></div>
-      <button class="drop_item" role="menuitem" :disabled="docStore.info?.isEncrypted"
-        :class="{ disabled: docStore.info?.isEncrypted }" @click="handleAddPassword">
-        <span class="drop_item_icon" aria-hidden="true" v-html="lockIcon"></span>
-        {{ $t('menu.addPassword') }}
-      </button>
-      <button class="drop_item" role="menuitem" :disabled="!docStore.info?.isEncrypted"
-        :class="{ disabled: !docStore.info?.isEncrypted }" @click="handleRemovePassword">
-        <span class="drop_item_icon" aria-hidden="true" v-html="unlockIcon"></span>
-        {{ $t('menu.removePassword') }}
-      </button>
+      <template v-for="(item, i) in items" :key="i">
+        <div v-if="item.type === 'sep'" class="drop_sep"></div>
+        <button v-else
+          class="drop_item" role="menuitem"
+          :disabled="item.disabled" :class="{ disabled: item.disabled }"
+          @click="item.action()">
+          <span class="drop_item_icon" aria-hidden="true" v-html="item.icon"></span>
+          {{ $t(item.labelKey) }}
+        </button>
+      </template>
     </div>
   </div>
 </template>

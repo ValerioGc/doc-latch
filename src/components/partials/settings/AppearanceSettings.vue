@@ -55,6 +55,7 @@ const TEXT_SIZES: { value: TextSize; labelKey: string }[] = [
 </template>
 
 <style lang="scss" scoped>
+
     .toggle_switch {
         @include toggle-switch;
     }

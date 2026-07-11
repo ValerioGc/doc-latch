@@ -1,3 +1,4 @@
+// Fixes the paths in the rust-lcov.info file to be relative to the project root.
 const { readFileSync, writeFileSync } = require('node:fs');
 const { join, relative } = require('node:path');
 

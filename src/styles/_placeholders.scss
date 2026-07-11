@@ -1,7 +1,7 @@
 @use 'variables' as *;
 @use 'mixins' as *;
 
-// ─── Layout ──────────────────────────────────────────────────────────────────
+// Layout
 
 %flex-center {
   @include flex-center;
@@ -15,7 +15,7 @@
   @include flex-col;
 }
 
-// ─── Typography ──────────────────────────────────────────────────────────────
+// Typography
 
 %truncate {
   @include truncate;
@@ -26,13 +26,13 @@
   color: var(--color-text-tertiary);
 }
 
-// ─── Surface ─────────────────────────────────────────────────────────────────
+// Surface
 
 %surface-primary {
   @include surface(primary);
 }
 
-// ─── Overlay ─────────────────────────────────────────────────────────────────
+// Overlay
 
 %overlay {
   position: fixed;
@@ -41,14 +41,14 @@
   backdrop-filter: blur(2px);
 }
 
-// ─── Divider ─────────────────────────────────────────────────────────────────
+// Divider
 
 %divider-x {
   border: none;
   border-top: 0.5px solid var(--color-border);
 }
 
-// ─── Toolbar menu ────────────────────────────────────────────────────────────
+// Toolbar menu
 
 %menu_item {
   @extend %flex-row;
@@ -94,8 +94,8 @@
   color: var(--color-text-tertiary);
 
   :deep(svg) {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
   }
 }
 

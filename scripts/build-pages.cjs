@@ -1,3 +1,6 @@
+// Generates the GitHub Pages files for the project, based on the site content in docs/site-content.json.
+// This script is run as part of the build process, and can also be run manually to regenerate the pages.
+
 const { mkdirSync, readFileSync, writeFileSync } = require('node:fs');
 const { dirname, join } = require('node:path');
 
@@ -17,9 +20,8 @@ assertSameLocales(siteLocales, appLocales);
 const site = content.site;
 const defaultLocale = site.defaultLocale;
 
-if (!siteLocales.includes(defaultLocale)) {
+if (!siteLocales.includes(defaultLocale))
   throw new Error(`Default locale "${defaultLocale}" is not present in docs/site-content.json.`);
-}
 
 const generatedFiles = new Map();
 const logoSvg = readFileSync(logoPath, 'utf8');
@@ -42,9 +44,8 @@ for (const [filePath, html] of generatedFiles.entries()) {
     current = '';
   }
 
-  if (current !== html) {
+  if (current !== html) 
     changed.push(filePath);
-  }
 
   if (!checkOnly) {
     mkdirSync(dirname(filePath), { recursive: true });
@@ -54,24 +55,22 @@ for (const [filePath, html] of generatedFiles.entries()) {
 
 if (checkOnly && changed.length > 0) {
   console.error('Generated GitHub Pages files are not up to date:');
-  for (const filePath of changed) {
+  for (const filePath of changed) 
     console.error(`- ${filePath}`);
-  }
+  
   console.error('Run: npm run build:pages');
   process.exit(1);
 }
 
-if (!checkOnly) {
+if (!checkOnly)
   console.log(`Generated ${generatedFiles.size} GitHub Pages files.`);
-}
 
 function readAppLocales() {
   const source = readFileSync(i18nPath, 'utf8');
   const match = source.match(/SUPPORTED_LOCALES:\s*AppLocale\[\]\s*=\s*\[([^\]]+)\]/m);
 
-  if (!match) {
+  if (!match)
     throw new Error('Could not find SUPPORTED_LOCALES in src/i18n/index.ts.');
-  }
 
   return [...match[1].matchAll(/'([^']+)'/g)].map((locale) => locale[1]);
 }
@@ -80,11 +79,8 @@ function assertSameLocales(docsLocales, locales) {
   const docsSorted = [...docsLocales].sort();
   const appSorted = [...locales].sort();
 
-  if (docsSorted.join(',') !== appSorted.join(',')) {
-    throw new Error(
-      `Docs locales (${docsSorted.join(', ')}) do not match app locales (${appSorted.join(', ')}).`,
-    );
-  }
+  if (docsSorted.join(',') !== appSorted.join(',')) 
+    throw new Error(`Docs locales (${docsSorted.join(', ')}) do not match app locales (${appSorted.join(', ')}).`,);
 }
 
 function renderRootPage() {
@@ -93,7 +89,7 @@ function renderRootPage() {
       const page = content.locales[locale];
       return `<a href="./${locale}/" lang="${locale}" hreflang="${locale}">${escapeHtml(page.languageName)}</a>`;
     })
-    .join('\n        ');
+    .join('\n       ');
 
   const alternates = renderAlternateLinks('./');
   const defaultPage = content.locales[defaultLocale];
@@ -285,10 +281,10 @@ function renderDownloadSection(locale) {
   const releasesUrl = `${site.repositoryUrl}/releases/latest`;
   const apiUrl = `https://api.github.com/repos/${repoPath}/releases/latest`;
 
-  const strFor     = JSON.stringify(page.downloadFor);
-  const strAll     = JSON.stringify(page.downloadAll);
+  const strFor = JSON.stringify(page.downloadFor);
+  const strAll = JSON.stringify(page.downloadAll);
   const strVersion = JSON.stringify(page.downloadVersion);
-  const strCopied  = JSON.stringify(page.downloadHashCopied);
+  const strCopied = JSON.stringify(page.downloadHashCopied);
 
   return `<section id="download" class="download_section">
   <div class="section_header">

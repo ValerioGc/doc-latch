@@ -50,7 +50,7 @@
         <div class="sidebar_top">
           <button :title="uiStore.sidebarCollapsed ? t('settings.expandSidebar') : t('settings.collapseSidebar')"
             class="sidebar_toggle"
-            :class="{ collapsed: uiStore.sidebarCollapsed }"
+            :class="{ 'collapsed': uiStore.sidebarCollapsed }"
             :aria-label="uiStore.sidebarCollapsed ? t('settings.expandSidebar') : t('settings.collapseSidebar')"
             @click="uiStore.toggleSidebar()"
           >
@@ -68,7 +68,7 @@
             ref="thumbRefs"
             type="button"
             class="thumb"
-            :class="{ active: page === docStore.currentPage }"
+            :class="{ 'active': page === docStore.currentPage }"
             :aria-label="`Pagina ${page}`"
             :aria-current="page === docStore.currentPage ? 'page' : undefined"
             @click="docStore.setPage(page)"

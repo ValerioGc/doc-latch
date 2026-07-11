@@ -59,7 +59,6 @@ function onUp(e: PointerEvent): void {
       docStore.swapSplitTabs();
     else if (overTabId && overTabId !== draggedId)
       docStore.reorderTab(draggedId, overTabId);
-    // Eat the click that fires right after pointerup so the button doesn't trigger
     document.addEventListener('click', (ev) => ev.stopImmediatePropagation(), {
       capture: true,
       once: true,
@@ -110,7 +109,7 @@ export function useDragState(): Readonly<TabDragState> {
   return readonly(_state);
 }
 
-// ── Test helpers ──────────────────────────────────────────────────────────────
+// Test helpers
 
 export function getActiveDragTabId(): string | null {
   return _state.tabId;

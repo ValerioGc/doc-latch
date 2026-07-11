@@ -1,3 +1,5 @@
+// Extracts the changelog section for a given version from CHANGELOG.txt and prints it to stdout.
+
 const { readFileSync } = require('node:fs');
 const { join } = require('node:path');
 

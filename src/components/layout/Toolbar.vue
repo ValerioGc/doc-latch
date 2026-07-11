@@ -23,7 +23,6 @@
   const { t } = useI18n();
 
   const openMenu = ref<string | null>(null);
-
   const activeDialog = ref<DialogName | null>(null);
 
   function closeMenus(): void {

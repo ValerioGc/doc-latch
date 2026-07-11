@@ -31,6 +31,8 @@
   <div class="split_header"
     :class="{ 'drop-over': drag.isDragging && drag.overSplit }"
   >
+
+    <!-- Tab header -->
     <div v-if="tab" class="split_header_tab" role="tab" aria-selected="true">
       <span class="split_header_tab_drag"
         data-drag-handle="true"
@@ -39,6 +41,8 @@
         <span class="split_header_tab_icon" aria-hidden="true" v-html="documentIcon" />
         <span class="split_header_tab_name">{{ tabName(tab.filePath) }}</span>
       </span>
+
+      <!-- Close button -->
       <button class="split_header_close"
         :title="t('menu.close')"
         :aria-label="t('menu.close')"

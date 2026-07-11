@@ -5,8 +5,7 @@ import { useRecentStore } from '@/stores/recent';
 import type { DocumentInfo, PageRenderResult, PdfError, SecurityInfo } from '@/types/pdf';
 
 /**
- * Reads encryption status and permissions for a PDF, without needing its password.
- * Returns null on error; callers handle their own error display.
+ * Reads encryption status and permissions for a PDF, without needing its password
  */
 async function getSecurityInfo(path: string): Promise<SecurityInfo | null> {
   try {
@@ -28,13 +27,12 @@ export function usePdf() {
    * Switches to the existing tab instead of reloading if the file is already open.
    */
   async function loadDocument(path: string): Promise<void> {
-    // Already visible in the active pane — nothing to do
     if (docStore.filePath === path)
       return;
-    // Already visible in the split pane — do not trigger a pane swap
+    
     if (docStore.splitTabId && docStore.getTab(docStore.splitTabId)?.filePath === path)
       return;
-    // Open in a background (non-visible) tab — bring it to the front
+
     if (docStore.focusTabByPath(path))
       return;
 
@@ -83,13 +81,12 @@ export function usePdf() {
    * Used when loading from the HomeScreen shown inside the split pane.
    */
   async function loadDocumentInTab(path: string, tabId: string): Promise<void> {
-    // Already visible in the active pane — nothing to do
     if (docStore.filePath === path)
       return;
-    // Already visible in the split pane — do not trigger a pane swap
+
     if (docStore.splitTabId && docStore.getTab(docStore.splitTabId)?.filePath === path)
       return;
-    // Open in a background (non-visible) tab — bring it to the front
+
     if (docStore.focusTabByPath(path))
       return;
 
@@ -106,6 +103,7 @@ export function usePdf() {
       } else {
         if (pdfErr.kind === 'FileNotFound')
           recentStore.remove(path);
+
         docStore.setError(pdfErr, tabId);
       }
     }
@@ -211,7 +209,6 @@ export function usePdf() {
   /**
    * Decrypts the current document and saves an unencrypted copy at `destination`.
    * Uses the password already held in memory from when the document was opened.
-   * Returns `null` on success, or the `PdfError` on failure.
    */
   async function removePassword(destination: string): Promise<PdfError | null> {
     const path = docStore.filePath;

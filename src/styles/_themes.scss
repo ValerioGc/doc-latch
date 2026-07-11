@@ -1,6 +1,6 @@
 @use 'variables' as *;
 
-// ─── CSS custom properties — light (default) ─────────────────────────────────
+// CSS custom properties - light (default)
 
 :root {
   --color-bg-primary:#ffffff;
@@ -17,7 +17,7 @@
   --toolbar-height:40px;
   --statusbar-height:34px;
 
-  // ── Font-size scale (medium / default) ──────────────────────────────────────
+  // Font-size scale (medium / default)
   --font-xs:12px;
   --font-sm:13px;
   --font-base:14px;
@@ -26,7 +26,7 @@
   --font-xl:17px;
 }
 
-// ─── Font-size scale — small ─────────────────────────────────────────────────
+// Font-size scale — small  
 
 :root[data-text-size="small"] {
   --font-xs:11px;
@@ -37,7 +37,7 @@
   --font-xl:16px;
 }
 
-// ─── Font-size scale — large ─────────────────────────────────────────────────
+// Font-size scale — large
 
 :root[data-text-size="large"] {
   --font-xs:13px;
@@ -48,7 +48,7 @@
   --font-xl:18px;
 }
 
-// ─── CSS custom properties — dark ────────────────────────────────────────────
+// CSS custom properties — dark
 
 :root.dark {
   --color-bg-primary:#1e1e1e;

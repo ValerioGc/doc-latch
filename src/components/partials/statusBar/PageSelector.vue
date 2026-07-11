@@ -39,7 +39,10 @@
 </script>
 
 <template>
+
   <div class="page_selector">
+
+    <!-- Page selector trigger button -->
     <button class="page_selector_trigger"
       :aria-label="$t('statusBar.goToPageLabel')"
       @click="toggle"
@@ -51,6 +54,7 @@
 
     <div v-if="open" class="page_selector_overlay" @click="close"></div>
 
+    <!-- Page selector panel -->
     <dialog v-if="open" open class="page_selector_panel" :aria-label="$t('statusBar.goToPageLabel')">
       <input ref="inputRef" type="number" class="page_selector_input"
         v-model="pageInput"
@@ -59,6 +63,7 @@
         @keydown.enter="goToPage"
         @keydown.escape="close"
       />
+      
       <button class="btn btn_primary page_selector_go" @click="goToPage">
         {{ $t('statusBar.goToPage') }}
       </button>

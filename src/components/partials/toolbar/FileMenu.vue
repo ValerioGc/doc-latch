@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-  import { ref, watch } from 'vue';
+  import { ref, computed, watch } from 'vue';
   import { useDocumentStore } from '@/stores/document';
   import { useRecentStore } from '@/stores/recent';
   import { usePdf } from '@/composables/usePdf';
@@ -26,8 +26,6 @@
 
   const recentSubmenuOpen = ref(false);
 
-  // Collapse the recent-files submenu whenever the File menu itself closes
-  // (or another top-level menu takes over), since its state is local here.
   watch(() => props.openMenu, (menu) => {
     if (menu !== 'file')
       recentSubmenuOpen.value = false;
@@ -66,26 +64,44 @@
     emit('docInfo');
   }
 
+  type DropItem = { icon: string; labelKey: string; action: () => void; disabled: boolean };
+
+  const topItems = computed<DropItem[]>(() => [
+    { icon: fileIcon, labelKey: 'menu.open', action: handleOpenFile, disabled: false },
+  ]);
+
+  const bottomItems = computed<DropItem[]>(() => [
+    { icon: infoIcon, labelKey: 'menu.docInfo', action: handleDocInfo, disabled: !docStore.isOpen },
+  ]);
+
 </script>
 
 <template>
-  <!-- File menu -->
   <div class="menu_item" @mouseenter="emit('hover', 'file')" @mouseleave="emit('close')">
     <button class="menu_btn" :class="{ open: props.openMenu === 'file' }" @click="emit('toggle', 'file')">
       <span class="menu_btn_icon" aria-hidden="true" v-html="fileIcon"></span>
       {{ $t('menu.file') }}
       <span class="menu_btn_icon chev" aria-hidden="true" v-html="chevronDownIcon"></span>
     </button>
+
     <div v-if="props.openMenu === 'file'" class="dropdown" role="menu">
-      <button class="drop_item" role="menuitem" @click="handleOpenFile">
-        <span class="drop_item_icon" aria-hidden="true" v-html="fileIcon"></span>
-        {{ $t('menu.open') }}
-        <span class="kbd">⌘O</span>
+
+      <button v-for="item in topItems" :key="item.labelKey"
+        class="drop_item" role="menuitem"
+        :disabled="item.disabled" :class="{ disabled: item.disabled }"
+        @click="item.action()">
+        <span class="drop_item_icon" aria-hidden="true" v-html="item.icon"></span>
+        {{ $t(item.labelKey) }}
       </button>
+
       <div class="drop_sep"></div>
+
+      <!-- Recent files -->
       <div class="drop_item_wrap" @mouseenter="openRecentSubmenu" @mouseleave="closeRecentSubmenu">
-        <button class="drop_item" role="menuitem" :class="{ disabled: recentStore.entries.length === 0 }"
-          :disabled="recentStore.entries.length === 0" aria-haspopup="menu" :aria-expanded="recentSubmenuOpen"
+        <button class="drop_item" role="menuitem"
+          :disabled="recentStore.entries.length === 0"
+          :class="{ disabled: recentStore.entries.length === 0 }"
+          aria-haspopup="menu" :aria-expanded="recentSubmenuOpen"
           @click="toggleRecentSubmenu">
           <span class="drop_item_icon" aria-hidden="true" v-html="recentIcon"></span>
           {{ $t('menu.recent') }}
@@ -93,19 +109,24 @@
         </button>
 
         <div v-if="recentSubmenuOpen" class="dropdown submenu" role="menu">
-          <button v-for="entry in recentStore.entries" :key="entry.path" class="drop_item" role="menuitem"
-            :title="entry.path" @click="handleOpenRecent(entry.path)">
+          <button v-for="entry in recentStore.entries" :key="entry.path"
+            class="drop_item" role="menuitem"
+            :title="entry.path"
+            @click="handleOpenRecent(entry.path)">
             <span class="drop_item_icon" aria-hidden="true" v-html="documentIcon"></span>
             <span class="drop_item_label">{{ entry.name }}</span>
           </button>
         </div>
       </div>
+
       <div class="drop_sep"></div>
-      <button class="drop_item" role="menuitem" :disabled="!docStore.isOpen"
-        :class="{ disabled: !docStore.isOpen }" @click="handleDocInfo">
-        <span class="drop_item_icon" aria-hidden="true" v-html="infoIcon"></span>
-        {{ $t('menu.docInfo') }}
-        <span class="kbd">⌘I</span>
+
+      <button v-for="item in bottomItems" :key="item.labelKey"
+        class="drop_item" role="menuitem"
+        :disabled="item.disabled" :class="{ disabled: item.disabled }"
+        @click="item.action()">
+        <span class="drop_item_icon" aria-hidden="true" v-html="item.icon"></span>
+        {{ $t(item.labelKey) }}
       </button>
     </div>
   </div>
@@ -145,17 +166,12 @@
     @extend %drop_item_label;
   }
 
-  .kbd {
-    @extend %kbd;
+  .drop_item_wrap {
+    position: relative;
   }
 
   .drop_sep {
     @extend %drop_sep;
-  }
-
-  // File-menu-only: recent files submenu
-  .drop_item_wrap {
-    position: relative;
   }
 
   .chev_right {

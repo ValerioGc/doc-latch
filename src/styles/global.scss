@@ -1,7 +1,7 @@
 @use 'variables' as *;
 @use 'themes';
 
-// ─── Reset & base ────────────────────────────────────────────────────────────
+// Reset & base
 
 *,
 *::before,
@@ -43,7 +43,7 @@ textarea {
   color: inherit;
 }
 
-// ─── Buttons ─────────────────────────────────────────────────────────────────
+// Buttons
 
 .btn {
   padding: 7px $space-4;

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 
-   import { computed } from 'vue';
+  import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
   import { useUiStore } from '@/stores/ui';
   import { startTabDrag, useDragState } from '@/composables/useTabDrag';
- 
+
   import SplitToggle from '@/components/layout/SplitToggle.vue';
   import documentIcon from '@/assets/icons/document.svg?raw';
   import closeIcon from '@/assets/icons/window-close.svg?raw';
@@ -39,10 +39,12 @@
       class="tab_row"
       :data-tab-id="tab.id"
       :class="{
-        active: tab.id === docStore.activeTabId,
+        'active': tab.id === docStore.activeTabId,
         'drop-over': drag.isDragging && drag.overTabId === tab.id,
       }"
     >
+
+      <!-- Tab select button -->
       <button class="tab_select"
         role="tab"
         :aria-selected="tab.id === docStore.activeTabId"
@@ -57,6 +59,8 @@
           <span class="tab_select_name">{{ tabName(tab.filePath) }}</span>
         </span>
       </button>
+
+      <!-- Close button -->
       <button class="tab_close"
         :title="t('menu.closeTab')"
         :aria-label="t('menu.closeTab')"
@@ -65,7 +69,11 @@
         <span class="tab_close_icon" aria-hidden="true" v-html="closeIcon"></span>
       </button>
     </div>
+    
+    <!-- Split toggle button -->
     <SplitToggle v-if="!uiStore.isMobile" />
+
+    <!-- New tab button -->
     <button v-if="!uiStore.isMobile" class="tab_add"
       :title="t('menu.newTab')"
       :aria-label="t('menu.newTab')"
@@ -74,12 +82,12 @@
       <span class="tab_add_icon" aria-hidden="true" v-html="addIcon"></span>
     </button>
 
-    <!-- Drag ghost: teleported to body so it sits above all other elements -->
+    <!-- Drag ghost teleported to body -->
     <Teleport to="body">
       <div v-if="drag.isDragging" class="tab_drag_ghost" aria-hidden="true"
         :style="{ left: `${drag.x + 14}px`, top: `${drag.y + 14}px` }"
       >
-        <span class="tab_drag_ghost_icon" v-html="documentIcon" />
+        <span class="tab_drag_ghost_icon" v-html="documentIcon"></span>
         <span class="tab_drag_ghost_label">{{ drag.label }}</span>
       </div>
     </Teleport>
@@ -103,11 +111,20 @@
     align-items: flex-end;
     gap: 2px;
 
-    // ── Context-dependent overrides ──────────────────────────────────────────
-    &_row.active &_select        { color: var(--color-text-primary); }
-    &_row.active &_select_icon   { color: var(--color-accent); }
+    // ****** Context-dependent overrides *******
+    &_row.active &_select{
+      color: var(--color-text-primary); 
+    }
+
+    &_row.active &_select_icon { 
+      color: var(--color-accent); 
+    }
+
     &_row.active &_close,
-    &_row:hover  &_close         { opacity: 1; pointer-events: auto; }
+    &_row:hover &_close{
+      opacity: 1; 
+      pointer-events: auto; 
+    }
 
     &_row {
       @include flex-row;

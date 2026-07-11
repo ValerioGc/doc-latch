@@ -26,7 +26,7 @@
 
   useKeyboard();
 
-  // ── Split-pane resize ──────────────────────────────────────────────────────
+  // ************** Split-pane resize ***************
   const SPLIT_MIN = 280;
   const SPLIT_DIVIDER_WIDTH = 6;
 
@@ -80,7 +80,9 @@
 
         <!-- Split-pane header -->
         <div v-if="docStore.tabs.length > 0" class="app_panes_header">
+
           <TabBar :style="leftPaneStyle" />
+          
           <template v-if="docStore.splitEnabled">
             <div class="pane_header_sep" :style="{ width: `${SPLIT_DIVIDER_WIDTH}px` }" aria-hidden="true"></div>
             <SplitTabHeader />
@@ -98,6 +100,7 @@
               aria-orientation="vertical"
               @mousedown="onSplitResizeStart"
             />
+            
             <SplitPane />
           </template>
         </div>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 import { ref, computed } from 'vue';
 import { useUiStore } from '@/stores/ui';
 import type { SupportedLocale } from '@/types/pdf';
@@ -38,20 +39,21 @@ const currentLocale = computed(
             <div class="lang_select">
 
                 <!-- Overlay to close the menu on outside click -->
-                <div v-if="langMenuOpen" class="lang_select_overlay" @click="langMenuOpen = false" />
+                <div v-if="langMenuOpen" class="lang_select_overlay" @click="langMenuOpen = false"></div>
 
                 <button type="button" class="lang_select_trigger" aria-haspopup="menu" :aria-expanded="langMenuOpen"
                     :aria-label="$t('settings.languageLabel')" @click="langMenuOpen = !langMenuOpen">
                     <img :src="currentLocale.flag" alt="" class="lang_select_flag" />
                     {{ currentLocale.label }}
-                    <span class="lang_select_chev" :class="{ open: langMenuOpen }" aria-hidden="true" v-html="chevronDownIcon" />
+                    <span class="lang_select_chev" :class="{ 'open': langMenuOpen }" aria-hidden="true" v-html="chevronDownIcon"></span>
                 </button>
 
                 <ul v-if="langMenuOpen" class="lang_select_menu">
                     <li v-for="locale in locales" :key="locale.value">
                         <button type="button" class="lang_select_option"
                             :aria-current="locale.value === uiStore.locale"
-                            @click="selectLocale(locale.value)">
+                            @click="selectLocale(locale.value)"
+                        >
                             <img :src="locale.flag" alt="" class="lang_select_flag" />
                             {{ locale.label }}
                         </button>

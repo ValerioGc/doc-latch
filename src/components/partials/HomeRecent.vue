@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 import { useRecentStore } from '@/stores/recent';
 import documentIcon from '@/assets/icons/document.svg?raw';
 import closeIcon from '@/assets/icons/window-close.svg?raw';
@@ -10,10 +11,10 @@ const recentStore = useRecentStore();
 const { openRecentFile, loadDocumentInTab } = usePdf();
 
 function handleOpen(path: string): void {
-  if (props.tabId)
-    loadDocumentInTab(path, props.tabId);
-  else
-    openRecentFile(path);
+    if (props.tabId)
+        loadDocumentInTab(path, props.tabId);
+    else
+        openRecentFile(path);
 }
 
 </script>
