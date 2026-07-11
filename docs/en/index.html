@@ -29,12 +29,18 @@
             <a href="https://github.com/ValerioGc/doc-latch">GitHub</a>
           </div>
           <div class="language_switcher">
-            <select class="language_select" aria-label="Language" onchange="window.location.href=this.value">
-                        <option value="../it/">🇮🇹 Italiano</option>
-                        <option value="../en/" selected>🇬🇧 English</option>
-                        <option value="../fr/">🇫🇷 Français</option>
-                        <option value="../de/">🇩🇪 Deutsch</option>
-                      </select>
+            <details class="lang_picker">
+              <summary class="lang_picker_btn" aria-label="Language">
+                <img src="../flags/flag-gb.svg" alt="English" class="lang_flag" width="20" height="15">
+                <span>EN</span>
+              </summary>
+              <ul class="lang_picker_menu">
+                <li><a href="../it/" lang="it" hreflang="it"><img src="../flags/flag-it.svg" alt="" class="lang_flag" width="20" height="15"> Italiano</a></li>
+                <li><a aria-current="page" href="../en/" lang="en" hreflang="en"><img src="../flags/flag-gb.svg" alt="" class="lang_flag" width="20" height="15"> English</a></li>
+                <li><a href="../fr/" lang="fr" hreflang="fr"><img src="../flags/flag-fr.svg" alt="" class="lang_flag" width="20" height="15"> Français</a></li>
+                <li><a href="../de/" lang="de" hreflang="de"><img src="../flags/flag-de.svg" alt="" class="lang_flag" width="20" height="15"> Deutsch</a></li>
+              </ul>
+            </details>
           </div>
         </div>
       </nav>
@@ -284,5 +290,12 @@
       <span>DocLatch</span>
       <a href="https://github.com/ValerioGc/doc-latch">Source code on GitHub</a>
     </footer>
+    <script>
+      document.addEventListener('click', function (e) {
+        document.querySelectorAll('.lang_picker[open]').forEach(function (d) {
+          if (!d.contains(e.target)) d.removeAttribute('open');
+        });
+      });
+    </script>
   </body>
 </html>

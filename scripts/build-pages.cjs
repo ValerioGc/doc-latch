@@ -9,7 +9,10 @@ const docsDir = join(rootDir, 'docs');
 const contentPath = join(docsDir, 'site-content.json');
 const i18nPath = join(rootDir, 'src', 'i18n', 'index.ts');
 const logoPath = join(rootDir, 'src', 'assets', 'logo.svg');
+const iconsDir = join(rootDir, 'src', 'assets', 'icons');
 const checkOnly = process.argv.includes('--check');
+
+const FLAG_FILES = { it: 'flag-it.svg', en: 'flag-gb.svg', fr: 'flag-fr.svg', de: 'flag-de.svg' };
 
 const content = JSON.parse(readFileSync(contentPath, 'utf8'));
 const siteLocales = Object.keys(content.locales);
@@ -28,6 +31,11 @@ const logoSvg = readFileSync(logoPath, 'utf8');
 
 generatedFiles.set(join(docsDir, 'index.html'), renderRootPage());
 generatedFiles.set(join(docsDir, 'logo.svg'), logoSvg);
+
+const flagsDir = join(docsDir, 'flags');
+for (const file of Object.values(FLAG_FILES)) {
+  generatedFiles.set(join(flagsDir, file), readFileSync(join(iconsDir, file), 'utf8'));
+}
 
 for (const locale of siteLocales) {
   generatedFiles.set(join(docsDir, locale, 'index.html'), renderLocalePage(locale));
@@ -105,13 +113,7 @@ function renderRootPage() {
     <link rel="stylesheet" href="./styles.css">
 ${indent(alternates, 4)}
     <script>
-      (function () {
-        var supported = ${JSON.stringify(siteLocales)};
-        var preferred = (navigator.languages || [navigator.language || '${defaultLocale}'])
-          .map(function (language) { return String(language).slice(0, 2).toLowerCase(); })
-          .find(function (language) { return supported.indexOf(language) !== -1; }) || '${defaultLocale}';
-        window.location.replace('./' + preferred + '/');
-      }());
+      window.location.replace('./${defaultLocale}/');
     </script>
   </head>
   <body>
@@ -252,6 +254,13 @@ ${indent(renderDownloadSection(locale), 6)}
       <span>${escapeHtml(site.name)}</span>
       <a href="${escapeHtml(site.repositoryUrl)}">${escapeHtml(page.footerRepo)}</a>
     </footer>
+    <script>
+      document.addEventListener('click', function (e) {
+        document.querySelectorAll('.lang_picker[open]').forEach(function (d) {
+          if (!d.contains(e.target)) d.removeAttribute('open');
+        });
+      });
+    </script>
   </body>
 </html>
 `;
@@ -402,16 +411,25 @@ function renderDownloadSection(locale) {
 }
 
 function renderLanguageSelector(activeLocale) {
-  const label = escapeHtml(content.locales[activeLocale].languageLabel);
-  const options = siteLocales.map((locale) => {
-    const lp = content.locales[locale];
-    const selected = locale === activeLocale ? ' selected' : '';
-    return `<option value="../${locale}/"${selected}>${escapeHtml(lp.flagEmoji)} ${escapeHtml(lp.languageName)}</option>`;
-  }).join('\n            ');
+  const activePage = content.locales[activeLocale];
+  const activeFlag = FLAG_FILES[activeLocale];
 
-  return `<select class="language_select" aria-label="${label}" onchange="window.location.href=this.value">
-            ${options}
-          </select>`;
+  const items = siteLocales.map((locale) => {
+    const lp = content.locales[locale];
+    const flag = FLAG_FILES[locale];
+    const ariaCurrent = locale === activeLocale ? ' aria-current="page"' : '';
+    return `<li><a${ariaCurrent} href="../${locale}/" lang="${locale}" hreflang="${locale}"><img src="../flags/${flag}" alt="" class="lang_flag" width="20" height="15"> ${escapeHtml(lp.languageName)}</a></li>`;
+  }).join('\n    ');
+
+  return `<details class="lang_picker">
+  <summary class="lang_picker_btn" aria-label="${escapeHtml(activePage.languageLabel)}">
+    <img src="../flags/${activeFlag}" alt="${escapeHtml(activePage.languageName)}" class="lang_flag" width="20" height="15">
+    <span>${escapeHtml(activePage.shortName)}</span>
+  </summary>
+  <ul class="lang_picker_menu">
+    ${items}
+  </ul>
+</details>`;
 }
 
 function renderAlternateLinks(prefix) {
