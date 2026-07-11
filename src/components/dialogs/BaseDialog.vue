@@ -85,6 +85,7 @@
 
   .dialog {
     @include flex-col($space-3);
+    @include scrollbar(8px);
 
     background: var(--color-bg-primary);
     border: 0.5px solid var(--color-border-strong);
