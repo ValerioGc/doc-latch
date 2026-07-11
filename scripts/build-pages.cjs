@@ -147,8 +147,6 @@ function renderLocalePage(locale) {
             <h3>${escapeHtml(feature.title)}</h3>
             <p>${escapeHtml(feature.body)}</p>
           </article>`).join('');
-  const createSteps = renderSteps(page.createGuideSteps);
-  const editSteps = renderSteps(page.editGuideSteps);
   const formats = page.formats.map((format) => `<span>${escapeHtml(format)}</span>`).join('\n          ');
 
   return `<!doctype html>
@@ -174,7 +172,6 @@ ${indent(alternates, 4)}
           <div class="nav_links">
             <a href="#download">${escapeHtml(page.downloadNav)}</a>
             <a href="#features">${escapeHtml(page.featuresNav)}</a>
-            <a href="#guides">${escapeHtml(page.guidesNav)}</a>
             <a href="#formats">${escapeHtml(page.formatsNav)}</a>
             <a href="${escapeHtml(site.repositoryUrl)}">${escapeHtml(page.githubNav)}</a>
           </div>
@@ -193,7 +190,7 @@ ${indent(languageOptions, 12)}
           </p>
           <div class="hero_actions">
             <a class="button button_primary" href="${escapeHtml(site.repositoryUrl)}">${escapeHtml(page.repoButton)}</a>
-            <a class="button" href="#guides">${escapeHtml(page.guidesButton)}</a>
+            <a class="button" href="#download">${escapeHtml(page.downloadNav)}</a>
           </div>
         </div>
         <aside class="hero_panel" aria-label="${escapeHtml(page.summaryLabel)}">
@@ -218,27 +215,6 @@ ${indent(renderDownloadSection(locale), 6)}
           <h2>${escapeHtml(page.featuresTitle)}</h2>
         </div>
         <div class="card_grid">${features}
-        </div>
-      </section>
-
-      <section id="guides" class="section section_tinted">
-        <div class="section_header">
-          <p class="eyebrow">${escapeHtml(page.guidesKicker)}</p>
-          <h2>${escapeHtml(page.guidesTitle)}</h2>
-        </div>
-        <div class="guide_layout">
-          <article class="guide">
-            <h3>${escapeHtml(page.createGuideTitle)}</h3>
-            <ol>
-${indent(createSteps, 14)}
-            </ol>
-          </article>
-          <article class="guide">
-            <h3>${escapeHtml(page.editGuideTitle)}</h3>
-            <ol>
-${indent(editSteps, 14)}
-            </ol>
-          </article>
         </div>
       </section>
 
