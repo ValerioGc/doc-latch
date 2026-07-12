@@ -14,7 +14,11 @@ use tauri::{Emitter, Manager};
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
-            if let Some(pdf_path) = args.iter().skip(1).find(|a| a.to_lowercase().ends_with(".pdf")) {
+            if let Some(pdf_path) = args
+                .iter()
+                .skip(1)
+                .find(|a| a.to_lowercase().ends_with(".pdf"))
+            {
                 let _ = app.emit("open-file", pdf_path.clone());
             }
             if let Some(window) = app.get_webview_window("main") {
