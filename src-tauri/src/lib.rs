@@ -12,8 +12,11 @@ use tauri::{Emitter, Manager};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
-        .plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
+    let mut builder = tauri::Builder::default();
+
+    #[cfg(desktop)]
+    {
+        builder = builder.plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
             if let Some(pdf_path) = args
                 .iter()
                 .skip(1)
@@ -26,7 +29,10 @@ pub fn run() {
                 let _ = window.unminimize();
                 let _ = window.set_focus();
             }
-        }))
+        }));
+    }
+
+    builder
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_shell::init())

@@ -25,7 +25,6 @@ tauri = { version = "2.0", features = [] }
 tauri-plugin-dialog = "2.0"
 tauri-plugin-fs = "2.0"
 tauri-plugin-shell = "2.0"
-tauri-plugin-single-instance = "2"
 
 # PDF parsing and writing
 lopdf = "0.42"
@@ -55,6 +54,9 @@ log = "0.4"
 # Temporary-file creation for the `test_support` helpers, only linked when
 # the `test-support` feature is on (unit tests, or integration tests in `tests/`).
 tempfile = { version = "3.10", optional = true }
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-single-instance = "2"
 
 [target.'cfg(target_os = "windows")'.dependencies]
 winreg = "0.52"
