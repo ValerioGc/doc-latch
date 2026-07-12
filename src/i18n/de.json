@@ -32,7 +32,13 @@
     "textSize": "Textgröße",
     "textSizeSmall": "Klein",
     "textSizeMedium": "Mittel",
-    "textSizeLarge": "Groß"
+    "textSizeLarge": "Groß",
+    "system": "System",
+    "defaultApp": "Standard-PDF-Viewer",
+    "defaultAppActive": "DocLatch ist der Standard-PDF-Viewer",
+    "defaultAppInactive": "DocLatch ist nicht der Standard-PDF-Viewer",
+    "setDefaultApp": "Als Standard festlegen",
+    "setDefaultAppHint": "Öffnet die Windows-Einstellungen"
   },
   "viewer": {
     "noDocument": "Kein Dokument geöffnet",
@@ -141,6 +147,13 @@
     "settings": {
       "close": "Schließen"
     }
+  },
+  "banner": {
+    "defaultApp": "DocLatch ist nicht als Standard-PDF-Viewer festgelegt.",
+    "openSettings": "Als Standard festlegen",
+    "close": "Banner schließen",
+    "hideSession": "Für diese Sitzung ausblenden",
+    "hideForever": "Nicht mehr anzeigen"
   },
   "statusBar": {
     "noFile": "Keine Datei geöffnet",

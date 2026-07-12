@@ -32,7 +32,13 @@
     "textSize": "Taille du texte",
     "textSizeSmall": "Petite",
     "textSizeMedium": "Moyenne",
-    "textSizeLarge": "Grande"
+    "textSizeLarge": "Grande",
+    "system": "Système",
+    "defaultApp": "Visionneuse PDF par défaut",
+    "defaultAppActive": "DocLatch est la visionneuse PDF par défaut",
+    "defaultAppInactive": "DocLatch n'est pas la visionneuse PDF par défaut",
+    "setDefaultApp": "Définir par défaut",
+    "setDefaultAppHint": "Ouvre les paramètres Windows"
   },
   "viewer": {
     "noDocument": "Aucun document ouvert",
@@ -141,6 +147,13 @@
     "settings": {
       "close": "Fermer"
     }
+  },
+  "banner": {
+    "defaultApp": "DocLatch n'est pas défini comme lecteur PDF par défaut.",
+    "openSettings": "Définir par défaut",
+    "close": "Fermer la bannière",
+    "hideSession": "Masquer pour cette session",
+    "hideForever": "Ne plus afficher"
   },
   "statusBar": {
     "noFile": "Aucun fichier ouvert",

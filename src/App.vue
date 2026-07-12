@@ -1,13 +1,16 @@
 <script setup lang="ts">
 
-  import { ref, computed, watch, useTemplateRef } from 'vue';
+  import { ref, computed, watch, useTemplateRef, onMounted } from 'vue';
+  import { invoke } from '@tauri-apps/api/core';
   import { useI18n } from 'vue-i18n';
   import { useUiStore } from '@/stores/ui';
   import { useDocumentStore } from '@/stores/document';
   import { useKeyboard } from '@/composables/useKeyboard';
+  import { usePdf } from '@/composables/usePdf';
 
   import TitleBar from '@/components/layout/TitleBar.vue';
   import Toolbar from '@/components/layout/Toolbar.vue';
+  import BannerDefaultApp from '@/components/layout/BannerDefaultApp.vue';
   import TabBar from '@/components/layout/TabBar.vue';
   import SplitTabHeader from '@/components/layout/SplitTabHeader.vue';
   import Sidebar from '@/components/layout/Sidebar.vue';
@@ -25,6 +28,14 @@
   });
 
   useKeyboard();
+
+  const { openRecentFile } = usePdf();
+
+  onMounted(async () => {
+    const path = await invoke<string | null>('get_initial_file');
+    if (path)
+      await openRecentFile(path);
+  });
 
   // ************** Split-pane resize ***************
   const SPLIT_MIN = 420;
@@ -72,6 +83,8 @@
     <TitleBar />
     
     <Toolbar />
+
+    <BannerDefaultApp />
 
     <div class="app_body">
       <Sidebar v-if="!uiStore.sidebarHidden" />

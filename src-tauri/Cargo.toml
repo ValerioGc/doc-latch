@@ -55,6 +55,9 @@ log = "0.4"
 # the `test-support` feature is on (unit tests, or integration tests in `tests/`).
 tempfile = { version = "3.10", optional = true }
 
+[target.'cfg(target_os = "windows")'.dependencies]
+winreg = "0.52"
+
 [features]
 test-support = ["tempfile"]
 

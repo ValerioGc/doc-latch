@@ -70,5 +70,14 @@ fn render_page_impl(
     crate::pdf::renderer::render_page(resource_dir, path, page, zoom, password)
 }
 
+/// Returns the PDF file path passed as a CLI argument when the app is launched
+/// via a file association (e.g. double-clicking a .pdf in Windows Explorer).
+#[command]
+pub fn get_initial_file() -> Option<String> {
+    std::env::args()
+        .skip(1)
+        .find(|arg| arg.to_lowercase().ends_with(".pdf"))
+}
+
 #[cfg(test)]
 mod tests;

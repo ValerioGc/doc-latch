@@ -32,7 +32,13 @@
     "textSize": "Text size",
     "textSizeSmall": "Small",
     "textSizeMedium": "Medium",
-    "textSizeLarge": "Large"
+    "textSizeLarge": "Large",
+    "system": "System",
+    "defaultApp": "Default PDF viewer",
+    "defaultAppActive": "DocLatch is the default PDF viewer",
+    "defaultAppInactive": "DocLatch is not the default PDF viewer",
+    "setDefaultApp": "Set as default",
+    "setDefaultAppHint": "Opens Windows Settings"
   },
   "viewer": {
     "noDocument": "No document open",
@@ -141,6 +147,13 @@
     "settings": {
       "close": "Close"
     }
+  },
+  "banner": {
+    "defaultApp": "DocLatch is not set as the default PDF viewer.",
+    "openSettings": "Set as default",
+    "close": "Dismiss banner",
+    "hideSession": "Hide for this session",
+    "hideForever": "Don't show again"
   },
   "statusBar": {
     "noFile": "No file open",

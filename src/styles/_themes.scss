@@ -13,6 +13,9 @@
   --color-border-strong:rgba(0, 0, 0, 0.15);
   --color-accent:#{$accent};
   --color-accent-hover:#c93d3c;
+  --color-warning-bg:#fffbeb;
+  --color-warning-border:#fcd34d;
+  --color-warning-text:#92400e;
   --sidebar-width:130px;
   --toolbar-height:40px;
   --statusbar-height:34px;
@@ -59,4 +62,7 @@
   --color-text-tertiary:#858585;
   --color-border:rgba(255, 255, 255, 0.10);
   --color-border-strong:rgba(255, 255, 255, 0.18);
+  --color-warning-bg:#2d2410;
+  --color-warning-border:#78600a;
+  --color-warning-text:#fcd34d;
 }

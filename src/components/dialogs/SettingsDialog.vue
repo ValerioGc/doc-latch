@@ -4,6 +4,7 @@
   import AppearanceSettings from '@/components/partials/settings/AppearanceSettings.vue';
   import SidebarSettings from '@/components/partials/settings/SidebarSettings.vue';
   import LanguageSettings from '@/components/partials/settings/LanguageSettings.vue';
+  import DefaultAppSettings from '@/components/partials/settings/DefaultAppSettings.vue';
 
   const emit = defineEmits<{ close: [] }>();
   function close(): void {
@@ -20,8 +21,10 @@
     <SidebarSettings />
 
     <div class="sep"></div>
-    
+
     <LanguageSettings />
+
+    <DefaultAppSettings />
 
     <template #actions>
       <button class="btn btn_primary" @click="close">
