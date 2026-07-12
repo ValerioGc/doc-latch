@@ -3,7 +3,12 @@
     "targets": ["nsis"],
     "windows": {
       "nsis": {
-        "languages": ["English","Italian", "French", "German"]
+        "languages": ["English", "Italian", "French", "German"],
+        "displayLanguageSelector": true,
+        "installerHooks": "nsis/hooks.nsh",
+        "customLanguageFiles": {
+          "Italian": "nsis/Italian.nsh"
+        }
       }
     },
     "resources": {
