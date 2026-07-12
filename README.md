@@ -46,7 +46,6 @@ chmod +x DocLatch_x.x.x_linux_x64_portable.AppImage
 
 - Handles **PDF** files only (no exporting to other formats yet).
 - It's a viewer: it doesn't yet support editing page content (text/images) or reordering pages.
-- macOS is not yet supported.
 
 ## Coming up
 
