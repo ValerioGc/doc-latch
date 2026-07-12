@@ -1,10 +1,14 @@
 import { vi } from 'vitest';
 
-// Tauri's invoke requires the WebView2 runtime context, which is unavailable in jsdom.
-// This global stub makes invoke a no-op that resolves to null for all component tests.
-// Individual test files that need specific invoke behavior override this with their own vi.mock.
+// Tauri's invoke/listen require the WebView2 runtime context, which is unavailable in jsdom.
+// These global stubs make them no-ops for all component tests.
+// Individual test files that need specific behavior override these with their own vi.mock.
 vi.mock('@tauri-apps/api/core', () => ({
   invoke: vi.fn().mockResolvedValue(null),
+}));
+
+vi.mock('@tauri-apps/api/event', () => ({
+  listen: vi.fn().mockResolvedValue(() => {}),
 }));
 
 if (!window.matchMedia) {

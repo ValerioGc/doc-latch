@@ -125,7 +125,7 @@ describe('SplitPane', () => {
     const wrapper = mount(SplitPane, mountOptions);
 
     wrapper.find('.split_pane').element.dispatchEvent(
-      new WheelEvent('wheel', { ctrlKey: true, deltaY: -1, bubbles: true }),
+      new WheelEvent('wheel', { ctrlKey: true, deltaY: -100, bubbles: true }),
     );
     await nextTick();
 
@@ -138,7 +138,7 @@ describe('SplitPane', () => {
     const wrapper = mount(SplitPane, mountOptions);
 
     wrapper.find('.split_pane').element.dispatchEvent(
-      new WheelEvent('wheel', { ctrlKey: true, deltaY: 1, bubbles: true }),
+      new WheelEvent('wheel', { ctrlKey: true, deltaY: 100, bubbles: true }),
     );
     await nextTick();
 

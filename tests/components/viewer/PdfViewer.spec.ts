@@ -139,7 +139,7 @@ describe('PdfViewer', () => {
     const before = docStore.zoom;
 
     wrapper.find('.viewer').element.dispatchEvent(
-      new WheelEvent('wheel', { ctrlKey: true, deltaY: -1, bubbles: true }),
+      new WheelEvent('wheel', { ctrlKey: true, deltaY: -100, bubbles: true }),
     );
     await nextTick();
 
@@ -154,7 +154,7 @@ describe('PdfViewer', () => {
     const before = docStore.zoom;
 
     wrapper.find('.viewer').element.dispatchEvent(
-      new WheelEvent('wheel', { ctrlKey: true, deltaY: 1, bubbles: true }),
+      new WheelEvent('wheel', { ctrlKey: true, deltaY: 100, bubbles: true }),
     );
     await nextTick();
 
