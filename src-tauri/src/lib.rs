@@ -8,10 +8,21 @@ use commands::document::{
     get_initial_file, open_pdf, open_pdf_with_password, render_page, render_page_with_password,
 };
 use commands::security::{add_password, get_security_info, remove_password};
+use tauri::{Emitter, Manager};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
+            if let Some(pdf_path) = args.iter().skip(1).find(|a| a.to_lowercase().ends_with(".pdf")) {
+                let _ = app.emit("open-file", pdf_path.clone());
+            }
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.show();
+                let _ = window.unminimize();
+                let _ = window.set_focus();
+            }
+        }))
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_shell::init())

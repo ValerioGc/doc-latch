@@ -55,7 +55,7 @@ function hideForever(): void {
         </button>
 
         <Transition name="popup">
-          <div v-if="showPopup" class="banner_popup" role="dialog" :aria-label="$t('banner.close')">
+          <dialog v-if="showPopup" open class="banner_popup" :aria-label="$t('banner.close')">
             <button type="button" class="banner_popup_item" @click="hideSession">
               {{ $t('banner.hideSession') }}
             </button>
@@ -63,7 +63,7 @@ function hideForever(): void {
             <button type="button" class="banner_popup_item" @click="hideForever">
               {{ $t('banner.hideForever') }}
             </button>
-          </div>
+          </dialog>
         </Transition>
       </div>
 
@@ -154,6 +154,8 @@ function hideForever(): void {
       right: 0;
       z-index: 100;
       min-width: 180px;
+      margin: 0;
+      padding: 0;
       background: var(--color-bg-primary);
       border: 0.5px solid var(--color-border-strong);
       border-radius: $radius-md;

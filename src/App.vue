@@ -2,6 +2,7 @@
 
   import { ref, computed, watch, useTemplateRef, onMounted } from 'vue';
   import { invoke } from '@tauri-apps/api/core';
+  import { listen } from '@tauri-apps/api/event';
   import { useI18n } from 'vue-i18n';
   import { useUiStore } from '@/stores/ui';
   import { useDocumentStore } from '@/stores/document';
@@ -35,6 +36,10 @@
     const path = await invoke<string | null>('get_initial_file');
     if (path)
       await openRecentFile(path);
+
+    await listen<string>('open-file', async (event) => {
+      await openRecentFile(event.payload);
+    });
   });
 
   // ************** Split-pane resize ***************
