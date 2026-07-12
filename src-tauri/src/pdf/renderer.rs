@@ -20,7 +20,7 @@ pub struct PageRenderResult {
 fn bind_pdfium(resource_dir: Option<PathBuf>) -> Result<Pdfium, PdfError> {
     let candidate_dirs: Vec<PathBuf> = [
         resource_dir,
-        std::env::current_exe() 
+        std::env::current_exe()
             .ok()
             .and_then(|p| p.parent().map(std::path::Path::to_path_buf)),
     ]
@@ -38,9 +38,7 @@ fn bind_pdfium(resource_dir: Option<PathBuf>) -> Result<Pdfium, PdfError> {
         })
         .or_else(|| Pdfium::bind_to_system_library().ok())
         .ok_or_else(|| {
-            PdfError::RenderError(
-                "PDFium not found: add pdfium.dll in src-tauri/".to_string(),
-            )
+            PdfError::RenderError("PDFium not found: add pdfium.dll in src-tauri/".to_string())
         })?;
 
     Ok(Pdfium::new(bindings))
