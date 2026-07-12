@@ -3,6 +3,7 @@
   import { computed, watch, nextTick, useTemplateRef, onUnmounted } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
+  import { useWheelGesture } from '@/composables/useWheelGesture';
 
   import PasswordDialog from '@/components/dialogs/password/PasswordDialog.vue';
   import HomeScreen from '@/components/viewer/HomeScreen.vue';
@@ -75,14 +76,7 @@
       clearTimeout(programmaticTimer);
   });
 
-  // Handle Ctrl + mouse wheel to zoom in/out
-  function onWheel(e: WheelEvent): void {
-    if (!e.ctrlKey)
-      return;
-
-    e.preventDefault();
-    docStore.adjustZoom(e.deltaY < 0 ? 10 : -10);
-  }
+  const { onWheel } = useWheelGesture(viewerRef, (delta) => docStore.adjustZoom(delta));
 
   function onMouseEnter(): void {
     docStore.setFocusedPane('left');

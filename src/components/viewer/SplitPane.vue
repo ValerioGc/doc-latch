@@ -3,6 +3,7 @@
   import { computed, nextTick, onUnmounted, useTemplateRef, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useDocumentStore } from '@/stores/document';
+  import { useWheelGesture } from '@/composables/useWheelGesture';
   import HomeScreen from '@/components/viewer/HomeScreen.vue';
   import PageCanvas from '@/components/viewer/PageCanvas.vue';
   import errorIcon from '@/assets/icons/error.svg?raw';
@@ -73,13 +74,10 @@
     docStore.setFocusedPane('right');
   }
 
-  function onWheel(e: WheelEvent): void {
-    if (!e.ctrlKey || !tab.value)
-      return;
-
-    e.preventDefault();
-    docStore.adjustTabZoom(tab.value.id, e.deltaY < 0 ? 10 : -10);
-  }
+  const { onWheel } = useWheelGesture(paneRef, (delta) => {
+    if (tab.value)
+      docStore.adjustTabZoom(tab.value.id, delta);
+  });
 
   const errorMessage = computed(() => {
     const kind = tab.value?.error?.kind ?? 'Unknown';
