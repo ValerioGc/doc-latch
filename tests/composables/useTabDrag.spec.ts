@@ -224,7 +224,6 @@ describe('useTabDrag', () => {
       docStore.setLoading('/a.pdf');
       const aId = docStore.activeTabId!;
       docStore.setLoading('/b.pdf');
-      const bId = docStore.activeTabId!;
       docStore.setLoading('/c.pdf');
       const cId = docStore.activeTabId!;
 
