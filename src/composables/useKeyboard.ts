@@ -1,16 +1,32 @@
 import { onMounted, onUnmounted } from 'vue';
 import { useDocumentStore } from '@/stores/document';
 
-/**
- * Registers global keyboard shortcuts for navigation and zoom
- */
 export function useKeyboard(): void {
   const docStore = useDocumentStore();
+
+  function handleZoom(e: KeyboardEvent, delta: number): void {
+    if (!e.ctrlKey && !e.metaKey)
+      return;
+    e.preventDefault();
+    if (docStore.focusedPane === 'right' && docStore.splitTabId)
+      docStore.adjustTabZoom(docStore.splitTabId, delta);
+    else
+      docStore.adjustZoom(delta);
+  }
+
+  function handleZoomReset(e: KeyboardEvent): void {
+    if (!e.ctrlKey && !e.metaKey)
+      return;
+    e.preventDefault();
+    if (docStore.focusedPane === 'right' && docStore.splitTabId)
+      docStore.setTabZoom(docStore.splitTabId, 100);
+    else
+      docStore.setZoom(100);
+  }
 
   function onKeyDown(e: KeyboardEvent): void {
     const tag = (e.target as HTMLElement).tagName;
 
-    // Ignore shortcuts when typing in inputs
     if (tag === 'INPUT' || tag === 'TEXTAREA')
       return;
 
@@ -35,31 +51,13 @@ export function useKeyboard(): void {
         break;
       case '+':
       case '=':
-        if (e.ctrlKey || e.metaKey) {
-          e.preventDefault();
-          if (docStore.focusedPane === 'right' && docStore.splitTabId)
-            docStore.adjustTabZoom(docStore.splitTabId, 10);
-          else
-            docStore.adjustZoom(10);
-        }
+        handleZoom(e, 10);
         break;
       case '-':
-        if (e.ctrlKey || e.metaKey) {
-          e.preventDefault();
-          if (docStore.focusedPane === 'right' && docStore.splitTabId)
-            docStore.adjustTabZoom(docStore.splitTabId, -10);
-          else
-            docStore.adjustZoom(-10);
-        }
+        handleZoom(e, -10);
         break;
       case '0':
-        if (e.ctrlKey || e.metaKey) {
-          e.preventDefault();
-          if (docStore.focusedPane === 'right' && docStore.splitTabId)
-            docStore.setTabZoom(docStore.splitTabId, 100);
-          else
-            docStore.setZoom(100);
-        }
+        handleZoomReset(e);
         break;
       case 'Tab':
         if (e.ctrlKey || e.metaKey) {
