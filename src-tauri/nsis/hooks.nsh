@@ -1,6 +1,8 @@
-; After each successful installation, remove the saved installer language preference.
-; This ensures the language selection dialog is shown on every subsequent run of
-; the installer, instead of silently reusing the previously saved locale.
+; Force the language selection dialog to appear on every run, ignoring any saved
+; registry preference. This must be a compile-time define placed before
+; MUI_LANGDLL_DISPLAY is expanded (hooks.nsh is included at the top of installer.nsi).
+!define MUI_LANGDLL_ALWAYSSHOW
+
 !macro NSIS_HOOK_POSTINSTALL
   DeleteRegValue ${MUI_LANGDLL_REGISTRY_ROOT} "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
 !macroend
